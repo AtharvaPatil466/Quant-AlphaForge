@@ -1,0 +1,144 @@
+# ─────────────────────────────────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ─────────────────────────────────────────────────────────────────────────
+# Virtual environments (3 of these in this repo — each ~500-900 MB)
+#
+# NOTE: we intentionally do NOT gitignore bare 'env/' or 'ENV/' here —
+# both collide with source packages in this repo (alphaforge-marl/env/
+# is the TradingEnv package). Prefer the '.venv/' convention locally.
+# ─────────────────────────────────────────────────────────────────────────
+.venv/
+venv/
+
+# ─────────────────────────────────────────────────────────────────────────
+# Testing, linting, coverage
+# ─────────────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ─────────────────────────────────────────────────────────────────────────
+# IDE / OS / local tooling
+# ─────────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+.DS_Store
+.claude/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ─────────────────────────────────────────────────────────────────────────
+# Secrets — never commit (double-check with `git grep` before pushing)
+# ─────────────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+credentials.json
+
+# ─────────────────────────────────────────────────────────────────────────
+# SQLite databases (regenerable by run_backtest.py / daily_loop.py)
+# ─────────────────────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ─────────────────────────────────────────────────────────────────────────
+# Market data parquet store (GB-scale, regenerable via sync_market_data.py)
+#
+# IMPORTANT: alphaforge-python/data/ is a PYTHON PACKAGE (has __init__.py,
+# loader.py, universe.py, etc. as source code). We exclude ONLY its
+# runtime parquet output, not the source files.
+#
+# The repo-root data/market/ and data/quarantine/ directories contain
+# only parquet — no source — so they can be fully excluded.
+# ─────────────────────────────────────────────────────────────────────────
+
+# Repo-root parquet store (pure data, no source)
+/data/market/
+/data/quarantine/
+/data/reports/
+
+# Sub-project runtime caches
+alphaforge-marl/.data_cache/
+
+# Parquet files anywhere (belt + suspenders)
+**/*.parquet
+
+# ─────────────────────────────────────────────────────────────────────────
+# MARL training artifacts — large binaries, regenerable from run_training.py
+# ─────────────────────────────────────────────────────────────────────────
+alphaforge-marl/checkpoints/
+alphaforge-marl/checkpoints_*/
+alphaforge-marl/training_runs/
+alphaforge-marl/ablations_*/
+alphaforge-marl/reward_mix_sweep_*/
+alphaforge-marl/stability_*/
+alphaforge-marl/reports/
+**/training.jsonl
+**/checkpoint_*.pt
+**/*.pt
+
+# Paper-trading and live-decision logs
+**/marl_decisions.jsonl
+**/*_decisions.jsonl
+
+# ─────────────────────────────────────────────────────────────────────────
+# Generated research outputs (regenerable via `make all`)
+# ─────────────────────────────────────────────────────────────────────────
+alphaforge-python/research/out/
+alphaforge-marl/research/out/
+alphaforge-execution/research/out/
+
+# ─────────────────────────────────────────────────────────────────────────
+# Operational logs (may contain trade details, NAV, sensitive metadata)
+# ─────────────────────────────────────────────────────────────────────────
+*.log
+alerts.log
+*_pager.log
+alphaforge_execution_pager.log
+alphaforge-execution/alerts.log
+alphaforge-execution/live_*.log
+
+# ─────────────────────────────────────────────────────────────────────────
+# yfinance cache
+# ─────────────────────────────────────────────────────────────────────────
+yfinance.cache/
+
+# ─────────────────────────────────────────────────────────────────────────
+# Misc local scratch
+# ─────────────────────────────────────────────────────────────────────────
+scratch/
+tmp/
+*.bak
+*.orig

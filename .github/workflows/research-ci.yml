@@ -1,0 +1,80 @@
+name: research-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subdir: [alphaforge-python, alphaforge-marl, alphaforge-execution]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install deps
+        working-directory: ${{ matrix.subdir }}
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+          pip install pytest
+
+      - name: Run tests
+        working-directory: ${{ matrix.subdir }}
+        # `python -m pytest` prepends the cwd to sys.path so in-repo
+        # packages like `data.market.loader` resolve without installing
+        # the project as a package. Bare `pytest` does not do this.
+        run: python -m pytest tests/ -q
+
+  headline-metrics-diff:
+    # Rebuilds factor_study + marl_rigor artifacts and compares headline
+    # metrics to the committed JSON. Catches silent numerical drift (new
+    # dependency versions, NumPy changes) that tests alone would miss.
+    needs: tests
+    runs-on: ubuntu-latest
+    env:
+      ALPHAFORGE_GLOBAL_SEED: 42
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+
+      - name: Install all deps
+        run: |
+          python -m pip install --upgrade pip
+          for d in alphaforge-python alphaforge-marl alphaforge-execution; do
+            if [ -f "$d/requirements.txt" ]; then
+              pip install -r "$d/requirements.txt"
+            fi
+          done
+          pip install pytest
+
+      - name: Snapshot committed headline metrics
+        run: |
+          mkdir -p /tmp/ci-diff
+          for f in \
+              alphaforge-python/research/out/factor_study_results.json \
+              alphaforge-marl/research/out/marl_rigor_metrics.json; do
+            [ -f "$f" ] && cp "$f" "/tmp/ci-diff/$(basename "$f").committed" || true
+          done
+
+      - name: Rebuild headline artifacts
+        run: make factor-study marl-rigor || true
+
+      - name: Diff headline metrics
+        run: python .github/scripts/diff_headline_metrics.py
