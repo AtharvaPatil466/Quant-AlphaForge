@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AlphaForge — Quantitative Alpha Research Workstation. Professional signal scanning, backtesting, and alpha generation.">
+  <title>AlphaForge — Quantitative Research Workstation</title>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗️</text></svg>">
+</head>
+<body>
+  <div id="app-shell">
+
+    <!-- ═══ Top Bar ═══ -->
+    <header class="header" role="banner">
+      <div class="header-brand">
+        <div class="header-logo-icon">α</div>
+        <div>
+          <div class="header-logo">AlphaForge</div>
+          <div class="header-tagline">Quantitative Research</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span>Market Closed</span>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-clock" id="header-clock">--:--:-- <span class="tz">EST</span></div>
+      </div>
+    </header>
+
+    <!-- ═══ Controls Bar ═══ -->
+    <div class="workspace-bar" role="toolbar" aria-label="Workspace controls">
+      <div class="control-group">
+        <label class="control-label" for="sector-filter">Sector</label>
+        <select id="sector-filter">
+          <option value="All">All Sectors</option>
+          <option value="Technology">Technology</option>
+          <option value="Finance">Financials</option>
+          <option value="Healthcare">Healthcare</option>
+          <option value="Energy">Energy</option>
+          <option value="Consumer">Consumer</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="universe-filter">Universe</label>
+        <select id="universe-filter">
+          <option value="sp500">S&P 500</option>
+          <option value="russell">Russell 1000</option>
+          <option value="nasdaq">NASDAQ 100</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="lookback-slider">Lookback</label>
+        <input type="range" id="lookback-slider" min="21" max="504" value="252" step="1">
+        <span id="lookback-value" class="control-value">252d</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="control-group">
+        <label class="control-label" for="backend-toggle">Backend</label>
+        <select id="backend-toggle">
+          <option value="api" selected>Python API</option>
+          <option value="local">Local (JS Demo)</option>
+        </select>
+      </div>
+      <div class="control-group" id="backend-url-group">
+        <label class="control-label" for="backend-url">API URL</label>
+        <input type="text" id="backend-url" value="http://localhost:8000" style="width:180px;font-size:11px;padding:4px 8px;background:var(--bg-secondary);color:var(--text-primary);border:1px solid var(--border-primary);border-radius:4px;">
+      </div>
+    </div>
+
+    <!-- ═══ Tab Navigation ═══ -->
+    <nav class="tab-nav" role="tablist" aria-label="Module tabs">
+      <button class="tab-btn" data-tab="backtester" role="tab" aria-selected="false" id="tab-backtester">
+        <span class="tab-icon">◧</span> Strategy Backtester
+      </button>
+      <button class="tab-btn active" data-tab="scanner" role="tab" aria-selected="true" id="tab-scanner">
+        <span class="tab-icon">⊘</span> Signal Scanner
+      </button>
+      <button class="tab-btn" data-tab="correlation" role="tab" aria-selected="false" id="tab-correlation">
+        <span class="tab-icon">⬡</span> Correlation Lab
+      </button>
+      <button class="tab-btn" data-tab="ai-engine" role="tab" aria-selected="false" id="tab-ai-engine">
+        <span class="tab-icon">◈</span> AI Alpha Engine
+      </button>
+      <button class="tab-btn" data-tab="marl" role="tab" aria-selected="false" id="tab-marl">
+        <span class="tab-icon">◉</span> MARL Training
+      </button>
+      <button class="tab-btn" data-tab="execution" role="tab" aria-selected="false" id="tab-execution">
+        <span class="tab-icon">◎</span> Live Trading
+      </button>
+    </nav>
+
+    <!-- ═══ Module Panels ═══ -->
+    <main class="module-content">
+
+      <!-- ── Module 1: Backtester ── -->
+      <section id="panel-backtester" class="module-panel" role="tabpanel" aria-labelledby="tab-backtester">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Strategy Backtester</h1>
+            <p class="section-subtitle">Simulate alpha strategies on synthetic US equity data</p>
+          </div>
+        </div>
+        <div id="bt-error-banner" class="error-banner">⚠ <span id="bt-error-msg"></span></div>
+        <div class="controls-panel">
+          <div class="control-group">
+            <label class="control-label" for="bt-factor">Alpha Factor</label>
+            <select id="bt-factor">
+              <option value="Momentum (12-1)">Momentum (12-1)</option>
+              <option value="Mean Reversion (5d)">Mean Reversion (5d)</option>
+              <option value="Volume Surge">Volume Surge</option>
+              <option value="RSI Divergence">RSI Divergence</option>
+              <option value="Earnings Drift">Earnings Drift</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="bt-holding">Holding Period</label>
+            <input type="range" id="bt-holding" min="1" max="60" value="21" step="1">
+            <span id="bt-holding-value" class="control-value">21d</span>
+            <span id="bt-holding-error" class="validation-error"></span>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="bt-position">Position Size</label>
+            <input type="range" id="bt-position" min="1" max="20" value="10" step="1">
+            <span id="bt-position-value" class="control-value">10%</span>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="bt-stoploss">Stop Loss</label>
+            <input type="range" id="bt-stoploss" min="1" max="15" value="5" step="0.5">
+            <span id="bt-stoploss-value" class="control-value">5%</span>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="bt-txcost">Tx Cost (bps)</label>
+            <input type="number" id="bt-txcost" min="0" max="100" value="10" step="1">
+          </div>
+          <div class="control-group" style="justify-content: flex-end;">
+            <button id="bt-run" class="btn-primary">▶ Run Backtest</button>
+          </div>
+        </div>
+        <div id="bt-metrics" class="metrics-grid">
+          <div class="metric-card"><div class="metric-label">Sharpe Ratio</div><div id="bt-sharpe" class="metric-value neutral">—</div></div>
+          <div class="metric-card"><div class="metric-label">Total Return</div><div id="bt-return" class="metric-value neutral">—</div></div>
+          <div class="metric-card"><div class="metric-label">Max Drawdown</div><div id="bt-drawdown" class="metric-value neutral">—</div><div id="bt-dd-date" class="metric-detail"></div></div>
+          <div class="metric-card"><div class="metric-label">Win Rate</div><div id="bt-winrate" class="metric-value neutral">—</div></div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-container"><div class="card-header"><span class="card-title">NAV vs Benchmark</span></div><canvas id="bt-nav-chart"></canvas><div id="bt-nav-fallback" class="chart-unavailable hidden">Charts unavailable — CDN unreachable</div></div>
+        </div>
+        <div class="charts-grid dual mt-lg">
+          <div class="chart-container"><div class="card-header"><span class="card-title">Monthly Returns</span></div><canvas id="bt-monthly-chart"></canvas><div id="bt-monthly-fallback" class="chart-unavailable hidden">Charts unavailable</div></div>
+          <div class="chart-container"><div class="card-header"><span class="card-title">Drawdown</span></div><canvas id="bt-dd-chart"></canvas><div id="bt-dd-fallback" class="chart-unavailable hidden">Charts unavailable</div></div>
+        </div>
+      </section>
+
+      <!-- ── Module 2: Signal Scanner ── -->
+      <section id="panel-scanner" class="module-panel active" role="tabpanel" aria-labelledby="tab-scanner">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Signal Scanner</h1>
+            <p class="section-subtitle" id="scanner-subtitle">Real-time factor-based signal screening across the equity universe · 252-day lookback</p>
+          </div>
+          <button id="scanner-refresh" class="btn-scan" onclick="this.classList.add('scanning'); setTimeout(() => this.classList.remove('scanning'), 1000);">
+            <span class="scan-icon">⟳</span> Scan Universe
+          </button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row" id="scanner-stats">
+          <div class="stat-card green">
+            <div class="stat-label">Long Signals</div>
+            <div class="stat-value" id="stat-long-count">0</div>
+            <div class="stat-detail"><span class="ticker-list" id="stat-long-tickers">—</span></div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">Short Signals</div>
+            <div class="stat-value" id="stat-short-count">0</div>
+            <div class="stat-detail"><span class="ticker-list" id="stat-short-tickers">—</span></div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Neutral</div>
+            <div class="stat-value" id="stat-neutral-count">0</div>
+            <div class="stat-detail"><span class="ticker-list" id="stat-neutral-tickers">—</span></div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Avg |Score|</div>
+            <div class="stat-value" id="stat-avg-score">—</div>
+            <div class="stat-detail" id="stat-avg-detail">σ = —</div>
+          </div>
+        </div>
+
+        <!-- Filter Pills -->
+        <div class="filter-bar">
+          <button class="filter-pill active" data-filter="all" id="filter-all">All</button>
+          <button class="filter-pill" data-filter="LONG" id="filter-long"><span class="filter-dot"></span> Long</button>
+          <button class="filter-pill" data-filter="SHORT" id="filter-short"><span class="filter-dot"></span> Short</button>
+          <button class="filter-pill" data-filter="NEUTRAL" id="filter-neutral"><span class="filter-dot"></span> Neutral</button>
+        </div>
+
+        <!-- Data Table -->
+        <div class="signal-table-wrapper">
+          <table class="signal-table" id="scanner-table">
+            <thead>
+              <tr>
+                <th data-col="ticker">Ticker <span class="sort-arrow">↕</span></th>
+                <th data-col="name">Name <span class="sort-arrow">↕</span></th>
+                <th data-col="composite">Composite <span class="sort-arrow">↕</span></th>
+                <th data-col="signal">Signal <span class="sort-arrow">↕</span></th>
+                <th data-col="ret5d">5d Return <span class="sort-arrow">↕</span></th>
+                <th data-col="volume">Vol (M) <span class="sort-arrow">↕</span></th>
+                <th data-col="momentum">Momentum <span class="sort-arrow">↕</span></th>
+                <th data-col="meanrev">Mean Rev <span class="sort-arrow">↕</span></th>
+                <th data-col="volsurge">Vol Surge <span class="sort-arrow">↕</span></th>
+                <th data-col="rsidiv">RSI Div <span class="sort-arrow">↕</span></th>
+                <th data-col="earndrift">Earn Drift <span class="sort-arrow">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="scanner-tbody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span id="table-footer-info">Showing 0 of 0 signals · Last scan --:--:--</span>
+            <div class="pagination" id="table-pagination"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Module 3: Correlation Lab ── -->
+      <section id="panel-correlation" class="module-panel" role="tabpanel" aria-labelledby="tab-correlation">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Correlation Laboratory</h1>
+            <p class="section-subtitle">Measure pairwise factor correlation, IC, and turnover for signal independence</p>
+          </div>
+        </div>
+        <div class="charts-grid dual">
+          <div class="card"><div class="card-header"><span class="card-title">Factor Correlation Matrix</span></div><div id="corr-heatmap" class="heatmap-grid"></div></div>
+          <div class="chart-container"><div class="card-header"><span class="card-title">Information Coefficient (IC)</span></div><canvas id="corr-ic-chart"></canvas><div id="corr-ic-fallback" class="chart-unavailable hidden">Charts unavailable</div></div>
+        </div>
+        <div class="charts-grid mt-lg">
+          <div class="chart-container"><div class="card-header"><span class="card-title">Factor Turnover</span></div><canvas id="corr-turnover-chart"></canvas><div id="corr-turnover-fallback" class="chart-unavailable hidden">Charts unavailable</div></div>
+        </div>
+      </section>
+
+      <!-- ── Module 4: AI Alpha Engine ── -->
+      <section id="panel-ai-engine" class="module-panel" role="tabpanel" aria-labelledby="tab-ai-engine">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">AI Alpha Engine</h1>
+            <p class="section-subtitle">Describe an investment hypothesis — AI constructs a formal signal specification</p>
+          </div>
+        </div>
+        <div class="card mb-lg">
+          <div class="card-header"><span class="card-title">API Configuration</span></div>
+          <div class="control-group">
+            <label class="control-label" for="ai-api-key">Anthropic API Key</label>
+            <input type="password" id="ai-api-key" class="api-key-input" placeholder="sk-ant-...">
+          </div>
+          <p class="text-muted mt-md" style="font-size: 10px;">Key stored in session only. Leave blank for demo mode.</p>
+        </div>
+        <div class="card mb-lg">
+          <div class="card-header"><span class="card-title">Investment Hypothesis</span></div>
+          <div><textarea id="ai-hypothesis" class="ai-textarea" placeholder="e.g., Stocks with high short interest that report positive earnings surprises tend to experience multi-day short squeezes..."></textarea></div>
+          <div class="flex items-center justify-between mt-md">
+            <button id="ai-generate" class="btn-primary">⚡ Generate Signal Spec</button>
+            <div id="ai-spinner" class="hidden"><span class="spinner"></span> Generating...</div>
+          </div>
+        </div>
+        <div id="ai-output-section" class="hidden">
+          <div class="ai-output"><div class="card-header"><span class="card-title">Signal Specification</span></div><div id="ai-spec-content" class="ai-spec-grid"></div></div>
+          <div class="metrics-grid mt-lg">
+            <div class="metric-card"><div class="metric-label">Expected IC</div><div id="ai-ic" class="metric-value neutral">—</div></div>
+            <div class="metric-card"><div class="metric-label">Holding Period</div><div id="ai-hold" class="metric-value neutral">—</div></div>
+            <div class="metric-card"><div class="metric-label">Signal Name</div><div id="ai-name" class="metric-value neutral" style="font-size:12px;">—</div></div>
+          </div>
+          <div class="charts-grid mt-lg">
+            <div class="chart-container"><div class="card-header"><span class="card-title">AI Backtest Preview</span></div><canvas id="ai-preview-chart"></canvas><div id="ai-preview-fallback" class="chart-unavailable hidden">Charts unavailable</div></div>
+          </div>
+        </div>
+        <div class="card mt-lg">
+          <div class="card-header"><span class="card-title">Hypothesis Library</span></div>
+          <div id="ai-library" class="hypothesis-list"><p class="text-muted" style="font-size: 11px;">No saved hypotheses yet.</p></div>
+        </div>
+      </section>
+
+      <!-- ── Module 5: MARL Training ── -->
+      <section id="panel-marl" class="module-panel" role="tabpanel" aria-labelledby="tab-marl">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">MARL Training</h1>
+            <p class="section-subtitle">Multi-Agent Reinforcement Learning — neuroevolution with regime-conditional Thompson sampling</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button id="marl-start" class="btn-primary">▶ Start Training</button>
+            <button id="marl-stop" class="btn-primary" style="background:var(--red);box-shadow:0 0 16px var(--red-glow);" disabled>◼ Stop</button>
+          </div>
+        </div>
+
+        <!-- MARL Config Bar -->
+        <div class="controls-panel">
+          <div class="control-group">
+            <label class="control-label" for="marl-url">MARL API</label>
+            <input type="text" id="marl-url" value="http://localhost:8001" style="width:180px;font-size:11px;padding:4px 8px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-subtle);border-radius:4px;">
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="marl-generations">Generations</label>
+            <input type="number" id="marl-generations" min="1" max="500" value="50" style="width:70px;font-size:11px;padding:4px 8px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-subtle);border-radius:4px;">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Status</label>
+            <span id="marl-status-text" style="font-size:11px;color:var(--text-secondary);">Idle</span>
+          </div>
+        </div>
+
+        <!-- Live Stats -->
+        <div class="stats-row" id="marl-stats">
+          <div class="stat-card blue">
+            <div class="stat-label">Generation</div>
+            <div class="stat-value" id="marl-gen">0</div>
+            <div class="stat-detail" id="marl-gen-detail">of 50</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Best Fitness</div>
+            <div class="stat-value" id="marl-best-fitness">—</div>
+            <div class="stat-detail" id="marl-best-agent">—</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Mean Fitness</div>
+            <div class="stat-value" id="marl-mean-fitness">—</div>
+            <div class="stat-detail" id="marl-fitness-std">σ = —</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">Mutation σ</div>
+            <div class="stat-value" id="marl-sigma">—</div>
+            <div class="stat-detail" id="marl-sigma-detail">adaptive</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid dual mt-lg">
+          <div class="chart-container">
+            <div class="card-header"><span class="card-title">Fitness Over Generations</span></div>
+            <canvas id="marl-fitness-chart"></canvas>
+            <div id="marl-fitness-fallback" class="chart-unavailable hidden">Charts unavailable</div>
+          </div>
+          <div class="chart-container">
+            <div class="card-header"><span class="card-title">Mutation Sigma & Diversity</span></div>
+            <canvas id="marl-sigma-chart"></canvas>
+            <div id="marl-sigma-fallback" class="chart-unavailable hidden">Charts unavailable</div>
+          </div>
+        </div>
+
+        <!-- Generation Log -->
+        <div class="card mt-lg">
+          <div class="card-header"><span class="card-title">Generation Log</span></div>
+          <div id="marl-log" style="max-height:240px;overflow-y:auto;font-size:11px;color:var(--text-secondary);padding:var(--sp-12);font-family:var(--font-mono);">
+            <div style="color:var(--text-dim);">Waiting for training to start...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Module 6: Live Paper Trading ── -->
+      <section id="panel-execution" class="module-panel" role="tabpanel" aria-labelledby="tab-execution">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title">Live Paper Trading</h1>
+            <p class="section-subtitle">Real-time execution monitoring — Alpaca paper broker with circuit breakers</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span id="exec-status-dot" style="width:8px;height:8px;border-radius:50%;background:var(--text-dim);display:inline-block;"></span>
+            <span id="exec-system-status" style="font-size:12px;font-weight:600;color:var(--text-dim);">DISCONNECTED</span>
+          </div>
+        </div>
+
+        <!-- Connection + Controls -->
+        <div class="controls-panel">
+          <div class="control-group">
+            <label class="control-label" for="exec-url">Execution API</label>
+            <input type="text" id="exec-url" value="http://localhost:8002" style="width:180px;font-size:11px;padding:4px 8px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-subtle);border-radius:4px;">
+          </div>
+          <div class="control-group">
+            <label class="control-label">Connection</label>
+            <span id="exec-conn-status" style="font-size:11px;color:var(--text-secondary);">Disconnected</span>
+          </div>
+          <div class="control-group" style="justify-content:flex-end;gap:6px;">
+            <button id="exec-connect" class="btn-primary">▶ Connect</button>
+            <button id="exec-halt" class="btn-primary" style="background:var(--red);box-shadow:0 0 16px var(--red-glow);">◼ Halt</button>
+            <button id="exec-resume" class="btn-primary" style="background:var(--green);box-shadow:0 0 16px var(--green-glow);">▶ Resume</button>
+          </div>
+        </div>
+        <div id="exec-halt-reason" style="font-size:11px;color:var(--red);padding:0 16px 8px;"></div>
+
+        <!-- Performance Metrics -->
+        <div class="stats-row" id="exec-stats">
+          <div class="stat-card blue">
+            <div class="stat-label">NAV</div>
+            <div class="stat-value" id="exec-nav">—</div>
+            <div class="stat-detail" id="exec-nav-detail">—</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Sharpe Ratio</div>
+            <div class="stat-value" id="exec-sharpe">—</div>
+            <div class="stat-detail" id="exec-sharpe-detail">—</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">Max Drawdown</div>
+            <div class="stat-value" id="exec-drawdown">—</div>
+            <div class="stat-detail" id="exec-dd-detail">limit: 10%</div>
+          </div>
+          <div class="stat-card amber">
+            <div class="stat-label">Win Rate</div>
+            <div class="stat-value" id="exec-winrate">—</div>
+            <div class="stat-detail" id="exec-winrate-detail">—</div>
+          </div>
+        </div>
+
+        <!-- Circuit Breaker Status -->
+        <div class="card mb-lg" style="padding:12px 16px;">
+          <div style="display:flex;align-items:center;gap:16px;font-size:11px;">
+            <span style="color:var(--text-dim);font-weight:600;">CIRCUIT BREAKERS</span>
+            <span id="exec-cb-daily" style="color:var(--text-dim);">— daily</span>
+            <span style="color:var(--border-subtle);">|</span>
+            <span id="exec-cb-dd" style="color:var(--text-dim);">— drawdown</span>
+            <span style="color:var(--border-subtle);">|</span>
+            <span id="exec-cb-status" style="font-weight:600;color:var(--text-dim);">—</span>
+          </div>
+        </div>
+
+        <!-- NAV Chart -->
+        <div class="charts-grid">
+          <div class="chart-container">
+            <div class="card-header"><span class="card-title">NAV & Drawdown</span></div>
+            <canvas id="exec-nav-chart"></canvas>
+            <div id="exec-nav-fallback" class="chart-unavailable hidden">Charts unavailable — CDN unreachable</div>
+          </div>
+        </div>
+
+        <!-- Positions + Orders -->
+        <div class="charts-grid dual mt-lg">
+          <div class="card">
+            <div class="card-header"><span class="card-title">Current Positions</span></div>
+            <div style="overflow-x:auto;">
+              <table class="signal-table" style="min-width:auto;">
+                <thead>
+                  <tr>
+                    <th>Ticker</th>
+                    <th>Side</th>
+                    <th>Weight</th>
+                    <th>Mkt Value</th>
+                  </tr>
+                </thead>
+                <tbody id="exec-positions-tbody">
+                  <tr><td colspan="4" style="text-align:center;color:var(--text-dim);">Connect to view</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Recent Orders</span>
+              <span id="exec-orders-count" style="font-size:10px;color:var(--text-dim);">—</span>
+            </div>
+            <div style="overflow-x:auto;max-height:300px;overflow-y:auto;">
+              <table class="signal-table" style="min-width:auto;">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Ticker</th>
+                    <th>Side</th>
+                    <th>Qty</th>
+                    <th>Fill Px</th>
+                    <th>Slip (bps)</th>
+                  </tr>
+                </thead>
+                <tbody id="exec-orders-tbody">
+                  <tr><td colspan="6" style="text-align:center;color:var(--text-dim);">Connect to view</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Event Log -->
+        <div class="card mt-lg">
+          <div class="card-header"><span class="card-title">Event Log</span></div>
+          <div id="exec-log" style="max-height:200px;overflow-y:auto;font-size:11px;color:var(--text-secondary);padding:var(--sp-12);font-family:var(--font-mono);">
+            <div style="color:var(--text-dim);">Click Connect to start monitoring...</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Chart.js: local file with CDN fallback -->
+  <script src="chart.min.js"></script>
+  <script>
+    if (typeof Chart === 'undefined') {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.7/chart.umd.min.js';
+      s.onload = function() { window.CHARTJS_LOADED = true; window.dispatchEvent(new Event('chartjs-ready')); };
+      s.onerror = function() {
+        var s2 = document.createElement('script');
+        s2.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js';
+        s2.onload = function() { window.CHARTJS_LOADED = true; window.dispatchEvent(new Event('chartjs-ready')); };
+        s2.onerror = function() { window.CHARTJS_LOADED = false; };
+        document.head.appendChild(s2);
+      };
+      document.head.appendChild(s);
+    } else {
+      window.CHARTJS_LOADED = true;
+    }
+  </script>
+
+  <script src="data.js"></script>
+  <script src="backend.js"></script>
+  <script src="backtester.js"></script>
+  <script src="scanner.js"></script>
+  <script src="correlation.js"></script>
+  <script src="ai-engine.js"></script>
+  <script src="marl.js"></script>
+  <script src="execution.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    window.onerror = function(msg, src, line, col, err) {
+      window.AlphaApp && window.AlphaApp.showToast('Error — see console', 'error');
+      console.error('Global:', msg, src, line, col, err);
+      return false;
+    };
+    window.onunhandledrejection = function(e) {
+      window.AlphaApp && window.AlphaApp.showToast('Unhandled error', 'error');
+      console.error('Rejection:', e.reason);
+    };
+  </script>
+</body>
+</html>

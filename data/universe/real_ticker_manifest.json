@@ -1,0 +1,414 @@
+{
+  "tickers": [
+    {
+      "ticker": "AAPL",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core mega-cap technology name with full modern history."
+    },
+    {
+      "ticker": "MSFT",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core mega-cap technology name with full modern history."
+    },
+    {
+      "ticker": "NVDA",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core semiconductor name with full modern history."
+    },
+    {
+      "ticker": "GOOGL",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core mega-cap technology name with full modern history."
+    },
+    {
+      "ticker": "META",
+      "sector": "Technology",
+      "usable_start": "2012-05-18",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Exclude pre-IPO history; training eligibility starts only after 5 clean post-IPO years."
+    },
+    {
+      "ticker": "AVGO",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Use listed Broadcom history only; no predecessor backfill."
+    },
+    {
+      "ticker": "INTC",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a mature underperforming semiconductor counterweight."
+    },
+    {
+      "ticker": "IBM",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a mature low-growth technology name."
+    },
+    {
+      "ticker": "CSCO",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a mature networking incumbent."
+    },
+    {
+      "ticker": "ORCL",
+      "sector": "Technology",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added to widen enterprise software outcomes."
+    },
+    {
+      "ticker": "JNJ",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core defensive healthcare benchmark."
+    },
+    {
+      "ticker": "UNH",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core managed-care benchmark."
+    },
+    {
+      "ticker": "PFE",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Large-cap pharma with mixed regime outcomes."
+    },
+    {
+      "ticker": "ABBV",
+      "sector": "Healthcare",
+      "usable_start": "2013-01-02",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Exclude pre-spin data before AbbVie began standalone trading."
+    },
+    {
+      "ticker": "MRK",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core pharma benchmark."
+    },
+    {
+      "ticker": "LLY",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core pharma benchmark."
+    },
+    {
+      "ticker": "BMY",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a slower-growth pharma control."
+    },
+    {
+      "ticker": "CVS",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a healthcare services name with mixed performance."
+    },
+    {
+      "ticker": "GILD",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a boom-bust biotech/pharma outcome."
+    },
+    {
+      "ticker": "AMGN",
+      "sector": "Healthcare",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a mature biotech benchmark."
+    },
+    {
+      "ticker": "JPM",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core money-center bank benchmark."
+    },
+    {
+      "ticker": "BAC",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Post-crisis recovery bank with full training history."
+    },
+    {
+      "ticker": "GS",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Investment-bank benchmark."
+    },
+    {
+      "ticker": "MS",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Investment-bank benchmark."
+    },
+    {
+      "ticker": "BLK",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Asset-management benchmark."
+    },
+    {
+      "ticker": "C",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Keep post-crisis history but quarantine split/anomaly years when validator flags them."
+    },
+    {
+      "ticker": "WFC",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a bank with weaker long-run outcomes."
+    },
+    {
+      "ticker": "AIG",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Keep post-crisis restructured history only."
+    },
+    {
+      "ticker": "USB",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a lower-beta regional bank."
+    },
+    {
+      "ticker": "PNC",
+      "sector": "Finance",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a diversified regional bank."
+    },
+    {
+      "ticker": "AMZN",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core consumer/discretionary benchmark."
+    },
+    {
+      "ticker": "TSLA",
+      "sector": "Consumer",
+      "usable_start": "2010-06-29",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Exclude pre-IPO history; training eligibility begins after 5 clean post-IPO years."
+    },
+    {
+      "ticker": "WMT",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Defensive retail benchmark."
+    },
+    {
+      "ticker": "HD",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Home-improvement retail benchmark."
+    },
+    {
+      "ticker": "NKE",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Consumer brand with cyclical drawdowns."
+    },
+    {
+      "ticker": "COST",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Defensive retail benchmark."
+    },
+    {
+      "ticker": "DIS",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a large-cap consumer name with multiple regime shifts."
+    },
+    {
+      "ticker": "TGT",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a retail name with weaker stretches than COST/WMT."
+    },
+    {
+      "ticker": "SBUX",
+      "sector": "Consumer",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a global consumer discretionary name."
+    },
+    {
+      "ticker": "KHC",
+      "sector": "Consumer",
+      "usable_start": "2015-07-06",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Exclude pre-merger ticker history; training eligibility starts after 5 clean post-merger years."
+    },
+    {
+      "ticker": "XOM",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core energy benchmark."
+    },
+    {
+      "ticker": "CVX",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core energy benchmark."
+    },
+    {
+      "ticker": "COP",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Core E&P benchmark."
+    },
+    {
+      "ticker": "SLB",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Oil-services benchmark."
+    },
+    {
+      "ticker": "EOG",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "E&P benchmark."
+    },
+    {
+      "ticker": "PSX",
+      "sector": "Energy",
+      "usable_start": "2012-05-01",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Exclude pre-spin history before Phillips 66 began standalone trading."
+    },
+    {
+      "ticker": "GE",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a major restructuring / underperformance case."
+    },
+    {
+      "ticker": "BA",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as an industrial stress-case with major drawdown periods."
+    },
+    {
+      "ticker": "F",
+      "sector": "Energy",
+      "usable_start": "2010-01-04",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Added as a mature cyclical underperformer."
+    },
+    {
+      "ticker": "GM",
+      "sector": "Energy",
+      "usable_start": "2010-11-18",
+      "usable_end": null,
+      "requires_clean_years": 5,
+      "notes": "Use post-relisting history only after 2010 IPO."
+    }
+  ],
+  "summary": {
+    "n_tickers": 50,
+    "sectors": [
+      "Technology",
+      "Healthcare",
+      "Finance",
+      "Consumer",
+      "Energy"
+    ]
+  }
+}
