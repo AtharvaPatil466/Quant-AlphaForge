@@ -1,0 +1,147 @@
+# AlphaForge MARL — Larger network, pinned real-data cache date
+
+population:
+  n_agents: 16
+  episodes_per_agent: 5
+  n_generations: 20
+  elite_fraction: 0.10
+  survivor_fraction: 0.50
+
+mutation:
+  sigma_init: 0.02
+  sigma_min: 0.005
+  sigma_max: 0.10
+  diversity_threshold: 0.3
+  crossover_prob: 0.30
+
+ppo:
+  learning_rate: 1.0e-3
+  clip_epsilon: 0.20
+  gamma: 0.99
+  gae_lambda: 0.95
+  ppo_epochs: 4
+  minibatch_size: 32
+  entropy_coeff: 0.01
+  value_loss_coeff: 0.5
+
+dqn:
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay_steps: 10000
+  replay_buffer_size: 50000
+  target_update_freq: 100
+
+environment:
+  episode_length: 252
+  max_position: 0.05
+  max_gross_exposure: 1.50
+  stop_loss: 0.03
+  tx_cost_bps: 5
+  obs_dim: 57
+  n_actions: 5
+  catastrophic_nav: 0.50
+  continuous_actions: false
+
+reward:
+  drawdown_penalty_coeff: 2.0
+  drawdown_threshold: 0.10
+  consistency_bonus: 0.10
+  consistency_threshold: 0.55
+  turnover_penalty_coeff: 0.20
+  benchmark_relative_mix: 0.50
+  relative_reference_strategy: "ridge_excess_top5"
+  sharpe_delta_scale: 0.2
+  drawdown_step_penalty: 0.25
+  participation_bonus: 0.0
+  inactivity_penalty: 0.02
+
+bandit:
+  n_regimes: 4
+  bandit_prior_alpha: 1.0
+  bandit_prior_beta: 1.0
+  regime_update_freq: 21
+  regime_fitness_blend: 0.0
+
+network:
+  hidden_sizes: [256, 128, 64]
+  activation: relu
+  use_attention: false
+
+evolution:
+  nsga2_enabled: false
+  speciation_threshold: 0.15
+  max_stagnation: 15
+  per_param_mutation: true
+  maml_enabled: false
+  maml_every_n_gens: 5
+
+curriculum:
+  enabled: false
+  stages:
+    - name: beginner
+      tx_cost_bps: 1
+      max_gross_exposure: 2.0
+      stop_loss: 0.05
+      episode_length: 126
+      min_fitness: -1.0
+      min_generations: 3
+    - name: intermediate
+      tx_cost_bps: 3
+      max_gross_exposure: 1.75
+      stop_loss: 0.04
+      episode_length: 189
+      min_fitness: 0.0
+      min_generations: 5
+    - name: advanced
+      tx_cost_bps: 5
+      max_gross_exposure: 1.50
+      stop_loss: 0.03
+      episode_length: 252
+      min_fitness: 0.5
+      min_generations: 8
+    - name: expert
+      tx_cost_bps: 8
+      max_gross_exposure: 1.25
+      stop_loss: 0.02
+      episode_length: 252
+
+ensemble:
+  pareto_max_size: 8
+  min_weight: 0.05
+
+distributed:
+  enabled: false
+  n_workers: null
+
+data:
+  mode: "real_strict"
+  sector: "All"
+  lookback_days: 252
+  cache_dir: ".data_cache"
+  end_date: "2026-03-29"
+  hybrid_real_prob: 0.5
+  strict_real_data: true
+
+seeds:
+  train_min: 0
+  train_max: 899999
+  val_min: 900000
+  val_max: 999999
+  n_val_seeds: 20
+
+validation:
+  validate_every_n_gens: 5
+  early_stop_patience: 10
+  n_val_episodes: 8
+  use_stochastic_policy: false
+  monitor: "stable"
+  selection_window: 3
+  selection_stability_penalty: 0.25
+  selection_baselines: ["equal_weight", "momentum_top5", "ridge_excess_top5"]
+
+alpha_engine:
+  base_url: "http://localhost:8000"
+  api_prefix: "/api/v1"
+  sector: "Technology"
+  lookback: 252
+  base_seed: 42

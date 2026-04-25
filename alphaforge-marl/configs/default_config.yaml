@@ -1,0 +1,168 @@
+# AlphaForge MARL — Default Hyperparameters
+
+population:
+  n_agents: 30
+  episodes_per_agent: 10
+  n_generations: 50
+  elite_fraction: 0.10
+  survivor_fraction: 0.50
+
+mutation:
+  sigma_init: 0.02
+  sigma_min: 0.005
+  sigma_max: 0.10           # Widened from 0.05 for per-parameter adaptive mutation
+  diversity_threshold: 0.3
+  crossover_prob: 0.30
+
+ppo:
+  learning_rate: 1.0e-3     # Consistent with PPOTrainer/BaseAgent defaults
+  clip_epsilon: 0.20
+  gamma: 0.99
+  gae_lambda: 0.95
+  ppo_epochs: 4
+  minibatch_size: 32
+  entropy_coeff: 0.01
+  value_loss_coeff: 0.5
+
+dqn:
+  epsilon_start: 1.0
+  epsilon_end: 0.05
+  epsilon_decay_steps: 10000
+  replay_buffer_size: 50000
+  target_update_freq: 100
+
+environment:
+  episode_length: 252
+  max_position: 0.05
+  max_gross_exposure: 1.50
+  stop_loss: 0.03
+  tx_cost_bps: 5
+  obs_dim: 57
+  n_actions: 5
+  catastrophic_nav: 0.50
+  continuous_actions: false  # Set true for continuous weight output
+  normalize_observations: true
+  observation_norm_window: 63
+
+reward:
+  drawdown_penalty_coeff: 2.0
+  drawdown_threshold: 0.10
+  consistency_bonus: 0.10
+  consistency_threshold: 0.55
+  turnover_penalty_coeff: 0.20
+  benchmark_relative_mix: 0.50 # Blend portfolio Sharpe with excess-return Sharpe vs equal-weight index
+  relative_reference_strategy: "equal_weight" # Optional reward reference: equal_weight, momentum_top5, mean_reversion_top5, ridge_excess_top5
+  # Dense shaping params (applied per-step in env)
+  sharpe_delta_scale: 0.2
+  drawdown_step_penalty: 0.25
+  participation_bonus: 0.0
+  inactivity_penalty: 0.02
+  baseline_sharpe_reference: 0.8
+  episode_reward_scale: null
+
+bandit:
+  n_regimes: 4
+  bandit_prior_alpha: 1.0
+  bandit_prior_beta: 1.0
+  regime_update_freq: 21
+  regime_fitness_blend: 0.0  # Weight of regime-adjusted fitness (0=off, 1=full)
+
+network:
+  hidden_sizes: [128, 64]
+  activation: relu
+  use_attention: false       # Start simple; enable only if it beats baselines OOS
+
+evolution:
+  nsga2_enabled: false       # Re-enable only if it improves walk-forward robustness
+  speciation_threshold: 0.15 # Behavioral distance for species membership
+  max_stagnation: 15         # Generations before removing stagnant species
+  per_param_mutation: true   # Scale noise by parameter magnitude
+  maml_enabled: false        # Keep adaptation simple by default
+  maml_every_n_gens: 5       # How often to run MAML updates
+
+curriculum:
+  enabled: false
+  stages:
+    - name: beginner
+      tx_cost_bps: 1
+      max_gross_exposure: 2.0
+      stop_loss: 0.05
+      episode_length: 126
+      min_fitness: -1.0
+      min_generations: 3
+    - name: intermediate
+      tx_cost_bps: 3
+      max_gross_exposure: 1.75
+      stop_loss: 0.04
+      episode_length: 189
+      min_fitness: 0.0
+      min_generations: 5
+    - name: advanced
+      tx_cost_bps: 5
+      max_gross_exposure: 1.50
+      stop_loss: 0.03
+      episode_length: 252
+      min_fitness: 0.5
+      min_generations: 8
+    - name: expert
+      tx_cost_bps: 8
+      max_gross_exposure: 1.25
+      stop_loss: 0.02
+      episode_length: 252
+
+ensemble:
+  pareto_max_size: 8         # Max agents in Pareto front
+  min_weight: 0.05           # Minimum capital weight per agent
+
+distributed:
+  enabled: false              # Set true for multiprocessing evaluation
+  n_workers: null             # null = cpu_count - 1
+
+data:
+  mode: "hybrid"              # "synthetic", "real", "real_strict", or "hybrid"
+  sector: "All"               # "All" = full 30-ticker universe across 5 sectors
+  lookback_days: 252          # Days of history per episode
+  cache_dir: ".data_cache"    # Retained for backward compatibility; runtime reads local parquet data
+  market_dir: null            # Optional override for repo-root data/market
+  start_date: null            # Optional YYYY-MM-DD to pin the earliest real-data observation
+  end_date: null              # Optional YYYY-MM-DD to pin local data windows deterministically
+  hybrid_real_prob: 0.5       # Probability of real data episode in hybrid mode
+  strict_real_data: false     # When true, fail instead of silently falling back to synthetic
+  # Available sectors: Technology, Healthcare, Finance, Consumer, Energy, or "All"
+
+seeds:
+  train_min: 0
+  train_max: 899999
+  val_min: 900000
+  val_max: 999999
+  n_val_seeds: 20
+
+validation:
+  validate_every_n_gens: 5
+  early_stop_patience: 10
+  n_val_episodes: 20
+  use_stochastic_policy: false
+  start_date: "2020-01-01"
+  end_date: "2021-12-31"
+  monitor: "stable"          # "stable" or "raw"
+  selection_window: 3
+  selection_stability_penalty: 0.25
+  use_fixed_windows: true    # Prefer fixed dated windows over random validation seeds when real data is available
+  n_val_windows: 5
+  shortlist_size: 3
+  selection_min_activity_ratio: 0.05
+  selection_min_avg_turnover: 0.01
+  selection_baselines: ["equal_weight", "momentum_top5", "ridge_excess_top5"]
+  baseline_margin: 0.0
+  selection_metric_weights:
+    mean_sharpe: 0.6
+    sharpe_std: -0.2
+    max_drawdown: -0.1
+    avg_turnover: -0.1
+
+alpha_engine:
+  base_url: "http://localhost:8000"
+  api_prefix: "/api/v1"
+  sector: "Technology"
+  lookback: 252
+  base_seed: 42
