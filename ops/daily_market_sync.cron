@@ -1,0 +1,3 @@
+# AlphaForge local market-data refresh
+# Schedule: 6:00 PM ET on weekdays after the cash session closes
+0 18 * * 1-5 cd /path/to/Quant\ Alpha && /bin/sh ops/daily_market_sync.sh >> /tmp/alphaforge_market_sync.log 2>&1
