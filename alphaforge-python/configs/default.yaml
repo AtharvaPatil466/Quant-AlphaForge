@@ -1,0 +1,39 @@
+# AlphaForge Python Alpha Engine — Default Configuration
+
+universe:
+  sectors:
+    - Technology
+    - Finance
+    - Healthcare
+    - Energy
+    - Consumer
+  default_sector: All
+
+data:
+  base_seed: 42
+  default_lookback: 252
+  max_lookback: 504
+  min_lookback: 21
+
+factors:
+  names:
+    - "Momentum (12-1)"
+    - "Mean Reversion (5d)"
+    - "Volume Surge"
+    - "RSI Divergence"
+    - "Earnings Drift"
+    - "Low Volatility"
+
+backtest:
+  holding_period: 10
+  position_size: 10
+  stop_loss: 5.0
+  tx_cost_bps: 5
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins:
+    - "http://localhost:5500"
+    - "http://127.0.0.1:5500"
+    - "http://localhost:8080"
