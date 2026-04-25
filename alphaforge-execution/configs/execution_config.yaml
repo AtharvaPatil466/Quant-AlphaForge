@@ -1,0 +1,67 @@
+# AlphaForge Execution — Configuration
+
+universe:
+  tickers: ["AAPL", "MSFT", "NVDA", "GOOGL", "META", "AVGO"]
+  sector: "Technology"
+
+strategy:
+  type: "momentum"              # "momentum" or "marl"
+  marl_checkpoint: "checkpoints_larger_network_robustsel_20260329/deploy_v1.pt"
+  mom_5d_weight: 0.4
+  mom_21d_weight: 0.4
+  mean_reversion_weight: 0.2
+  top_n: 5                    # number of tickers to go long
+  position_weight: 0.05       # weight per position (5% of NAV)
+  rebalance_threshold: 0.01   # min ranking change to trigger rebalance
+
+execution:
+  broker: "alpaca"             # "paper" or "alpaca"
+  starting_nav: 100000.0
+  slippage_bps: 5             # simulated slippage for paper broker
+  tx_cost_bps: 5
+  fill_timeout: 180           # seconds to wait for Alpaca fill (was 60)
+
+risk:
+  max_position_pct: 0.10      # max single position as % of NAV
+  max_gross_exposure: 1.50
+  max_daily_turnover: 0.30    # max turnover per day as % of NAV
+  max_drawdown: 0.10          # halt if drawdown exceeds 10%
+  max_daily_loss: 0.02        # halt if daily loss exceeds 2%
+
+data:
+  lookback_days: 252          # days of history to fetch
+  source: "local_parquet"     # runtime reads only from local validated parquet data
+  market_dir: null            # optional override for repo-root data/market
+
+api:
+  host: "0.0.0.0"
+  port: 8002
+
+# ────────────────────────────────────────────────────────────────────────
+# Kill-switch playbook. Trading is halted when ANY trigger fires. The
+# unwind ladder controls how quickly positions are liquidated once halt
+# is engaged. Triggers are evaluated at the end of each trading day in
+# `execution/daily_loop.py` after the snapshot is recorded.
+# ────────────────────────────────────────────────────────────────────────
+kill_switch:
+  enabled: true
+  triggers:
+    # Hard triggers — halt + unwind immediately
+    max_drawdown_pct: 0.15           # portfolio max_drawdown > 15%
+    single_day_loss_pct: 0.05        # single-day loss > 5%
+    consecutive_losing_days: 10      # 10 consecutive negative-return days
+    # Realized vs simulated-cost divergence
+    realized_slippage_median_bps: 50 # median realized slippage > 50 bps
+    realized_cum_drag_vs_nav_pct: 0.02 # cumulative fill-error drag > 2% of NAV
+    # Universe-level sanity
+    min_liquid_tickers: 3            # < 3 tickers with ADV > $10M in universe
+  unwind_ladder:
+    # After halt, liquidate on a ramp to limit market impact.
+    # Each entry: (fraction_of_remaining_notional, hours_since_halt)
+    - [0.25, 0]      # immediately close 25% of remaining book
+    - [0.50, 4]      # 50% more by +4h
+    - [1.00, 24]     # full flat by next session close
+  notifications:
+    # When kill-switch fires, write a pager file (integrations wire their own)
+    pager_file: "alphaforge_execution_pager.log"
+    also_write_sqlite_event: true
