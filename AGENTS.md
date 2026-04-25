@@ -15,13 +15,13 @@ Each Python sub-project has its own `AGENTS.md` with detailed architecture. This
 ## Commands
 
 ```bash
-# alphaforge-python (452 tests)
+# alphaforge-python (496 tests)
 cd alphaforge-python
 python3 -m pytest tests/ -v --tb=short
 python3 -m pytest tests/test_prng.py -k "test_first_five"  # single test
 uvicorn api.server:app --reload                              # API at :8000
 
-# alphaforge-marl (104 tests)
+# alphaforge-marl (122 tests)
 cd alphaforge-marl
 python3 -m pytest tests/ -v --tb=short
 uvicorn api.server:app --reload --port 8001                  # API at :8001
@@ -50,7 +50,7 @@ catch silent numerical drift.
 All modules communicate through globals on `window`:
 - **`data.js`** (`window.AlphaData`) — Seeded PRNG (Mulberry32), synthetic fallback price/volume generation, factor scoring (cross-sectional z-score), backtest engine. All numerics use `safeDiv`, `sanitizeNumber`, `validateSeries`, `clamp`.
 - **`app.js`** (`window.AlphaApp`) — Tab switching, workspace controls, dispatches to modules. Loads last, calls each module's `init()`.
-- **`scanner.js`** / **`backtester.js`** / **`correlation.js`** / **`ai-engine.js`** / **`marl.js`** / **`execution.js`** — Feature modules for each tab.
+- **`scanner.js`** / **`correlation.js`** / **`ai-engine.js`** / **`marl.js`** / **`execution.js`** — Feature modules for each tab. (The earlier `backtester.js` was removed; the canonical research backtester lives in Python.)
 
 **Key patterns:**
 - Global state via `AlphaApp.getState()` → `{ sector, lookback, activeTab }`.
@@ -64,7 +64,9 @@ All modules communicate through globals on `window`:
 
 - **`data/`** — Mulberry32 PRNG (`prng.py`), synthetic ticker universe + GBM generator (`universe.py`, `synthetic.py`), feature engineering (`features.py`), plus the real-market layer: `data/market/` (parquet store, downloader, loader, real ticker universe), `real_dataset.py` (loads aligned OHLCV history from the local parquet store into `PriceSeries` objects). `sync_market_data.py` at the project root is the only module that touches yfinance; everything else reads from parquet.
 - **`factors/`** — `BaseFactor` ABC with `compute()` (enhanced) and `compute_js()` (JS parity). Registry pattern via `FACTOR_REGISTRY`. 9 factors total: the 5 JS-parity factors (Momentum 12-1, Mean Reversion 5d, Volume Surge, RSI Divergence, Earnings Drift), plus Python-only Low Volatility, Amihud Illiquidity, Idiosyncratic Volatility, and Residual Reversal (5d). The last two override `compute_universe` to compute an equal-weighted market return once and reuse it per ticker — they produce 0 in the single-ticker fallback.
-- **`backtest/`** — Long-short simulation engine (`engine.py`) + real-data variant (`real_engine.py`) that runs the same factor logic against the parquet store. 9 performance metrics, portfolio/position tracking, OLS attribution, Gymnasium TradingEnv.
+- **`factors/scoring.py`** — Cross-sectional z-score pipeline (`compute_factor_scores_js`). Imported by the optimizer, correlation matrix, scanner, MARL env, execution strategy, and both backtest engines. Lives outside `backtest/` so non-backtest callers don't pull in the engine module.
+- **`backtest/`** — Long-short simulation engine (`engine.py`, public entry `run_synthetic_backtest`) + real-data variant (`real_engine.py`, `run_real_backtest`) that runs the same factor logic against the parquet store. 9 performance metrics, portfolio/position tracking, OLS attribution, Gymnasium TradingEnv.
+- **`backtest/event_driven/`** — Event-driven engine that replaces the vectorized panel sweep. Architecturally enforces no-look-ahead (`BarHistory` raises if it holds any row past its `as_of`), no same-bar fills (`ExecutionHandler` requires next-bar timestamp strictly later than the order), and per-fill cash costs (slippage + commission charged on each `FillEvent`, not as a flat post-hoc bps deduction). Components: `events.py`, `data_handler.py` (`DataHandler` + PIT `BarHistory`), `strategy.py` (`Strategy` ABC + reference `MomentumLongShort`), `execution.py` (`ExecutionHandler` + `FlatSlippageModel`), `portfolio.py` (positions/cash/NAV marks that fail loudly on missing prices), `core.py` (`EventDrivenEngine`). Slated to absorb `engine.py` and `real_engine.py` after the reconciliation pass.
 - **`optimizer/`** — Markowitz mean-variance optimizer (`optimize_portfolio()`). Supports long-only/long-short/market-neutral modes. Uses scipy SLSQP, Ledoit-Wolf covariance shrinkage, factor-score-blended expected returns.
 - **`scanner/`** / **`correlation/`** — Factor screening and correlation/IC/turnover analysis.
 - **`research/`** — Headline research artifacts. All scripts read from the parquet store, never the network, and write to `research/out/`:

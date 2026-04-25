@@ -24,7 +24,7 @@ cd alphaforge-python   && pip install -r requirements.txt && cd ..
 cd alphaforge-marl     && pip install -r requirements.txt && cd ..
 cd alphaforge-execution && pip install -r requirements.txt && cd ..
 
-# Run the full test matrix (~690 tests)
+# Run the full test matrix (~740 tests)
 make tests
 
 # Populate the market-data parquet store from yfinance (one-off, ~15 min)
