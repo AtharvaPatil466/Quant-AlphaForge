@@ -5,7 +5,7 @@ Backtest engine tests — mechanics, metric correctness, and edge cases.
 import numpy as np
 import pytest
 
-from backtest.engine import BacktestConfig, BacktestResult, run_backtest
+from backtest.engine import BacktestConfig, BacktestResult, run_synthetic_backtest
 
 
 @pytest.fixture
@@ -15,7 +15,7 @@ def default_result():
         lookback=252,
         factor_name="Momentum (12-1)",
     )
-    return run_backtest(config)
+    return run_synthetic_backtest(config)
 
 
 class TestBacktestMechanics:
@@ -79,8 +79,8 @@ class TestBacktestMetrics:
 class TestBacktestDeterminism:
     def test_same_config_same_result(self):
         config = BacktestConfig(sector="Technology", lookback=252)
-        r1 = run_backtest(config)
-        r2 = run_backtest(config)
+        r1 = run_synthetic_backtest(config)
+        r2 = run_synthetic_backtest(config)
         assert r1.nav == r2.nav
         assert r1.metrics.sharpe == r2.metrics.sharpe
 
@@ -88,18 +88,18 @@ class TestBacktestDeterminism:
 class TestBacktestEdgeCases:
     def test_empty_sector(self):
         config = BacktestConfig(sector="Nonexistent", lookback=252)
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
         assert result.error is not None
 
     def test_minimum_lookback(self):
         config = BacktestConfig(sector="Technology", lookback=21)
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
         assert result.error is None
         assert len(result.nav) > 0
 
     def test_all_sectors(self):
         config = BacktestConfig(sector="All", lookback=252)
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
         assert result.error is None
 
     def test_each_factor(self):
@@ -109,6 +109,6 @@ class TestBacktestEdgeCases:
             config = BacktestConfig(
                 sector="Technology", lookback=252, factor_name=factor
             )
-            result = run_backtest(config)
+            result = run_synthetic_backtest(config)
             assert result.error is None, f"Factor {factor} failed"
             assert len(result.nav) > 0

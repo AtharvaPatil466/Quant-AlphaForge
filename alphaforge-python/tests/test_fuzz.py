@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from data.synthetic import generate_dataset, generate_prices
-from backtest.engine import BacktestConfig, run_backtest
+from backtest.engine import BacktestConfig, run_synthetic_backtest
 from scanner.scanner import scan_universe
 from correlation import compute_correlation_result
 from factors.registry import JS_FACTOR_NAMES
@@ -34,7 +34,7 @@ class TestFuzzBacktest:
             tx_cost_bps=rng.randint(0, 100),
             base_seed=rng.randint(0, 10000),
         )
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
 
         if result.error:
             return  # expected for empty sectors

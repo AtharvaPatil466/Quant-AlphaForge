@@ -34,7 +34,7 @@ if _ALPHA_ENGINE not in sys.path:
     sys.path.insert(0, _ALPHA_ENGINE)
 
 from data.synthetic import generate_dataset, generate_prices, PriceSeries, safe_div, clamp
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
 from env.action_space import Action, ACTION_POSITION, N_ACTIONS, continuous_weights_to_positions
@@ -190,7 +190,7 @@ class TradingEnv(gym.Env):
             self._resolved_data_source = "synthetic"
 
         self._tickers = list(self._dataset.keys())
-        self._scores = _compute_factor_scores_js(self._dataset, self.lookback)
+        self._scores = compute_factor_scores_js(self._dataset, self.lookback)
         self._num_days = (
             len(self._dataset[self._tickers[0]].prices) if self._tickers else 0
         )

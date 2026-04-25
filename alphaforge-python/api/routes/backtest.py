@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import BacktestRequest, BacktestResponse, BacktestMetricsResponse
-from backtest.engine import BacktestConfig, run_backtest
+from backtest.engine import BacktestConfig, run_synthetic_backtest
 from backtest.real_engine import run_real_backtest
 from data.universe import SECTORS
 from factors.registry import JS_FACTOR_NAMES
@@ -43,7 +43,7 @@ def backtest(req: BacktestRequest):
     if req.data_source == "real":
         result = run_real_backtest(config, end_date=req.end_date)
     else:
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
 
     if result.error:
         raise HTTPException(status_code=400, detail=result.error)

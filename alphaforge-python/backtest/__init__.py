@@ -1,6 +1,6 @@
 """AlphaForge backtest engine — simulation, portfolio, metrics, attribution."""
 
-from .engine import run_backtest, BacktestConfig, BacktestResult
+from .engine import run_synthetic_backtest, BacktestConfig, BacktestResult
 from .metrics import (
     sharpe_ratio,
     max_drawdown,

@@ -13,7 +13,6 @@ from typing import Dict, List, Optional
 import numpy as np
 
 from data.synthetic import (
-    PriceSeries,
     generate_dataset,
     safe_div,
     sanitize_number,
@@ -22,7 +21,7 @@ from data.synthetic import (
     mean,
     stddev,
 )
-from factors.registry import load_factor, JS_FACTOR_NAMES
+from factors.scoring import compute_factor_scores_js
 from backtest import metrics as bm
 
 
@@ -65,53 +64,7 @@ class BacktestResult:
     error: Optional[str] = None
 
 
-def _compute_factor_scores_js(
-    dataset: Dict[str, PriceSeries], lookback: int
-) -> Dict[str, Dict[str, float]]:
-    """Compute z-scored factor values using JS-parity path. Returns
-    ticker -> {factor: z_score, '_composite': float, '_signal': str}.
-    """
-    tickers = list(dataset.keys())
-    if not tickers:
-        return {}
-
-    # Raw scores for all JS factors
-    raw_scores: Dict[str, Dict[str, float]] = {}
-    for ticker in tickers:
-        d = dataset[ticker]
-        raw_scores[ticker] = {}
-        for fname in JS_FACTOR_NAMES:
-            factor = load_factor(fname)
-            raw_scores[ticker][fname] = factor.compute_js(
-                d.prices, d.volumes, d.returns, lookback
-            )
-
-    # Cross-sectional z-score normalization
-    z_scored: Dict[str, Dict[str, float]] = {t: {} for t in tickers}
-    for fname in JS_FACTOR_NAMES:
-        raw_vals = np.array([raw_scores[t][fname] for t in tickers])
-        mu = mean(raw_vals)
-        sigma = max(1e-8, stddev(raw_vals))
-        for ticker in tickers:
-            z = safe_div(raw_scores[ticker][fname] - mu, sigma, 0.0)
-            z_scored[ticker][fname] = sanitize_number(z, 0.0)
-
-    # Composite
-    for ticker in tickers:
-        fv = [z_scored[ticker][f] for f in JS_FACTOR_NAMES]
-        composite = mean(fv) * 40
-        z_scored[ticker]["_composite"] = clamp(sanitize_number(composite, 0.0), -100, 100)
-        if composite > 40:
-            z_scored[ticker]["_signal"] = "LONG"
-        elif composite < -40:
-            z_scored[ticker]["_signal"] = "SHORT"
-        else:
-            z_scored[ticker]["_signal"] = "NEUTRAL"
-
-    return z_scored
-
-
-def run_backtest(config: BacktestConfig) -> BacktestResult:
+def run_synthetic_backtest(config: BacktestConfig) -> BacktestResult:
     """Run a full long-short backtest matching JS logic exactly.
 
     Simulation logic (matching JS):
@@ -132,7 +85,7 @@ def run_backtest(config: BacktestConfig) -> BacktestResult:
     num_days = len(dataset[tickers[0]].prices)
 
     # Score tickers
-    scores = _compute_factor_scores_js(dataset, config.lookback)
+    scores = compute_factor_scores_js(dataset, config.lookback)
     factor = config.factor_name
 
     # Rank by selected factor (descending)

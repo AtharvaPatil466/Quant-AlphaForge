@@ -12,7 +12,8 @@ import pytest
 
 from data.prng import Mulberry32
 from data.synthetic import generate_prices, generate_dataset
-from backtest.engine import _compute_factor_scores_js, run_backtest, BacktestConfig
+from backtest.engine import run_synthetic_backtest, BacktestConfig
+from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
 FIXTURE_PATH = os.path.join(os.path.dirname(__file__), "fixtures", "js_reference_output.json")
@@ -85,7 +86,7 @@ class TestFactorScoreParity:
     def test_tech_factor_scores(self, js_ref):
         """Factor z-scores for Tech sector match JS."""
         dataset = generate_dataset("Technology", 252, 42)
-        scores = _compute_factor_scores_js(dataset, 252)
+        scores = compute_factor_scores_js(dataset, 252)
 
         for ticker, ref_scores in js_ref["factor_scores"].items():
             if ticker not in scores:
@@ -98,7 +99,7 @@ class TestFactorScoreParity:
 
     def test_composite_and_signal(self, js_ref):
         dataset = generate_dataset("Technology", 252, 42)
-        scores = _compute_factor_scores_js(dataset, 252)
+        scores = compute_factor_scores_js(dataset, 252)
 
         for ticker, ref_scores in js_ref["factor_scores"].items():
             if ticker not in scores:
@@ -114,7 +115,7 @@ class TestBacktestParity:
         """Backtest metrics match JS reference."""
         ref = js_ref["backtest"]
         config = BacktestConfig(sector="Technology", lookback=252)
-        result = run_backtest(config)
+        result = run_synthetic_backtest(config)
 
         assert len(result.nav) == ref["nav_length"]
         assert result.nav[0] == pytest.approx(ref["nav_first"], abs=1e-6)

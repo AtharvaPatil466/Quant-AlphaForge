@@ -13,7 +13,7 @@ except ImportError:
     HAS_SCIPY = False
 
 from data.synthetic import PriceSeries, safe_div, sanitize_number, correlation
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
 
@@ -42,7 +42,7 @@ def compute_ic(
     IC = correlation(factor_score, forward_return) across tickers.
     """
     tickers = list(dataset.keys())
-    scores = _compute_factor_scores_js(dataset, lookback_days)
+    scores = compute_factor_scores_js(dataset, lookback_days)
 
     # Forward returns: use 5-day (JS) or configurable
     fwd_returns = {}

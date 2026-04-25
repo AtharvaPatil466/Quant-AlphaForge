@@ -29,7 +29,8 @@ from data.synthetic import (
     sanitize_number,
     stddev,
 )
-from backtest.engine import _compute_factor_scores_js, BacktestConfig
+from backtest.engine import BacktestConfig
+from factors.scoring import compute_factor_scores_js
 from backtest import metrics as bm
 
 
@@ -245,7 +246,7 @@ def optimize_portfolio(config: OptimizeConfig) -> OptimizeResult:
         )
 
     # Factor scores
-    scores = _compute_factor_scores_js(dataset, config.lookback)
+    scores = compute_factor_scores_js(dataset, config.lookback)
 
     # Expected returns
     mu = _estimate_expected_returns(

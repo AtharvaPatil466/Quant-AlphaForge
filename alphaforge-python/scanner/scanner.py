@@ -11,7 +11,7 @@ import numpy as np
 
 from data.real_dataset import load_real_dataset
 from data.synthetic import generate_dataset, safe_div, sanitize_number, PriceSeries
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 from factors.registry import load_factor, JS_FACTOR_NAMES
 from data.synthetic import mean, stddev
 
@@ -62,7 +62,7 @@ def scan_universe(
         )
     else:
         dataset = generate_dataset(sector, lookback, base_seed)
-    scores = _compute_factor_scores_js(dataset, lookback)
+    scores = compute_factor_scores_js(dataset, lookback)
 
     results = []
     for ticker, d in dataset.items():

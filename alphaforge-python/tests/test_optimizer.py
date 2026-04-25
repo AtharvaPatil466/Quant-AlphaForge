@@ -14,7 +14,7 @@ from optimizer.mean_variance import (
     optimize_portfolio,
 )
 from data.synthetic import generate_dataset
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def tickers(dataset):
 
 @pytest.fixture
 def scores(dataset):
-    return _compute_factor_scores_js(dataset, 252)
+    return compute_factor_scores_js(dataset, 252)
 
 
 # ── Expected Returns ────────────────────────────────────────────────────────

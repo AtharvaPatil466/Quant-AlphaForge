@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict, List
 
 from data.synthetic import PriceSeries, sanitize_number, correlation
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
 
@@ -19,7 +19,7 @@ def compute_correlation_matrix(
     Returns (n_factors × n_factors) matrix.
     """
     tickers = list(dataset.keys())
-    scores = _compute_factor_scores_js(dataset, lookback_days)
+    scores = compute_factor_scores_js(dataset, lookback_days)
     n_factors = len(JS_FACTOR_NAMES)
 
     matrix = []

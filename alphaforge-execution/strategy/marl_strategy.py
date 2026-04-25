@@ -33,7 +33,7 @@ sys.path.insert(0, _PYTHON_DIR)
 
 # Now these resolve to alphaforge-python/data and alphaforge-marl/env
 from data.synthetic import PriceSeries, safe_div
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 from agents.actor_critic import ActorCriticNetwork
 from env.action_space import Action, ACTION_POSITION
 from env.state_builder import build_state, rolling_signal_score
@@ -285,7 +285,7 @@ def generate_target_weights(
     # Compute factor scores (for state builder backward compat)
     n_days = len(dataset[tickers[0]].prices)
     lookback = n_days
-    scores = _compute_factor_scores_js(dataset, lookback)
+    scores = compute_factor_scores_js(dataset, lookback)
 
     # Build index arrays
     index_rets, index_vols, index_prices = _build_index_arrays(dataset)

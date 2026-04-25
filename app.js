@@ -26,7 +26,6 @@
     startClock();
 
     // Initialize modules
-    if (window.BacktesterModule) window.BacktesterModule.init();
     if (window.ScannerModule) window.ScannerModule.init();
     if (window.CorrelationModule) window.CorrelationModule.init();
     if (window.AIEngineModule) window.AIEngineModule.init();

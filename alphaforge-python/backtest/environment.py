@@ -21,7 +21,7 @@ except ImportError:
 
 from data.synthetic import generate_dataset, safe_div, clamp, PriceSeries
 from factors.registry import load_factor, JS_FACTOR_NAMES
-from backtest.engine import _compute_factor_scores_js
+from factors.scoring import compute_factor_scores_js
 
 
 @dataclass
@@ -71,7 +71,7 @@ if HAS_GYM:
                 self.config.sector, self.config.lookback, base_seed
             )
             self._tickers = list(self._dataset.keys())
-            self._scores = _compute_factor_scores_js(self._dataset, self.config.lookback)
+            self._scores = compute_factor_scores_js(self._dataset, self.config.lookback)
             self._day = 21
             self._nav = self.config.initial_nav
             self._prev_nav = self.config.initial_nav
