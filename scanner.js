@@ -44,6 +44,9 @@
         updateSortIndicators();
       });
     });
+
+    // Init detail panel
+    initDetailPanel();
   }
 
   function refreshScan() {
@@ -223,6 +226,7 @@
       `Showing ${pageRows.length} of ${filteredRows.length} signals · Last scan ${scanTimeStr}`;
 
     renderPagination(totalPages);
+    attachRowClickHandlers();
   }
 
   function renderPagination(totalPages) {
@@ -268,6 +272,155 @@
 
   function fmtZ(val) {
     return (val > 0 ? '+' : '') + val.toFixed(2);
+  }
+
+  // ── Ticker Detail Panel ─────────────────────────────────────
+
+  let detailPriceChart = null;
+  let detailVolumeChart = null;
+
+  function initDetailPanel() {
+    document.getElementById('detail-close').addEventListener('click', closeDetail);
+    document.getElementById('detail-backdrop').addEventListener('click', closeDetail);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDetail();
+    });
+  }
+
+  function openDetail(ticker) {
+    const row = allRows.find(r => r.ticker === ticker);
+    if (!row) return;
+
+    const panel = document.getElementById('ticker-detail-panel');
+    document.getElementById('detail-ticker').textContent = row.ticker;
+    document.getElementById('detail-name').textContent = row.name;
+
+    // Signal badge
+    const badge = document.getElementById('detail-signal');
+    badge.textContent = row.signal;
+    badge.className = 'signal-badge ' + row.signal.toLowerCase();
+
+    // Composite
+    const comp = document.getElementById('detail-composite');
+    comp.textContent = (row.composite > 0 ? '+' : '') + row.composite.toFixed(1);
+    comp.style.color = row.composite > 0 ? 'var(--green)' : row.composite < 0 ? 'var(--red)' : 'var(--text-dim)';
+
+    // Factor breakdown
+    const factors = [
+      { name: 'Momentum (12-1)', value: row.momentum },
+      { name: 'Mean Reversion', value: row.meanrev },
+      { name: 'Volume Surge', value: row.volsurge },
+      { name: 'RSI Divergence', value: row.rsidiv },
+      { name: 'Earnings Drift', value: row.earndrift },
+    ];
+    const factorGrid = document.getElementById('detail-factors');
+    factorGrid.innerHTML = factors.map(f => {
+      const cls = f.value > 0.3 ? 'pos' : f.value < -0.3 ? 'neg' : 'zero';
+      const barWidth = Math.min(50, Math.abs(f.value) * 15) + '%';
+      const barCls = f.value >= 0 ? 'pos' : 'neg';
+      return `<div class="detail-factor-item">
+        <div class="detail-factor-name">${f.name}</div>
+        <div class="detail-factor-bar-wrap">
+          <div class="detail-factor-bar ${barCls}" style="width:${barWidth}"></div>
+        </div>
+        <div class="detail-factor-value ${cls}">${fmtZ(f.value)}</div>
+      </div>`;
+    }).join('');
+
+    // Generate price/volume charts from synthetic data if available
+    renderDetailCharts(row.ticker);
+
+    panel.classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('ticker-detail-panel').classList.remove('open');
+    if (detailPriceChart) { detailPriceChart.destroy(); detailPriceChart = null; }
+    if (detailVolumeChart) { detailVolumeChart.destroy(); detailVolumeChart = null; }
+  }
+
+  function renderDetailCharts(ticker) {
+    if (typeof Chart === 'undefined') return;
+
+    const D = window.AlphaData;
+    const state = window.AlphaApp.getState();
+    let prices = [], volumes = [];
+
+    // Try to get data from the dataset
+    try {
+      const dataset = D.generateDataset(state.sector, state.lookback);
+      if (dataset[ticker]) {
+        prices = dataset[ticker].prices.slice(-60);
+        volumes = dataset[ticker].volumes.slice(-60);
+      }
+    } catch (e) {
+      // Use simple synthetic data as fallback
+      const seed = ticker.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      let p = 100;
+      for (let i = 0; i < 60; i++) {
+        p *= 1 + (Math.sin(seed + i * 0.3) * 0.02);
+        prices.push(p);
+        volumes.push(1e6 + Math.abs(Math.sin(seed + i * 0.7)) * 3e6);
+      }
+    }
+
+    if (prices.length === 0) return;
+    const labels = prices.map((_, i) => 'D-' + (prices.length - i));
+
+    // Destroy existing charts
+    if (detailPriceChart) { detailPriceChart.destroy(); }
+    if (detailVolumeChart) { detailVolumeChart.destroy(); }
+
+    const chartDefaults = {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: false },
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 9 } } }
+      },
+      elements: { point: { radius: 0 } },
+      animation: { duration: 600 }
+    };
+
+    // Price chart
+    const priceUp = prices[prices.length - 1] >= prices[0];
+    detailPriceChart = new Chart(document.getElementById('detail-price-chart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          data: prices,
+          borderColor: priceUp ? '#00e676' : '#ff3d57',
+          backgroundColor: priceUp ? 'rgba(0,230,118,0.08)' : 'rgba(255,61,87,0.08)',
+          fill: true, tension: 0.3, borderWidth: 2,
+        }]
+      },
+      options: chartDefaults,
+    });
+
+    // Volume chart
+    detailVolumeChart = new Chart(document.getElementById('detail-volume-chart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: volumes.map(v => v / 1e6),
+          backgroundColor: 'rgba(68,138,255,0.4)',
+          borderColor: 'rgba(68,138,255,0.6)',
+          borderWidth: 1, borderRadius: 2,
+        }]
+      },
+      options: { ...chartDefaults, scales: { ...chartDefaults.scales, y: { ...chartDefaults.scales.y, title: { display: true, text: 'Vol (M)', font: { size: 9 } } } } },
+    });
+  }
+
+  // Attach row click handlers after rendering
+  function attachRowClickHandlers() {
+    document.querySelectorAll('#scanner-tbody tr').forEach(tr => {
+      tr.addEventListener('click', () => {
+        const tickerCell = tr.querySelector('.ticker-cell');
+        if (tickerCell) openDetail(tickerCell.textContent);
+      });
+    });
   }
 
   window.ScannerModule = { init, refreshScan };

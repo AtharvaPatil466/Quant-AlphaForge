@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AlphaForge — Quantitative Alpha Research Workstation. Professional signal scanning, backtesting, and alpha generation.">
-  <title>AlphaForge — Quantitative Research Workstation</title>
+  <meta name="description" content="AlphaForge — A quantitative alpha research platform with deflation-aware statistical evaluation, point-in-time S&P 500 universe, multi-agent RL, and live execution infrastructure.">
+  <meta name="theme-color" content="#06080d">
+  <title>AlphaForge — Quantitative Research Terminal</title>
   <link rel="stylesheet" href="index.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚗️</text></svg>">
 </head>
@@ -109,22 +110,22 @@
         <div class="stats-row" id="scanner-stats">
           <div class="stat-card green">
             <div class="stat-label">Long Signals</div>
-            <div class="stat-value" id="stat-long-count">0</div>
+            <div class="stat-value" id="stat-long-count"><span class="shimmer shimmer-num">&nbsp;</span></div>
             <div class="stat-detail"><span class="ticker-list" id="stat-long-tickers">—</span></div>
           </div>
           <div class="stat-card red">
             <div class="stat-label">Short Signals</div>
-            <div class="stat-value" id="stat-short-count">0</div>
+            <div class="stat-value" id="stat-short-count"><span class="shimmer shimmer-num">&nbsp;</span></div>
             <div class="stat-detail"><span class="ticker-list" id="stat-short-tickers">—</span></div>
           </div>
           <div class="stat-card amber">
             <div class="stat-label">Neutral</div>
-            <div class="stat-value" id="stat-neutral-count">0</div>
+            <div class="stat-value" id="stat-neutral-count"><span class="shimmer shimmer-num">&nbsp;</span></div>
             <div class="stat-detail"><span class="ticker-list" id="stat-neutral-tickers">—</span></div>
           </div>
           <div class="stat-card blue">
             <div class="stat-label">Avg |Score|</div>
-            <div class="stat-value" id="stat-avg-score">—</div>
+            <div class="stat-value" id="stat-avg-score"><span class="shimmer shimmer-num">&nbsp;</span></div>
             <div class="stat-detail" id="stat-avg-detail">σ = —</div>
           </div>
         </div>
@@ -155,11 +156,55 @@
                 <th data-col="earndrift">Earn Drift <span class="sort-arrow">↕</span></th>
               </tr>
             </thead>
-            <tbody id="scanner-tbody"></tbody>
+            <tbody id="scanner-tbody">
+              <!-- Skeleton loading rows -->
+              <tr class="skeleton-row"><td colspan="11"><div class="shimmer" style="height:18px;width:100%;margin:4px 0;"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="11"><div class="shimmer" style="height:18px;width:92%;margin:4px 0;"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="11"><div class="shimmer" style="height:18px;width:96%;margin:4px 0;"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="11"><div class="shimmer" style="height:18px;width:88%;margin:4px 0;"></div></td></tr>
+              <tr class="skeleton-row"><td colspan="11"><div class="shimmer" style="height:18px;width:94%;margin:4px 0;"></div></td></tr>
+            </tbody>
           </table>
           <div class="table-footer">
-            <span id="table-footer-info">Showing 0 of 0 signals · Last scan --:--:--</span>
+            <span id="table-footer-info">Click Scan Universe to load signals</span>
             <div class="pagination" id="table-pagination"></div>
+          </div>
+        </div>
+
+        <!-- Ticker Detail Slide-out Panel -->
+        <div id="ticker-detail-panel" class="detail-panel">
+          <div class="detail-panel-backdrop" id="detail-backdrop"></div>
+          <div class="detail-panel-content">
+            <div class="detail-panel-header">
+              <div>
+                <h2 class="detail-ticker-symbol" id="detail-ticker">AAPL</h2>
+                <p class="detail-ticker-name" id="detail-name">Apple Inc.</p>
+              </div>
+              <button class="detail-close-btn" id="detail-close" aria-label="Close">✕</button>
+            </div>
+            <div class="detail-signal-row">
+              <span class="signal-badge" id="detail-signal">NEUTRAL</span>
+              <span class="detail-composite" id="detail-composite">+0.0</span>
+            </div>
+            <!-- Factor Breakdown -->
+            <div class="detail-section">
+              <h3 class="detail-section-title">Factor Scores</h3>
+              <div class="detail-factor-grid" id="detail-factors"></div>
+            </div>
+            <!-- Price Chart -->
+            <div class="detail-section">
+              <h3 class="detail-section-title">Price History</h3>
+              <div class="detail-chart-wrap">
+                <canvas id="detail-price-chart"></canvas>
+              </div>
+            </div>
+            <!-- Volume Chart -->
+            <div class="detail-section">
+              <h3 class="detail-section-title">Volume Profile</h3>
+              <div class="detail-chart-wrap">
+                <canvas id="detail-volume-chart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </section>

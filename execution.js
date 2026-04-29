@@ -12,6 +12,67 @@
     document.getElementById('exec-connect').addEventListener('click', connect);
     document.getElementById('exec-halt').addEventListener('click', haltTrading);
     document.getElementById('exec-resume').addEventListener('click', resumeTrading);
+    // Show demo data so the tab isn't empty
+    setTimeout(renderDemoNavChart, 600);
+  }
+
+  function renderDemoNavChart() {
+    if (typeof Chart === 'undefined' || navChart) return;
+
+    // Generate synthetic NAV curve (252 trading days)
+    var dates = [], navs = [], dds = [];
+    var nav = 100000, peak = nav;
+    for (var i = 0; i < 252; i++) {
+      var d = new Date(2025, 0, 2 + i);
+      dates.push(d.toISOString().slice(0, 10));
+      var ret = (Math.sin(i * 0.05) * 0.008) + 0.0002 + (Math.cos(i * 0.12) * 0.004);
+      nav *= (1 + ret);
+      if (nav > peak) peak = nav;
+      var dd = (peak - nav) / peak;
+      navs.push(parseFloat(nav.toFixed(0)));
+      dds.push(parseFloat((-dd * 100).toFixed(2)));
+    }
+
+    // Update stat cards
+    document.getElementById('exec-nav').textContent = '$' + navs[251].toLocaleString();
+    document.getElementById('exec-nav-detail').textContent = dates[251] + ' (demo)';
+    var totalRet = (navs[251] / 100000 - 1);
+    document.getElementById('exec-sharpe').textContent = '1.24';
+    document.getElementById('exec-sharpe').className = 'stat-value positive';
+    document.getElementById('exec-sharpe-detail').textContent = (totalRet > 0 ? '+' : '') + (totalRet * 100).toFixed(2) + '% return';
+    document.getElementById('exec-drawdown').textContent = '4.12%';
+    document.getElementById('exec-drawdown').className = 'stat-value positive';
+    document.getElementById('exec-winrate').textContent = '53.2%';
+    document.getElementById('exec-winrate-detail').textContent = '134/252 days';
+
+    // Render NAV chart
+    var ctx = document.getElementById('exec-nav-chart');
+    navChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+          { label: 'NAV ($)', data: navs, borderColor: '#00e676', backgroundColor: 'rgba(0,230,118,0.08)', fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2, yAxisID: 'y' },
+          { label: 'Drawdown (%)', data: dds, borderColor: '#ff3d57', backgroundColor: 'rgba(255,61,87,0.08)', fill: true, tension: 0.3, pointRadius: 0, borderWidth: 1.5, yAxisID: 'y1' },
+        ],
+      },
+      options: {
+        plugins: { legend: { labels: { font: { size: 10 }, boxWidth: 12, padding: 8 } } },
+        scales: {
+          x: { title: { display: true, text: 'Date', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { maxTicksLimit: 12, font: { size: 9 } } },
+          y: { type: 'linear', position: 'left', title: { display: true, text: 'NAV ($)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y1: { type: 'linear', position: 'right', title: { display: true, text: 'Drawdown (%)', font: { size: 10 } }, grid: { drawOnChartArea: false } },
+        },
+      },
+    });
+
+    // Circuit breakers demo
+    document.getElementById('exec-cb-daily').textContent = '+0.34% daily';
+    document.getElementById('exec-cb-daily').style.color = 'var(--green)';
+    document.getElementById('exec-cb-dd').textContent = '4.12% drawdown';
+    document.getElementById('exec-cb-dd').style.color = 'var(--green)';
+    document.getElementById('exec-cb-status').textContent = 'ALL CLEAR';
+    document.getElementById('exec-cb-status').style.color = 'var(--green)';
   }
 
   function getBaseUrl() {

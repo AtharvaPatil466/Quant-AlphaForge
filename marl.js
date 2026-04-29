@@ -13,6 +13,77 @@
   function init() {
     document.getElementById('marl-start').addEventListener('click', startTraining);
     document.getElementById('marl-stop').addEventListener('click', stopTraining);
+    // Show demo data in charts on load so the tab isn't empty
+    setTimeout(renderDemoCharts, 500);
+  }
+
+  function renderDemoCharts() {
+    if (typeof Chart === 'undefined' || history.length > 0) return;
+
+    // Generate synthetic training curve data
+    var gens = [], bestFit = [], meanFit = [], sigmas = [], fitStds = [];
+    var bf = -0.5, mf = -1.2, sig = 0.15;
+    for (var i = 1; i <= 50; i++) {
+      gens.push(i);
+      bf += (2.5 - bf) * 0.06 + (Math.sin(i * 0.4) * 0.05);
+      mf += (1.8 - mf) * 0.04 + (Math.sin(i * 0.3 + 1) * 0.08);
+      sig *= 0.97;
+      bestFit.push(parseFloat(bf.toFixed(3)));
+      meanFit.push(parseFloat(mf.toFixed(3)));
+      sigmas.push(parseFloat(sig.toFixed(4)));
+      fitStds.push(parseFloat((0.8 * Math.exp(-i * 0.04) + 0.1).toFixed(3)));
+    }
+
+    // Update stat cards with demo values
+    document.getElementById('marl-gen').textContent = '50';
+    document.getElementById('marl-best-fitness').textContent = bestFit[49].toFixed(2);
+    document.getElementById('marl-best-fitness').className = 'stat-value positive';
+    document.getElementById('marl-best-agent').textContent = 'agent_demo_01';
+    document.getElementById('marl-mean-fitness').textContent = meanFit[49].toFixed(2);
+    document.getElementById('marl-fitness-std').textContent = 'σ = ' + fitStds[49].toFixed(2);
+    document.getElementById('marl-sigma').textContent = sigmas[49].toFixed(4);
+    document.getElementById('marl-gen-detail').textContent = 'of 50 (demo)';
+
+    // Render fitness chart
+    var ctx1 = document.getElementById('marl-fitness-chart');
+    fitnessChart = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: gens,
+        datasets: [
+          { label: 'Best Fitness', data: bestFit, borderColor: '#00e676', backgroundColor: 'rgba(0,230,118,0.1)', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
+          { label: 'Mean Fitness', data: meanFit, borderColor: '#ffab00', backgroundColor: 'rgba(255,171,0,0.05)', fill: true, tension: 0.3, pointRadius: 1, borderWidth: 1.5 },
+        ],
+      },
+      options: {
+        plugins: { legend: { labels: { font: { size: 10 }, boxWidth: 12, padding: 8 } } },
+        scales: {
+          x: { title: { display: true, text: 'Generation', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { title: { display: true, text: 'Fitness (Sharpe-based)', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        },
+      },
+    });
+
+    // Render sigma chart
+    var ctx2 = document.getElementById('marl-sigma-chart');
+    sigmaChart = new Chart(ctx2, {
+      type: 'line',
+      data: {
+        labels: gens,
+        datasets: [
+          { label: 'Mutation σ', data: sigmas, borderColor: '#ff3d57', backgroundColor: 'rgba(255,61,87,0.1)', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2, yAxisID: 'y' },
+          { label: 'Fitness Std', data: fitStds, borderColor: '#448aff', backgroundColor: 'rgba(68,138,255,0.05)', fill: true, tension: 0.3, pointRadius: 1, borderWidth: 1.5, yAxisID: 'y1' },
+        ],
+      },
+      options: {
+        plugins: { legend: { labels: { font: { size: 10 }, boxWidth: 12, padding: 8 } } },
+        scales: {
+          x: { title: { display: true, text: 'Generation', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y: { type: 'linear', position: 'left', title: { display: true, text: 'Mutation σ', font: { size: 10 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+          y1: { type: 'linear', position: 'right', title: { display: true, text: 'Fitness Std', font: { size: 10 } }, grid: { drawOnChartArea: false } },
+        },
+      },
+    });
   }
 
   // ── API helpers ────────────────────────────────────────────
