@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 from data.synthetic import generate_dataset, generate_prices
-from backtest.engine import BacktestConfig, run_synthetic_backtest
+from backtest.synthetic_demo import BacktestConfig, run_synthetic_backtest
 from scanner.scanner import scan_universe
 from correlation import compute_correlation_result
 from factors.registry import JS_FACTOR_NAMES

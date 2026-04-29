@@ -1,8 +1,9 @@
 """Cross-sectional factor scoring — the JS-parity z-score pipeline.
 
-Extracted from `backtest.engine` so factor scoring is reusable without
-pulling in the backtest engine module. Behavior is bit-identical to the
-prior `_compute_factor_scores_js` location.
+Extracted from `backtest.synthetic_demo` (formerly `backtest.engine`)
+so factor scoring is reusable without pulling in the backtest engine
+module. Behavior is bit-identical to the prior `_compute_factor_scores_js`
+location.
 """
 
 from __future__ import annotations

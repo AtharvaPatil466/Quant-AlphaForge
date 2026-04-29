@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import BacktestRequest, BacktestResponse, BacktestMetricsResponse
-from backtest.engine import BacktestConfig, run_synthetic_backtest
-from backtest.real_engine import run_real_backtest
+from backtest.event_driven_adapter import run_real_backtest_via_event_driven
+from backtest.synthetic_demo import BacktestConfig, run_synthetic_backtest
 from data.universe import SECTORS
 from factors.registry import JS_FACTOR_NAMES
 
@@ -41,7 +41,7 @@ def backtest(req: BacktestRequest):
         tx_cost_bps=req.tx_cost_bps,
     )
     if req.data_source == "real":
-        result = run_real_backtest(config, end_date=req.end_date)
+        result = run_real_backtest_via_event_driven(config, end_date=req.end_date)
     else:
         result = run_synthetic_backtest(config)
 

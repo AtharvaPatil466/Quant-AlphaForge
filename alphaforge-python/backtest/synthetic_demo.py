@@ -1,8 +1,24 @@
-"""
-Long-short backtest simulation engine — port of JS runBacktest.
+"""JS-parity synthetic backtest demo — restricted to PRNG-generated data.
 
-Produces NAV history, benchmark, drawdowns, monthly returns, and performance
-metrics. The JS-parity path matches JS output for identical inputs.
+This module is the Python port of the JS frontend's `runBacktest`. Its
+sole job is to produce numerically-identical output to the JS engine on
+the same Mulberry32 synthetic dataset. It is verified to 10 decimal
+places against `tests/fixtures/js_reference_output.json` by
+`tests/test_parity.py`.
+
+**Do not use this engine for research.** Per
+`backtest/ENGINE_CONSOLIDATION_DESIGN.md` it has a different purpose
+than `backtest.event_driven.EventDrivenEngine`:
+
+  - same-bar fills (no next-bar slip)
+  - daily ±20% return clamp (kept for JS parity)
+  - per-rebalance flat tx-cost deduction
+  - factor-boost term
+  - operates on synthetic GBM data, not real OHLCV
+
+For real-data backtests use `backtest.event_driven.EventDrivenEngine`.
+For real-data factor research use `research/factor_study.py`'s
+`quintile_backtest`.
 """
 
 from __future__ import annotations

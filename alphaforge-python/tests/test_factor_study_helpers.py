@@ -8,6 +8,9 @@ import pytest
 
 from research.factor_study import (
     build_factor_panels,
+    prepare_analysis_returns,
+    quintile_backtest,
+    quintile_backtest_from_returns,
     sector_neutralize,
     split_train_test,
     slice_metrics,
@@ -107,3 +110,47 @@ class TestTrainTestSplit:
         assert m["n_days"] == 300
         assert m["max_drawdown"] == pytest.approx(0.0, abs=1e-12)
         assert m["ann_return"] > 0.0
+
+
+class TestResidualizedStudyPath:
+    def test_quintile_backtest_from_returns_matches_close_path(self, toy_panel):
+        close, _ = toy_panel
+        factor = close.pct_change(21)
+        from_close = quintile_backtest(factor, close, holding_period=21)
+        from_returns = quintile_backtest_from_returns(
+            factor,
+            close.pct_change(),
+            holding_period=21,
+        )
+        for key in ("q5", "q1", "long_short_gross", "long_short_net", "turnover"):
+            pd.testing.assert_series_equal(from_close[key], from_returns[key])
+
+    def test_prepare_analysis_returns_residualizes_against_reference(self, toy_panel, tmp_path):
+        close, _ = toy_panel
+        idx = close.index
+        reference = pd.DataFrame(
+            {
+                "date": idx,
+                "MKT": np.linspace(-0.01, 0.01, len(idx)),
+                "SMB": np.sin(np.arange(len(idx)) / 17.0) * 0.005,
+                "HML": np.cos(np.arange(len(idx)) / 19.0) * 0.004,
+                "RMW": np.sin(np.arange(len(idx)) / 23.0) * 0.003,
+                "CMA": np.cos(np.arange(len(idx)) / 29.0) * 0.003,
+                "UMD": np.sin(np.arange(len(idx)) / 31.0) * 0.004,
+            }
+        )
+        path = tmp_path / "reference.csv"
+        reference.to_csv(path, index=False)
+
+        residual, loaded = prepare_analysis_returns(
+            close,
+            residualize=True,
+            reference_factor_path=str(path),
+            window=60,
+            min_obs=40,
+        )
+
+        assert loaded is not None
+        assert residual.shape == close.shape
+        tail_fill = residual.iloc[-200:].notna().to_numpy().mean()
+        assert tail_fill > 0.8

@@ -35,7 +35,9 @@ if str(PROJECT_DIR) not in sys.path:
     sys.path.insert(0, str(PROJECT_DIR))
 
 from data.market.loader import MarketDataLoader
+from data.market.pit import load_pit_field_panel, load_pit_sector_map
 from data.market.universe import ALL_REAL_TICKERS, REAL_TICKER_SPECS
+from research.risk_model import load_reference_factor_table, rolling_factor_residuals_panel
 from research.stats_hygiene import (
     hansen_spa_test, white_reality_check,
     PurgedEmbargoedKFold, cross_sectional_ic_cv,
@@ -66,13 +68,43 @@ IMPACT_BPS_PER_UNIT_TURNOVER = 10.0
 # D2 — sector neutralization toggle; we always emit both raw and neutralized
 # variants so the reader can see the sector-tilt contribution.
 SECTOR_MAP = {s.ticker: s.sector for s in REAL_TICKER_SPECS}
+UNIVERSE_MODE = os.getenv("ALPHAFORGE_FACTOR_STUDY_UNIVERSE_MODE", "pit").strip().lower()
+PIT_MIN_ROWS_PER_TICKER = int(os.getenv("ALPHAFORGE_PIT_MIN_ROWS_PER_TICKER", str(252 * 3)))
+RESIDUALIZE_RETURNS = os.getenv("ALPHAFORGE_FACTOR_STUDY_RESIDUALIZE", "0").strip().lower() in {
+    "1", "true", "yes", "on"
+}
+REFERENCE_FACTOR_PATH = os.getenv("ALPHAFORGE_REFERENCE_FACTORS", "").strip()
+RESIDUAL_WINDOW = int(os.getenv("ALPHAFORGE_RESIDUAL_WINDOW", "252"))
+RESIDUAL_MIN_OBS = int(os.getenv("ALPHAFORGE_RESIDUAL_MIN_OBS", str(RESIDUAL_WINDOW)))
 # C5 — purged+embargoed CV for IC stability
 CV_SPLITS = 5
 CV_EMBARGO_PCT = 0.01
 
 
 # ---------- data ----------
-def load_panel() -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_panel(universe_mode: str = UNIVERSE_MODE) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    if universe_mode == "pit":
+        close_pt = load_pit_field_panel(
+            field="Adj Close",
+            start_date=STUDY_START,
+            end_date=STUDY_END,
+            min_rows=PIT_MIN_ROWS_PER_TICKER,
+        )
+        volume_pt = load_pit_field_panel(
+            field="Volume",
+            start_date=STUDY_START,
+            end_date=STUDY_END,
+            min_rows=PIT_MIN_ROWS_PER_TICKER,
+        )
+        closes = close_pt.panel.sort_index()
+        volumes = volume_pt.panel.reindex(index=closes.index, columns=closes.columns)
+        valid = (closes.notna().sum(axis=0) >= PIT_MIN_ROWS_PER_TICKER) & (
+            volumes.notna().sum(axis=0) >= PIT_MIN_ROWS_PER_TICKER
+        )
+        closes = closes.loc[:, valid]
+        volumes = volumes.loc[:, valid]
+        return closes, volumes
+
     loader = MarketDataLoader()
     history: Dict[str, pd.DataFrame] = {}
     for tk in ALL_REAL_TICKERS:
@@ -99,6 +131,54 @@ def load_panel() -> Tuple[pd.DataFrame, pd.DataFrame]:
     closes = closes.loc[:, valid]
     volumes = volumes.loc[:, valid]
     return closes, volumes
+
+
+def load_sector_map(tickers: List[str], universe_mode: str = UNIVERSE_MODE) -> Dict[str, str]:
+    if universe_mode == "pit":
+        pit_map = load_pit_sector_map()
+        return {ticker: pit_map.get(ticker, "Other") for ticker in tickers}
+    return {ticker: SECTOR_MAP.get(ticker, "Other") for ticker in tickers}
+
+
+def build_forward_returns(
+    daily_returns: pd.DataFrame,
+    horizons: List[int] = HORIZONS,
+) -> Dict[int, pd.DataFrame]:
+    """Forward simple returns built from daily simple returns."""
+    safe_daily = daily_returns.clip(lower=-0.999999)
+    log_ret = np.log1p(safe_daily)
+    return {h: log_ret.rolling(h).sum().shift(-h).apply(np.exp) - 1 for h in horizons}
+
+
+def prepare_analysis_returns(
+    close: pd.DataFrame,
+    *,
+    residualize: bool = RESIDUALIZE_RETURNS,
+    reference_factor_path: str = REFERENCE_FACTOR_PATH,
+    window: int = RESIDUAL_WINDOW,
+    min_obs: int = RESIDUAL_MIN_OBS,
+) -> Tuple[pd.DataFrame, pd.DataFrame | None]:
+    """Return the daily return panel used by IC/backtest logic.
+
+    When `residualize=True`, returns are no-look-ahead residuals from a
+    rolling factor model fit on a local FF5+UMD reference table.
+    """
+    raw_returns = close.pct_change()
+    if not residualize:
+        return raw_returns, None
+    if not reference_factor_path:
+        raise ValueError(
+            "Residualized factor study requires ALPHAFORGE_REFERENCE_FACTORS "
+            "or an explicit `reference_factor_path`."
+        )
+    reference = load_reference_factor_table(reference_factor_path)
+    residual = rolling_factor_residuals_panel(
+        raw_returns,
+        reference,
+        window=window,
+        min_obs=min_obs,
+    )
+    return residual.reindex_like(raw_returns), reference
 
 
 # ---------- vectorized factor panels (matches compute_js exactly) ----------
@@ -229,6 +309,19 @@ def ic_summary(ic: pd.Series) -> Dict[str, float]:
 def quintile_backtest(
     factor: pd.DataFrame, close: pd.DataFrame, *, holding_period: int = HOLDING_PERIOD_DAYS,
 ) -> Dict[str, object]:
+    return quintile_backtest_from_returns(
+        factor,
+        close.pct_change(),
+        holding_period=holding_period,
+    )
+
+
+def quintile_backtest_from_returns(
+    factor: pd.DataFrame,
+    asset_returns: pd.DataFrame,
+    *,
+    holding_period: int = HOLDING_PERIOD_DAYS,
+) -> Dict[str, object]:
     """Cross-sectional quintile portfolios. Monthly rebal, equal-weight within leg.
 
     Returns daily returns for:
@@ -238,17 +331,17 @@ def quintile_backtest(
       - long_short_net (after commission + half-spread + linear impact)
     Plus turnover series and rebalance dates.
     """
-    f = factor.reindex_like(close)
+    f = factor.reindex(index=asset_returns.index, columns=asset_returns.columns)
     # Rebalance dates: every `holding_period` days starting from first valid factor row.
     first_valid = f.dropna(how="all").index.min()
-    all_dates = close.loc[first_valid:].index
+    all_dates = asset_returns.loc[first_valid:].index
     rebal_dates = all_dates[::holding_period]
 
-    weights_long = pd.DataFrame(0.0, index=close.index, columns=close.columns)
-    weights_short = pd.DataFrame(0.0, index=close.index, columns=close.columns)
+    weights_long = pd.DataFrame(0.0, index=asset_returns.index, columns=asset_returns.columns)
+    weights_short = pd.DataFrame(0.0, index=asset_returns.index, columns=asset_returns.columns)
 
-    cur_long = pd.Series(0.0, index=close.columns)
-    cur_short = pd.Series(0.0, index=close.columns)
+    cur_long = pd.Series(0.0, index=asset_returns.columns)
+    cur_short = pd.Series(0.0, index=asset_returns.columns)
     rebal_set = set(rebal_dates)
 
     turnover_rows = []
@@ -261,8 +354,8 @@ def quintile_backtest(
                 q_size = len(ranked) // N_QUINTILES
                 bot = ranked.index[:q_size]
                 top = ranked.index[-q_size:]
-                new_long = pd.Series(0.0, index=close.columns)
-                new_short = pd.Series(0.0, index=close.columns)
+                new_long = pd.Series(0.0, index=asset_returns.columns)
+                new_short = pd.Series(0.0, index=asset_returns.columns)
                 new_long.loc[top] = 1.0 / len(top)
                 new_short.loc[bot] = 1.0 / len(bot)
                 turnover = float(
@@ -274,14 +367,14 @@ def quintile_backtest(
         weights_short.loc[dt] = cur_short
 
     # Day-over-day returns on held positions
-    rets = close.pct_change().fillna(0.0)
+    rets = asset_returns.fillna(0.0)
     q5 = (weights_long.shift(1).fillna(0.0) * rets).sum(axis=1)
     q1 = (weights_short.shift(1).fillna(0.0) * rets).sum(axis=1)
     ls = q5 - q1
 
     turnover_s = pd.Series(
         {d: t for d, t in turnover_rows}, name="turnover"
-    ).reindex(close.index).fillna(0.0)
+    ).reindex(asset_returns.index).fillna(0.0)
 
     # Cost on each rebalance day
     per_unit_cost = (COMMISSION_BPS + HALF_SPREAD_BPS) * 1e-4
@@ -296,8 +389,8 @@ def quintile_backtest(
     # Per-quintile returns too (for monotonicity)
     q_all = []
     for q_idx in range(N_QUINTILES):
-        w = pd.DataFrame(0.0, index=close.index, columns=close.columns)
-        cur = pd.Series(0.0, index=close.columns)
+        w = pd.DataFrame(0.0, index=asset_returns.index, columns=asset_returns.columns)
+        cur = pd.Series(0.0, index=asset_returns.columns)
         for dt in all_dates:
             if dt in rebal_set:
                 scores = f.loc[dt].dropna()
@@ -305,7 +398,7 @@ def quintile_backtest(
                     ranked = scores.sort_values()
                     q_size = len(ranked) // N_QUINTILES
                     members = ranked.index[q_idx * q_size:(q_idx + 1) * q_size]
-                    cur = pd.Series(0.0, index=close.columns)
+                    cur = pd.Series(0.0, index=asset_returns.columns)
                     cur.loc[members] = 1.0 / len(members)
             w.loc[dt] = cur
         q_ret = (w.shift(1).fillna(0.0) * rets).sum(axis=1).loc[start:]
@@ -397,28 +490,43 @@ def deflated_sharpe_ratio(sr_observed: float, n_obs: int, sr_candidates: List[fl
 
 # ---------- baselines ----------
 def equal_weight_benchmark(close: pd.DataFrame) -> pd.Series:
-    rets = close.pct_change().fillna(0.0)
-    return rets.mean(axis=1)
+    return equal_weight_benchmark_from_returns(close.pct_change())
+
+
+def equal_weight_benchmark_from_returns(asset_returns: pd.DataFrame) -> pd.Series:
+    return asset_returns.fillna(0.0).mean(axis=1)
 
 
 def random_long_short_baseline(close: pd.DataFrame, n_seeds: int = N_BASELINE_SEEDS, holding_period: int = HOLDING_PERIOD_DAYS) -> Dict[str, float]:
-    rets = close.pct_change().fillna(0.0)
-    rebal_idx = np.arange(0, len(close), holding_period)
+    return random_long_short_baseline_from_returns(
+        close.pct_change(),
+        n_seeds=n_seeds,
+        holding_period=holding_period,
+    )
+
+
+def random_long_short_baseline_from_returns(
+    asset_returns: pd.DataFrame,
+    n_seeds: int = N_BASELINE_SEEDS,
+    holding_period: int = HOLDING_PERIOD_DAYS,
+) -> Dict[str, float]:
+    rets = asset_returns.fillna(0.0)
+    rebal_idx = np.arange(0, len(asset_returns), holding_period)
     sharpes = []
     for seed in range(n_seeds):
         rng = np.random.default_rng(seed)
-        daily = np.zeros(len(close))
+        daily = np.zeros(len(asset_returns))
         long_set = short_set = None
-        for i in range(len(close)):
+        for i in range(len(asset_returns)):
             if i in rebal_idx:
-                tickers = close.columns.to_numpy()
+                tickers = asset_returns.columns.to_numpy()
                 rng.shuffle(tickers)
                 q = len(tickers) // N_QUINTILES
                 long_set = tickers[:q]
                 short_set = tickers[-q:]
             if long_set is not None and i > 0:
                 daily[i] = rets.iloc[i][long_set].mean() - rets.iloc[i][short_set].mean()
-        s = pd.Series(daily, index=close.index)
+        s = pd.Series(daily, index=asset_returns.index)
         sharpes.append(ann_sharpe(s))
     arr = np.array(sharpes)
     return {
@@ -470,7 +578,7 @@ def slice_metrics(r: pd.Series) -> Dict[str, float]:
 
 # ---------- main ----------
 def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
-                 close: pd.DataFrame, fwd: Dict[int, pd.DataFrame], t0: float):
+                 asset_returns: pd.DataFrame, fwd: Dict[int, pd.DataFrame], t0: float):
     """Evaluate a dict of factor panels end-to-end (IC + quintile backtest +
     bootstrap CI + DSR). Returns (all_results, net_series, sharpe_candidates).
     """
@@ -483,7 +591,7 @@ def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
         ic_by_h = {h: compute_ic_panel(panel, fwd[h]) for h in HORIZONS}
         ic_stats = {h: ic_summary(s) for h, s in ic_by_h.items()}
 
-        bt = quintile_backtest(panel, close, holding_period=HOLDING_PERIOD_DAYS)
+        bt = quintile_backtest_from_returns(panel, asset_returns, holding_period=HOLDING_PERIOD_DAYS)
         ls_gross = bt["long_short_gross"].dropna()
         ls_net = bt["long_short_net"].dropna()
         net_series[name] = ls_net
@@ -515,25 +623,31 @@ def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
 
 def main():
     t0 = time.time()
-    print(f"[{time.time()-t0:5.1f}s] Loading parquet panel ({STUDY_START} → {STUDY_END})...")
+    print(
+        f"[{time.time()-t0:5.1f}s] Loading {UNIVERSE_MODE} parquet panel "
+        f"({STUDY_START} → {STUDY_END})..."
+    )
     close, volume = load_panel()
+    sector_map = load_sector_map(list(close.columns))
     print(f"          universe: {close.shape[1]} tickers, {close.shape[0]} trading days")
 
     print(f"[{time.time()-t0:5.1f}s] Building factor panels (8 factors)...")
     raw_factors = build_factor_panels(close, volume)
 
     print(f"[{time.time()-t0:5.1f}s] Building sector-neutral variant (D2)...")
-    neutral_factors = {n: sector_neutralize(p, SECTOR_MAP) for n, p in raw_factors.items()}
+    neutral_factors = {n: sector_neutralize(p, sector_map) for n, p in raw_factors.items()}
 
-    log_ret = np.log(close).diff()
-    fwd = {h: log_ret.rolling(h).sum().shift(-h).apply(np.exp) - 1 for h in HORIZONS}
+    analysis_returns, reference_factors = prepare_analysis_returns(close)
+    analysis_mode = "residualized" if RESIDUALIZE_RETURNS else "raw"
+    print(f"[{time.time()-t0:5.1f}s] Analysis-return mode: {analysis_mode}")
+    fwd = build_forward_returns(analysis_returns)
 
     # --- raw variant ---
-    raw_results, raw_net, raw_cands = _run_variant("raw", raw_factors, close, fwd, t0)
+    raw_results, raw_net, raw_cands = _run_variant("raw", raw_factors, analysis_returns, fwd, t0)
 
     # --- sector-neutral variant ---
     neutral_results, neutral_net, neutral_cands = _run_variant(
-        "neutral", neutral_factors, close, fwd, t0)
+        "neutral", neutral_factors, analysis_returns, fwd, t0)
 
     # --- Hansen SPA across factors (C5) ---
     # Align all factors on common index and stack into T × K matrix.
@@ -579,11 +693,11 @@ def main():
 
     # --- baselines + regime split (computed on the raw variant as before) ---
     print(f"[{time.time()-t0:5.1f}s] Baseline: equal-weight...")
-    ew = equal_weight_benchmark(close).loc[raw_net[list(raw_factors)[0]].index]
+    ew = equal_weight_benchmark_from_returns(analysis_returns).loc[raw_net[list(raw_factors)[0]].index]
     eq_metrics = {"sharpe": ann_sharpe(ew), "ann_return": ann_return(ew),
                   "max_drawdown": max_drawdown(ew)}
     print(f"[{time.time()-t0:5.1f}s] Baseline: random long-short ({N_BASELINE_SEEDS} seeds)...")
-    rand_metrics = random_long_short_baseline(close)
+    rand_metrics = random_long_short_baseline_from_returns(analysis_returns)
     best = max(raw_factors, key=lambda n: raw_results[n]["net"]["sharpe"])
     print(f"[{time.time()-t0:5.1f}s] Regime split on best factor: {best}")
     regime = regime_split(raw_net[best], ew)
@@ -592,8 +706,13 @@ def main():
         "config": {
             "start": STUDY_START, "end": STUDY_END, "oos_start": OOS_START,
             "oos_embargo_days": OOS_EMBARGO_DAYS,
+            "universe_mode": UNIVERSE_MODE,
+            "analysis_returns_mode": analysis_mode,
             "universe_size": int(close.shape[1]),
             "trading_days": int(close.shape[0]),
+            "reference_factor_path": REFERENCE_FACTOR_PATH or None,
+            "residual_window": RESIDUAL_WINDOW if RESIDUALIZE_RETURNS else None,
+            "residual_min_obs": RESIDUAL_MIN_OBS if RESIDUALIZE_RETURNS else None,
             "horizons": HORIZONS,
             "holding_period_days": HOLDING_PERIOD_DAYS,
             "n_quintiles": N_QUINTILES,
@@ -617,6 +736,10 @@ def main():
         "best_factor": best,
         "regime_split_best": regime,
     }
+    if reference_factors is not None:
+        summary["reference_factor_overlap_days"] = int(
+            pd.Index(analysis_returns.index).intersection(reference_factors.index).shape[0]
+        )
     # Back-compat alias: older tooling expects `factors` to exist.
     all_results = raw_results
     net_series = raw_net
@@ -641,19 +764,26 @@ def write_report(s: dict):
     A = lines.append
     A("# AlphaForge — Single-Factor Research Study")
     A("")
-    A(f"_Universe {c['universe_size']} US large-caps · {c['start']} → {c['end']} ({c['trading_days']} trading days)_")
+    A(
+        f"_Universe {c['universe_size']} names · mode={c.get('universe_mode', 'legacy')} · "
+        f"{c['start']} → {c['end']} ({c['trading_days']} trading days)_"
+    )
     A("")
     A("## Abstract")
     A("")
     A("We evaluate five cross-sectional equity factors used by the AlphaForge engine "
       "(Momentum 12-1, 5-day Mean Reversion, Volume Surge, RSI Divergence, 10-day Earnings Drift) "
-      "on a local parquet store of adjusted OHLCV data for 50 US large-caps. "
+      "on a local parquet store of adjusted OHLCV data. "
       "For each factor we report Spearman IC and IC decay, a quintile-spread backtest with "
       "realistic transaction costs, stationary-bootstrap Sharpe confidence intervals, and "
       "the Deflated Sharpe Ratio (Bailey & López de Prado, 2014) accounting for the 5-factor trial set. "
       "Random long-short and equal-weight baselines provide the null. "
       "The goal is an honest assessment of whether any of these textbook signals has "
       "cost-adjusted, statistically credible edge in this universe.")
+    if c.get("analysis_returns_mode") == "residualized":
+        A("")
+        A("All IC and portfolio metrics are computed on no-look-ahead FF5+UMD residual returns, "
+          "not raw returns. This is the Phase-3 alpha-isolation path.")
     A("")
     A("## Headline Findings")
     A("")
@@ -675,8 +805,8 @@ def write_report(s: dict):
       f"{best_m['net']['sharpe']:+.2f} with a 95% bootstrap CI spanning zero, and the Deflated "
       f"Sharpe Ratio is **{best_dsr:.2f}** — far below the 0.95 conventional threshold for a "
       "credibly non-zero Sharpe after multiple testing.")
-    A(f"4. **Equal-weight beats every factor overlay.** A dumb long-only equal-weight basket of "
-      f"the same 50 names earns {s['baselines']['equal_weight']['sharpe']:+.2f} Sharpe and "
+    A(f"4. **Equal-weight beats every factor overlay.** A dumb equal-weight basket of "
+      f"the same study universe earns {s['baselines']['equal_weight']['sharpe']:+.2f} Sharpe and "
       f"{s['baselines']['equal_weight']['ann_return']:+.1%} annualized — well above any long-short "
       "net Sharpe in this study. The universe's beta is the dominant source of return; none of "
       "these factor overlays add credible alpha *on this universe, net of costs*.")
@@ -687,7 +817,7 @@ def write_report(s: dict):
       "(Daniel & Moskowitz 2016).")
     A("")
     A("**Interpretation.** This does *not* prove momentum has no edge in equities — it shows the "
-      "JS-parity formulation on a 50-ticker mega-cap universe, net of costs, has no credible "
+      "JS-parity formulation on this study universe, net of costs, has no credible "
       "edge *in this specific study*. A real signal-discovery workflow would: (a) expand to 500+ "
       "point-in-time names, (b) sector- and beta-neutralize, (c) test on a held-out period never "
       "used for any tuning choice, and (d) compare against a Fama-French-5 risk model to isolate "
@@ -695,13 +825,24 @@ def write_report(s: dict):
     A("")
     A("## Data & Methodology")
     A("")
-    A(f"- **Universe.** {c['universe_size']} US large-caps from the AlphaForge real-data manifest "
-      "(Technology, Healthcare, Finance, Consumer, Energy). Only tickers with full history over the "
-      "study window are retained. Known survivorship caveat: the universe is defined as of today, "
-      "not point-in-time; delisted peers are not included. This biases returns upward.")
+    if c.get("universe_mode") == "pit":
+        A(f"- **Universe.** {c['universe_size']} PIT-aware S&P 500 members with at least "
+          f"{PIT_MIN_ROWS_PER_TICKER} usable OHLCV rows in the quarantine parquet store. "
+          "Membership is masked by the Phase-1 event log; delisted or missing names remain "
+          "explicit coverage gaps instead of being silently dropped from the substrate.")
+    else:
+        A(f"- **Universe.** {c['universe_size']} US large-caps from the AlphaForge real-data manifest "
+          "(Technology, Healthcare, Finance, Consumer, Energy). Only tickers with full history over the "
+          "study window are retained. Known survivorship caveat: the universe is defined as of today, "
+          "not point-in-time; delisted peers are not included. This biases returns upward.")
     A(f"- **Period.** {c['start']} → {c['end']} ({c['trading_days']} trading days). The first 252 "
       "trading days are consumed as warmup for the 12-1 momentum lookback; all reported metrics "
       "are post-warmup.")
+    if c.get("analysis_returns_mode") == "residualized":
+        A(f"- **Risk model.** Daily returns are residualized with a no-look-ahead rolling "
+          f"FF5+UMD model (window={c['residual_window']}, min_obs={c['residual_min_obs']}). "
+          "The study therefore measures alpha after removing broad market, size, value, "
+          "profitability, investment, and momentum exposures.")
     A(f"- **Factor construction.** Each factor is computed daily per ticker using the JS-parity "
       "formulas in `alphaforge-python/factors/`. Raw scores are z-scored cross-sectionally at each rebalance.")
     A(f"- **Portfolios.** Cross-sectional quintiles ({c['n_quintiles']} buckets). Long top quintile, "

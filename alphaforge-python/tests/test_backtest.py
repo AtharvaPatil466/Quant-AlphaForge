@@ -5,7 +5,7 @@ Backtest engine tests — mechanics, metric correctness, and edge cases.
 import numpy as np
 import pytest
 
-from backtest.engine import BacktestConfig, BacktestResult, run_synthetic_backtest
+from backtest.synthetic_demo import BacktestConfig, BacktestResult, run_synthetic_backtest
 
 
 @pytest.fixture

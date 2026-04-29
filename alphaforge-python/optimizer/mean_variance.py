@@ -29,7 +29,7 @@ from data.synthetic import (
     sanitize_number,
     stddev,
 )
-from backtest.engine import BacktestConfig
+from backtest.synthetic_demo import BacktestConfig
 from factors.scoring import compute_factor_scores_js
 from backtest import metrics as bm
 

@@ -6,6 +6,11 @@ Architectural rules enforced by this package:
 2. No same-bar fills: orders generated on bar t fill at bar t+1's open.
 3. Costs are charged per fill in cash, not as a flat post-hoc bps deduction.
 4. Portfolio is the only authority on positions, cash, and NAV.
+
+This is the canonical real-data backtest path after Phase 2 engine
+consolidation. The only sibling engine that remains is
+`backtest.synthetic_demo`, which exists solely for JS-parity on the
+synthetic substrate.
 """
 
 from backtest.event_driven.core import EngineConfig, EngineRunResult, EventDrivenEngine

@@ -12,7 +12,7 @@ import pytest
 
 from data.prng import Mulberry32
 from data.synthetic import generate_prices, generate_dataset
-from backtest.engine import run_synthetic_backtest, BacktestConfig
+from backtest.synthetic_demo import run_synthetic_backtest, BacktestConfig
 from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
