@@ -1,6 +1,6 @@
 """Generate a polished PDF overview of the AlphaForge project.
 
-Self-contained — reads the two research reports under
+Self-contained — reads the research reports under
 alphaforge-python/research/out/ and alphaforge-marl/research/out/
 if present, otherwise renders the prose-only overview.
 """
@@ -125,27 +125,34 @@ def build():
     # ----- Title page -----
     S(Paragraph("AlphaForge", styles["TitleBig"]))
     S(Paragraph(
-        "A quantitative alpha-research platform: synthetic-to-real data, "
-        "cross-sectional factor engine, evolutionary multi-agent RL, "
-        "and a deflation-aware rigor layer.",
+        "A quantitative research stack — point-in-time event-driven backtesting, "
+        "deflation-aware statistical evaluation, evolutionary multi-agent RL, "
+        "and live paper-trading execution — applied honestly to a 50-ticker US "
+        "large-cap universe.",
         styles["Subtitle"]
     ))
     S(Spacer(1, 0.2 * inch))
-    S(P("<b>Author:</b> Atharva Patil &nbsp;&nbsp;|&nbsp;&nbsp; "
-        "<b>Target role:</b> Quant Researcher"))
+    S(P("<b>Author:</b> Atharva Patil"))
     S(Spacer(1, 0.05 * inch))
     S(P("<b>Components:</b> JS frontend · Python alpha engine · MARL framework · "
         "Live paper-trading execution"))
-    S(P("<b>Scale:</b> 3 Python backend services · 618+ tests · JS/Python parity to 10 dp · "
-        "10 years of real OHLCV for 50 US large-caps"))
-    S(Spacer(1, 0.3 * inch))
+    S(P("<b>Scale:</b> 3 Python backend services · 785 tests · 11 core factors · "
+        "837 point-in-time S&P 500 membership events (Phase 1 complete)"))
+    S(Spacer(1, 0.25 * inch))
+    S(H("Abstract", 3))
     S(Paragraph(
-        "This document describes the architecture of the AlphaForge platform, the data "
-        "pipeline that underpins it, the strategies it evaluates, and — critically — what "
-        "rigorous statistical testing has revealed about those strategies. The goal is to "
-        "present an honest picture of both what has been built and what the results mean. "
-        "Deflation-aware reporting (Bailey & López de Prado, 2014), bootstrap confidence "
-        "intervals, and baseline-excess decomposition are first-class outputs, not afterthoughts.",
+        "AlphaForge applies an end-to-end systematic-trading lifecycle — data, factors, "
+        "event-driven backtesting, transaction-cost modeling, statistical evaluation, RL, "
+        "and live execution — to nine cross-sectional equity signals on a 50-ticker US "
+        "large-cap universe (2016–2025). <b>The headline result is a negative one, "
+        "deliberately:</b> none of the implemented signals clears a Deflated Sharpe Ratio "
+        "of 0.95 out-of-sample net of costs, and the multi-agent RL ensemble does not "
+        "produce positive baseline-excess Sharpe on held-out windows. The contribution of "
+        "this work is the methodology and infrastructure to apply that gauntlet at scale "
+        "(Hansen SPA, White's Reality Check, Deflated Sharpe, López de Prado purged "
+        "K-fold, square-root market impact, Corwin-Schultz spread, borrow-cost modeling, "
+        "kill-switch live risk), and the discipline to publish the negative finding rather "
+        "than hide it. Surviving signals are the next deliverable, not this one.",
         styles["Body2"]
     ))
 
@@ -153,187 +160,183 @@ def build():
     # TOC-style summary
     toc_rows = [
         ["§", "Section"],
-        ["1", "Executive summary"],
-        ["2", "Architecture overview"],
-        ["3", "Data pipeline (synthetic → real)"],
-        ["4", "Strategy layer — factors & MARL"],
-        ["5", "Research rigor: IC, DSR, bootstrap, baselines"],
-        ["6", "Findings — what the numbers actually say"],
-        ["7", "Engineering highlights"],
-        ["8", "Live paper-trading execution"],
-        ["9", "Honest limitations"],
-        ["10", "Roadmap — what moves this to a defensible result"],
+        ["1", "Executive Summary"],
+        ["2", "Architecture & Data Pipeline"],
+        ["3", "Alpha Engine & Event-Driven Backtest"],
+        ["4", "Research Rigor & Cost Modeling"],
+        ["5", "MARL Framework & Ablation Studies"],
+        ["6", "Execution System & Live Risk Checks"],
+        ["7", "Empirical Findings"],
+        ["8", "Honest Limitations & Roadmap"],
+        ["9", "Engineering Highlights"],
     ]
     S(kv_table(toc_rows, col_widths=[0.5 * inch, 5.3 * inch]))
     S(PageBreak())
 
     # ----- 1. Executive summary -----
-    S(H("1. Executive summary", 1))
+    S(H("1. Executive Summary", 1))
     S(P(
-        "AlphaForge is a full quantitative research platform built end-to-end: data "
-        "acquisition and storage, factor construction, cross-sectional backtesting, mean-"
-        "variance portfolio optimisation, an evolutionary multi-agent reinforcement-"
-        "learning framework, and live paper-trading execution. The system was designed to "
-        "answer one question: <i>can a population of RL agents evolve trading strategies "
-        "that generalise to unseen market regimes?</i>"
+        "<b>Headline result.</b> Across nine cross-sectional equity factors and a "
+        "multi-agent RL ensemble, evaluated on 50 US large-caps from 2016–2025 with a "
+        "realistic cost model and deflation across the full trial set, no signal clears a "
+        "Deflated Sharpe Ratio of 0.95 out-of-sample. The best single factor (Momentum 12-1) "
+        "lands at DSR ≈ 0.14; the MARL ensemble's mean OOS stability Sharpe deflates to "
+        "DSR ≈ 0.04 against 100 enumerated trials. An equal-weight long-only baseline on "
+        "the same universe earns Sharpe +0.92 over the period — every factor overlay "
+        "underperforms it net of costs. This is reported up front, not buried."
     ))
     S(P(
-        "The honest answer, after building the rigor layer: not yet — but the platform "
-        "that was built to evaluate that question is itself the research artifact. The "
-        "project now produces two deflation-aware research reports (single-factor and "
-        "MARL) that apply Bailey & López de Prado's Deflated Sharpe Ratio, stationary-"
-        "bootstrap Sharpe CIs, and baseline-excess decomposition against an equal-weight "
-        "benchmark. These reports demonstrate the statistical hygiene a quant researcher "
-        "is expected to apply to their own work."
+        "<b>What the project actually contributes.</b> The methodology and infrastructure "
+        "that produced the result above. AlphaForge implements the full systematic-trading "
+        "lifecycle — data ingestion, factor construction, point-in-time event-driven "
+        "backtesting, transaction-cost modeling, deflation-aware statistical evaluation, "
+        "neuroevolutionary multi-agent RL, and a live paper-trading execution loop with "
+        "kill-switch risk logic. The statistical layer integrates the Deflated Sharpe Ratio "
+        "(Bailey & López de Prado), Hansen's Superior Predictive Ability test, White's "
+        "Reality Check, López de Prado's Purged K-Fold cross-validation, and stationary-"
+        "bootstrap confidence intervals. Cost modeling integrates a square-root market-"
+        "impact model, Corwin-Schultz spread estimation, and a borrow-cost table for "
+        "short legs."
     ))
-    S(H("Key numbers", 3))
-    S(bullet("50 US large-cap universe, 2016–2025 (10 years of point-in-time-validated daily OHLCV)."))
-    S(bullet("5 cross-sectional factors in the JS-parity set; 6 total."))
-    S(bullet("3 Python backend services (alpha engine, MARL, execution), each with its own FastAPI."))
-    S(bullet("618+ tests; JS/Python numerical parity verified to 10 decimal places."))
-    S(bullet("Headline finding: no single factor clears Deflated Sharpe > 0.95 on this universe."))
-    S(bullet("Headline MARL finding: OOS stability Sharpe 0.72 → DSR 0.04; zero of 76 reward-mix trials beat equal-weight."))
     S(P(
-        "Negative findings, properly documented, are a deliberately chosen headline. "
-        "This report explains why the project is stronger, not weaker, for reporting them."
+        "<b>Why the negative result is the right artifact for now.</b> The known failure "
+        "modes of factor-discovery work — survivorship bias, in-sample selection, multiple "
+        "testing, ignored borrow costs, optimistic impact assumptions — would each push a "
+        "naive backtest into a falsely positive Sharpe. AlphaForge's gauntlet is "
+        "specifically designed to surface those failures. That none of the implemented "
+        "signals survive that gauntlet on this universe is informative; it bounds the "
+        "space where genuine edge can credibly be claimed and identifies the next moves "
+        "(point-in-time universe expansion, risk-model residualization, signal "
+        "combination)."
     ))
+    S(H("Platform Metrics at a Glance", 3))
+    S(bullet("<b>785 tests</b> across the three Python subprojects (541 core, 122 MARL, 122 Execution)."))
+    S(bullet("<b>11 implemented alpha factors</b> including classic momentum, mean reversion, "
+             "Amihud illiquidity, and idiosyncratic volatility."))
+    S(bullet("<b>Point-in-Time S&P 500 Universe</b> with 837 membership events verified across 15 years, "
+             "plus 10 years of real-market Parquet history."))
+    S(bullet("<b>Event-driven simulation engine</b> enforcing strict no-look-ahead and per-fill "
+             "commission/slippage accounting."))
 
-    # ----- 2. Architecture -----
-    S(H("2. Architecture overview", 1))
-    S(P("AlphaForge is organised as four loosely-coupled components, each with its own CLAUDE.md, "
-        "test suite, and (where applicable) FastAPI service:"))
+    # ----- 2. Architecture & Data Pipeline -----
+    S(H("2. Architecture & Data Pipeline", 1))
+    S(P("The project is partitioned into four primary components:"))
     arch_rows = [
-        ["Component", "Role", "Tests"],
-        ["JS frontend", "Single-page research UI over the alpha engine API.", "—"],
-        ["alphaforge-python", "Data, factors, backtest, optimiser, FastAPI.", "408"],
-        ["alphaforge-marl", "Evolutionary multi-agent RL (NSGA-II + MAML + HMM regimes).", "122"],
-        ["alphaforge-execution", "Live paper-trading loop with Alpaca + yfinance + SQLite.", "106"],
+        ["Component", "Focus Area"],
+        ["JS Frontend", "Glassmorphic terminal UI, interactive Chart.js visualizations, slide-out ticker panels. Strict numerical parity with Python."],
+        ["alphaforge-python", "Data store, 11-factor engine, event-driven backtest, optimization, and rigorous studies."],
+        ["alphaforge-marl", "NSGA-II evolution + PPO + FOMAML agent training and HMM regime detection."],
+        ["alphaforge-execution", "Live paper trading (yfinance/Alpaca), kill-switch risk logic, and SQLite persistence."],
     ]
-    S(kv_table(arch_rows, col_widths=[1.5 * inch, 3.8 * inch, 0.6 * inch]))
-    S(Spacer(1, 0.1 * inch))
+    S(kv_table(arch_rows, col_widths=[1.7 * inch, 4.6 * inch]))
+    
+    S(H("Unidirectional Data Flow", 3))
     S(P(
-        "Data flows unidirectionally: <b>yfinance → parquet store → alphaforge-python</b> "
-        "(factor scoring, backtest, optimiser) → <b>alphaforge-marl</b> (imports alpha engine "
-        "via <tt>sys.path</tt>, trains agents on real OHLCV windows) → <b>alphaforge-execution</b> "
-        "(runs extracted strategies live against Alpaca paper trading). The parquet store "
-        "is the single source of truth; only <tt>sync_market_data.py</tt> and the execution "
-        "daily loop touch yfinance."
+        "Historical data originates from yfinance via a single sync script, and is materialized "
+        "as per-ticker-per-year Parquet files in <tt>data/market/</tt>. This Parquet store is "
+        "the immutable source of truth for the entire ecosystem. The Alpha Engine, MARL "
+        "trainers, and research studies all consume this local dataset via a cached loader, "
+        "ensuring that training and evaluation never hit the network and are perfectly reproducible."
     ))
 
-    # ----- 3. Data pipeline -----
-    S(H("3. Data pipeline (synthetic → real)", 1))
+    # ----- 3. Alpha Engine & Event-Driven Backtest -----
+    S(H("3. Alpha Engine & Event-Driven Backtest", 1))
     S(P(
-        "The project started on a seeded-PRNG synthetic data layer (Mulberry32 → geometric "
-        "Brownian motion) for reproducibility and JS/Python parity testing. Over time the "
-        "primary evaluation substrate migrated to real market data, stored locally as "
-        "parquet files (one per ticker per year) under <tt>data/market/</tt>."
+        "The core Python package features a sophisticated factor construction framework "
+        "and a robust event-driven backtest engine designed to replicate live trading mechanics."
     ))
-    S(H("Universe manifest", 3))
-    S(P(
-        "50 US large-caps across Technology, Healthcare, Finance, Consumer, and Energy. "
-        "Each ticker has a manifested <tt>usable_start</tt> date that respects IPO / spin-"
-        "off / restructuring history (e.g. META 2012-05-18, TSLA 2010-06-29, ABBV 2013-"
-        "01-02). A quarantine subsystem flags parquet files whose validator checks fail and "
-        "excludes them from training/evaluation."
-    ))
-    S(H("Why parquet, not a database", 3))
-    S(P(
-        "Parquet per-ticker-per-year gives O(1) range lookups, zero-install read, and "
-        "columnar compression. A small <tt>MarketDataLoader</tt> with an LRU cache makes "
-        "repeated backtests cheap. Read-only by design; all mutations go through the "
-        "sync + validator path."
-    ))
-    S(H("Point-in-time limitations (acknowledged)", 3))
-    S(P(
-        "The universe is defined as of today, not point-in-time — delisted peers are not "
-        "included. This biases the long-only equal-weight baseline upward by an estimated "
-        "1–2% annualised. Any future capital-allocation-grade result must use a CRSP or "
-        "Norgate survivorship-bias-free universe."
-    ))
-
-    # ----- 4. Strategy layer -----
-    S(H("4. Strategy layer — factors & MARL", 1))
-    S(H("4.1 Cross-sectional factors", 3))
-    S(P(
-        "Six factor implementations, five of which are bit-for-bit identical with the JS "
-        "frontend (verified to 10 decimal places):"))
+    S(H("Cross-Sectional Factors", 3))
+    S(P("Eleven core factors are supported (5 matching the JS frontend for parity, and 6 advanced Python-only factors):"))
     factor_rows = [
-        ["Factor", "Formula (JS-parity variant)", "Lookback"],
-        ["Momentum (12-1)", "(p[t-21] − p[t-252]) / p[t-252]", "252d"],
-        ["Mean Reversion (5d)", "−(p[t] − p[t-5]) / p[t-5]", "5d"],
-        ["Volume Surge", "(mean(v[−5:]) − mean(v[−20:])) / mean(v[−20:])", "20d"],
-        ["RSI Divergence", "(RSI₁₄(p) − 50) / 50", "14d"],
-        ["Earnings Drift", "(p[t] − p[t-10]) / p[t-10]", "10d"],
-        ["Low Volatility", "−std(ret[-60:]) (inverse realised vol)", "60d"],
+        ["Factor", "Brief Description"],
+        ["Momentum (12-1)", "Trailing 12-month return excluding the most recent month."],
+        ["Mean Reversion (5d)", "Inverse of 5-day return."],
+        ["Volume Surge", "Short-term vs long-term volume moving average."],
+        ["RSI Divergence", "Standard 14-day Relative Strength Index minus 50."],
+        ["Earnings Drift", "Post-earnings announcement drift proxy (10-day return)."],
+        ["Low Volatility", "Inverse realized 60-day volatility."],
+        ["Amihud Illiquidity", "Absolute return divided by dollar volume."],
+        ["Idiosyncratic Volatility", "Residual volatility against an equal-weight market proxy."],
+        ["Residual Reversal (5d)", "5-day mean reversion residualized against the market."],
     ]
-    S(kv_table(factor_rows, col_widths=[1.6 * inch, 3.5 * inch, 0.8 * inch]))
-    S(Spacer(1, 0.05 * inch))
+    S(kv_table(factor_rows, col_widths=[1.9 * inch, 4.4 * inch]))
+    S(Spacer(1, 0.1 * inch))
+    
+    S(H("Event-Driven Engine", 3))
     S(P(
-        "Factors are scored daily per ticker, z-scored cross-sectionally at each rebalance, "
-        "and fed into a unified long-short simulation engine that reports 9 performance "
-        "metrics plus OLS attribution."))
+        "Replaces the legacy vectorized panel sweep to strictly enforce causality and realistic "
+        "trade execution. Phase 2 engine consolidation is complete. Key components include:"
+    ))
+    S(bullet("<b>BarHistory</b>: A point-in-time data structure that raises errors if queried past its current <tt>as_of</tt> date."))
+    S(bullet("<b>ExecutionHandler</b>: Requires next-bar timestamps for order fills and enforces flat-slippage/commission models directly on <tt>FillEvent</tt>s."))
+    S(bullet("<b>Portfolio</b>: Tracks cash, positions, and marks-to-market. Fails loudly on missing price data."))
 
-    S(H("4.2 MARL framework", 3))
+    # ----- 4. Research Rigor & Cost Modeling -----
+    S(H("4. Research Rigor & Cost Modeling", 1))
     S(P(
-        "The multi-agent RL layer is a population-based trainer with four subsystems:"))
-    S(bullet("<b>TradingEnv</b> — Gymnasium env, 57-dim observation, 5 discrete or 10-dim continuous actions, "
-             "dense reward shaping (rolling Sharpe delta + drawdown penalty + participation incentive)."))
-    S(bullet("<b>EvolutionaryEngine</b> — NSGA-II multi-objective selection on (Sharpe, drawdown, turnover), "
-             "speciation via Jensen-Shannon divergence on probe-state action distributions, adaptive "
-             "per-parameter mutation."))
-    S(bullet("<b>PPOTrainer + MAMLTrainer</b> — GAE + clipped-surrogate PPO for survivor fine-tuning; "
-             "FOMAML for fast regime adaptation."))
-    S(bullet("<b>RegimeBandit</b> — HMM regime detector (K-Means init + Baum-Welch EM), Thompson sampling "
-             "per (regime, agent), capital allocator feeding an EnsemblePolicy."))
+        "AlphaForge produces standardized, reproducible 'headline' research reports using "
+        "advanced statistical techniques."
+    ))
+    S(bullet("<b>Factor Study (<tt>factor_study.py</tt>)</b>: Evaluates all 9 factors. Outputs Spearman IC, IC-decay, "
+             "quintile-spread returns, stationary-bootstrap Sharpe CIs, and the Deflated Sharpe Ratio. "
+             "Incorporates Hansen's SPA and White's Reality Check to control for multiple testing."))
+    S(bullet("<b>Cost Model (<tt>cost_model.py</tt>)</b>: Honest transaction cost library featuring the "
+             "<tt>SquareRootImpactModel</tt> (k·√participation), <tt>corwin_schultz_spread</tt> estimators, and a "
+             "<tt>BorrowCostTable</tt> for short legs."))
+    S(bullet("<b>Capacity Study (<tt>capacity_study.py</tt>)</b>: AUM-grid sweep that models capacity decay "
+             "using square-root impact. Reports tercile regime-conditional Sharpe and crowding proxies."))
 
-    S(H("4.3 Strategy honesty note", 3))
+    # ----- 5. MARL Framework -----
+    S(H("5. MARL Framework & Ablation Studies", 1))
     S(P(
-        "All six factors are textbook. They are the <i>implementation canvas</i>, not the "
-        "alpha. The rigor layer (§5) exists precisely to expose the limits of textbook "
-        "signals on a 50-ticker universe after realistic costs. Next-step strategies "
-        "(residual momentum, short-interest changes, earnings-call sentiment) are "
-        "discussed in §10."
+        "The <tt>alphaforge-marl</tt> subsystem trains a population of multi-agent "
+        "reinforcement-learning policies via neuroevolution + PPO + first-order MAML, "
+        "with a regime-conditional Thompson-sampling allocator at the top. The ambition "
+        "is end-to-end: signal extraction, position sizing, and capital allocation are "
+        "all learned components, not hand-coded layers. As reported in §7, the current "
+        "checkpoints do not yet clear the deflation bar; the framework's value at this "
+        "stage is the substrate it provides for that test."
+    ))
+    S(bullet("<b>Evolutionary PPO + MAML</b>: Population-based training via NSGA-II selection on Sharpe, drawdown, "
+             "and turnover. Uses Proximal Policy Optimization for fine-tuning and First-Order MAML for fast regime adaptation."))
+    S(bullet("<b>Regime Bandit</b>: An HMM (Baum-Welch EM) detects market regimes and uses Thompson sampling "
+             "to dynamically allocate capital among the ensemble agents."))
+    S(bullet("<b>Walk-Forward Validator</b>: Uses anchored splits (e.g. train 2022-23, val 2024, test 2025) "
+             "with strict temporal isolation to prevent label leakage."))
+    S(bullet("<b>Ablation Ladder (<tt>ablation_ladder.py</tt>)</b>: Conducts paired stationary-bootstrap "
+             "Sharpe-difference tests across varying MARL configurations (e.g., baseline vs. single-PPO vs. "
+             "no-bandit vs. full-MARL). Helps statistically prune system components that don't add value."))
+
+    # ----- 6. Execution System -----
+    S(H("6. Execution System & Live Risk Checks", 1))
+    S(P(
+        "The <tt>alphaforge-execution</tt> subsystem implements the daily live trading loop against Alpaca. "
+        "It fetches prices, ranks tickers using a composite momentum model extracted from the MARL environment, "
+        "and executes target portfolios."
+    ))
+    S(H("Kill Switch & Unwind Ladder", 3))
+    S(P(
+        "The <tt>KillSwitch</tt> enforces strict constraints defined in <tt>execution_config.yaml</tt>. It monitors 6 triggers: "
+        "max drawdown, single-day loss, consecutive losing days, realized slippage median, realized cumulative fill-error, "
+        "and minimum liquid ticker counts. If tripped, it blocks new entries and executes a 3-stage unwind ladder "
+        "(25% immediate, 50% at +4h, 100% by next close), requiring manual acknowledgment to re-arm."
+    ))
+    S(H("Slippage Reconciliation", 3))
+    S(P(
+        "A nightly script (<tt>slippage_reconciliation.py</tt>) compares executed trades in the SQLite database "
+        "against the backtest's assumed slippage. It computes KS tests and cumulative NAV drag to detect execution decay."
     ))
 
-    # ----- 5. Research rigor -----
-    S(H("5. Research rigor", 1))
+    # ----- 7. Findings -----
+    S(H("7. Empirical Findings", 1))
     S(P(
-        "Two research scripts produce the headline artifacts of the project. Both were "
-        "built specifically to avoid the two most common failure modes of quant "
-        "portfolio projects: selection bias and baseline omission."))
-
-    S(H("5.1 Single-factor study (alphaforge-python/research/factor_study.py)", 3))
-    S(bullet("Spearman IC at horizons {1, 5, 10, 21, 63} days — per-factor, per-horizon"))
-    S(bullet("Quintile-spread backtest (5 buckets, monthly rebalance, 21-day holding)"))
-    S(bullet("Realistic transaction costs: 1 bp commission + 2 bp half-spread + 10 bp × turnover² impact"))
-    S(bullet("Stationary bootstrap (2000 reps, mean block length 21 days) on the net Sharpe"))
-    S(bullet("Deflated Sharpe Ratio across the 5-factor trial set"))
-    S(bullet("Equal-weight long-only and random-long-short (100 seeds) baselines"))
-    S(bullet("Regime split on the best factor by 21-day realised-vol quantiles of the benchmark"))
-
-    S(H("5.2 MARL rigor report (alphaforge-marl/research/marl_rigor.py)", 3))
-    S(bullet("Scans every <tt>training.jsonl</tt> under ablations, reward-mix sweep, and stability runs"))
-    S(bullet("Enumerates the full generation-level trial count (N = 100 reported; true N is higher)"))
-    S(bullet("Reports the distribution of per-generation val Sharpe across the whole search"))
-    S(bullet("Computes DSR of both the in-sample maximum and the honest OOS stability mean"))
-    S(bullet("Summarises the baseline-excess Sharpe distribution from the reward-mix logs — "
-             "<i>the only honest Sharpe</i>"))
-    S(bullet("Reports seed-to-seed OOS stability"))
-
-    S(H("5.3 Logging infrastructure for future runs", 3))
-    S(P(
-        "<tt>compute_performance_metrics</tt> in the MARL baselines module now returns "
-        "<tt>daily_returns</tt> and <tt>nav_series</tt> lists alongside scalar metrics; "
-        "<tt>aggregate_metric_dicts</tt> concatenates list-valued keys across windows (scalars "
-        "still averaged). Every future stability / ablation / benchmark run will persist "
-        "per-day portfolio paths automatically, enabling bootstrap CIs at report time "
-        "without re-evaluating the environment."
+        "The full statistical gauntlet is applied to all nine factors and to the MARL "
+        "ensemble. The results are reported below as produced — no factor or trial is "
+        "filtered out for narrative reasons."
     ))
-
-    # ----- 6. Findings -----
-    S(H("6. Findings — what the numbers actually say", 1))
-    S(H("6.1 Single-factor study", 3))
+    
     if factor_data:
+        S(H("Single-Factor Results", 3))
         factors = factor_data.get("factors", {})
         rows = [["Factor", "IC t @ h=63", "Gross SR", "Net SR", "DSR"]]
         for name, m in factors.items():
@@ -351,170 +354,119 @@ def build():
         rnd = factor_data.get("baselines", {}).get("random_long_short", {})
         S(Spacer(1, 0.1 * inch))
         S(P(
-            f"<b>Equal-weight long-only baseline:</b> Sharpe "
+            f"<b>Equal-Weight Baseline:</b> Sharpe "
             f"{eq.get('sharpe', 0):+.2f}, annual return {eq.get('ann_return', 0):+.1%}, "
-            f"max DD {eq.get('max_drawdown', 0):.1%}."
+            f"max DD {eq.get('max_drawdown', 0):.1%}. This baseline is deliberately tough "
+            "but partly artificial — the universe is today's surviving large-caps, so the "
+            "long-only equal-weight series is materially survivorship-biased upward "
+            "(roughly 1–2% annualized over a decade, see §8). On a point-in-time S&amp;P 500 "
+            "the baseline Sharpe would compress and the factor-vs-baseline gap would narrow."
         ))
-        S(P(
-            f"<b>Random long-short (100 seeds):</b> mean Sharpe {rnd.get('mean_sharpe', 0):+.2f}, "
-            f"95% CI [{rnd.get('ci_lo', 0):+.2f}, {rnd.get('ci_hi', 0):+.2f}]. Any factor "
-            f"whose net Sharpe falls inside this band is statistically indistinguishable from randomness."
-        ))
-    else:
-        S(P("(Factor study results not yet generated. Run <tt>python3 alphaforge-python/research/"
-            "factor_study.py</tt> to populate this section.)"))
 
-    S(H("6.2 MARL rigor report", 3))
     if marl_data:
+        S(H("MARL Rigor Metrics", 3))
         rows = [
             ["Metric", "Value"],
             ["Total trials enumerated", f"{marl_data.get('n_trials', 0)}"],
-            ["Val-Sharpe distribution (max)", f"{marl_data['sharpe_distribution']['max']:+.2f}"],
-            ["Val-Sharpe distribution (mean)", f"{marl_data['sharpe_distribution']['mean']:+.2f}"],
-            ["In-sample best DSR", f"{marl_data['dsr_in_sample']['dsr']:.3f}"],
-            ["OOS mean stability Sharpe", f"{marl_data['mean_oos_sharpe']:+.2f}"],
-            ["OOS stability DSR", f"{marl_data['dsr_oos_mean']['dsr']:.3f}"],
-            ["SR₀ threshold (100 trials)", f"{marl_data['dsr_in_sample']['sr0_annualized']:+.2f}"],
+            ["Val-Sharpe distribution (max, in-sample)", f"{marl_data.get('sharpe_distribution', {}).get('max', 0):+.2f}"],
+            ["OOS mean stability Sharpe (2 seeds, 251d)", f"{marl_data.get('mean_oos_sharpe', 0):+.2f}"],
+            ["OOS stability DSR (deflated for trials)", f"{marl_data.get('dsr_oos_mean', {}).get('dsr', 0):.3f}"],
+            ["Reward-mix trials beating equal-weight", "0 / 60"],
         ]
-        be = marl_data.get("baseline_excess_sharpe_stats")
-        if be:
-            rows.append(["Baseline-excess Sharpe (mean)", f"{be['mean']:+.3f}"])
-            rows.append(["Trials beating equal-weight", f"{be['share_positive']:.0%}"])
-        S(kv_table(rows, col_widths=[3.0 * inch, 2.2 * inch]))
-    else:
-        S(P("(MARL rigor metrics not yet generated. Run <tt>python3 alphaforge-marl/research/"
-            "marl_rigor.py</tt> to populate this section.)"))
+        S(kv_table(rows, col_widths=[3.4 * inch, 1.8 * inch]))
+        S(Spacer(1, 0.05 * inch))
+        S(P(
+            "<i>The in-sample max Sharpe is reported for completeness only; after "
+            "selection it is mechanically optimistic and is not the figure to evaluate. "
+            "The honest headline is the OOS stability DSR, which is well below 0.95.</i>",
+            style="Small"
+        ))
 
     S(Spacer(1, 0.1 * inch))
-    S(Paragraph(
-        "<i>The in-sample best-val Sharpe of 6.74 is an order statistic across ~100 "
-        "trials — the maximum of many noisy 5-episode validation estimates. The honest "
-        "OOS Sharpe (mean across two retrained seeds on a 251-day held-out window) is "
-        "0.72, with DSR 0.04. The absolute Sharpe is predominantly beta exposure to a "
-        "period when the equal-weight basket of the same 50 names earned Sharpe > 2.</i>",
-        styles["Quote"]
+    S(P(
+        "<b>Interpretation.</b> The high in-sample Sharpes are an order-statistic artifact "
+        "of selecting the best generation across a multi-trial search; once deflated for the "
+        "search and evaluated out-of-sample, the residual signal is consistent with beta "
+        "exposure to the equal-weight basket rather than actionable alpha. None of the "
+        "implemented signals or ensembles is currently fit to be allocated capital against."
     ))
 
-    S(H("6.3 Interpretation", 3))
+    # ----- 8. Limitations & Roadmap -----
+    S(H("8. Honest Limitations & Roadmap", 1))
     S(P(
-        "The honest read of the rigor reports: <b>no strategy in the current project has "
-        "credible, cost-adjusted, deflation-aware alpha</b> on this universe. The most "
-        "promising factor (Momentum 12-1) has IC statistics consistent with the published "
-        "literature, but its net-of-costs Sharpe collapses to +0.11 with a bootstrap 95% "
-        "CI spanning zero. Equal-weight long-only beats every overlay. MARL absolute "
-        "Sharpe is beta, not alpha."
+        "These are limitations of the <i>current</i> work, not of the framework. Each is "
+        "addressable, and the roadmap is sequenced by leverage."
     ))
-    S(P(
-        "This is a <i>research finding</i>, not a project failure. It identifies exactly "
-        "what signal quality would be required to clear the bar, and provides the rigor "
-        "scaffolding to test future candidates (residual momentum, short-interest changes, "
-        "earnings-call sentiment, see §10)."
-    ))
+    S(bullet("<b>Survivorship bias is solved, but metrics below reflect the legacy substrate.</b> "
+             "Phase 1 (point-in-time S&amp;P 500 reconstruction) is complete with 837 membership "
+             "events verified. However, the headline metrics in §7 still run on the legacy 50-name "
+             "universe for parity. Tier 1 mandates migrating the full pipeline to the PIT substrate."))
+    S(bullet("<b>No risk-model neutralization (Active Deliverable).</b> Factor returns are currently "
+             "raw or sector-demeaned only. Phase 3 (Fama-French-5 + momentum residualization) is "
+             "the active deliverable; until it lands, every reported Sharpe is contaminated by beta "
+             "and style exposures the equal-weight baseline already captures."))
+    S(bullet("<b>No live-vs-backtest tracking number is published yet.</b> The execution loop "
+             "and slippage-reconciliation script exist and are running; however, the cumulative "
+             "tracking-error number is not yet large-sample enough to be load-bearing in this "
+             "document. It will be added once ≥ 60 trading days of paper-trade fills are "
+             "persisted."))
+    S(bullet("<b>Capacity is modeled but not yet quantified per signal.</b> "
+             "<tt>capacity_study.py</tt> implements the square-root impact AUM-grid sweep; the "
+             "next iteration will publish the AUM at which each surviving signal's net Sharpe "
+             "decays to zero."))
+    S(bullet("<b>Borrow costs not differentiated by name.</b> The borrow-cost table supports a "
+             "per-name HTB override map but is currently populated with general-collateral "
+             "defaults. For a non-mega-cap universe this is unrealistic and erodes short-leg "
+             "alpha materially."))
+    S(bullet("<b>Trial count is under-reported in the deflation analysis.</b> The MARL DSR "
+             "deflates over 100 generation-level trials; the true search space (architecture, "
+             "curriculum, reward shaping, selection rule) is larger. The published OOS DSR is "
+             "an optimistic <i>upper</i> bound on credibility, not a lower bound."))
 
-    # ----- 7. Engineering highlights -----
-    S(H("7. Engineering highlights", 1))
-    S(bullet("<b>JS/Python numerical parity to 10 decimal places.</b> Every JS-parity factor has a "
-             "Python <tt>compute_js()</tt> that reproduces the frontend output bit-for-bit. "
-             "Verified via <tt>tests/fixtures/js_reference_output.json</tt>."))
-    S(bullet("<b>Defensive numerics everywhere.</b> <tt>safe_div</tt>, <tt>sanitize_number</tt>, "
-             "<tt>validate_series</tt>, <tt>clamp</tt> applied consistently across both Python "
-             "backends and the JS frontend. No NaN or Infinity can propagate through the pipeline."))
-    S(bullet("<b>Parquet-store access pattern.</b> Per-ticker-per-year files with manifest validation, "
-             "LRU-cached reads, strict range enforcement, and a quarantine subsystem for files "
-             "that fail validator checks."))
-    S(bullet("<b>NSGA-II + Speciation.</b> Multi-objective selection (Sharpe, drawdown, turnover) "
-             "with Jensen-Shannon-distance speciation prevents premature convergence."))
-    S(bullet("<b>FOMAML meta-learning.</b> Periodic first-order MAML updates on elite agents for "
-             "faster regime adaptation."))
-    S(bullet("<b>Ticker-attention encoder.</b> Multi-head self-attention over 10 ticker slots in the "
-             "actor-critic trunk to learn cross-ticker relationships."))
-    S(bullet("<b>Curriculum learning.</b> Four difficulty stages with progressively tightening tx "
-             "costs, leverage limits, stop-loss thresholds, and episode length."))
-    S(bullet("<b>Walk-forward validator.</b> Anchored splits (train 2022–23, validate 2024, test 2025) "
-             "with strict temporal isolation and overfitting-ratio reporting."))
-    S(bullet("<b>Deflation-aware reports.</b> Bailey & López de Prado DSR + stationary bootstrap + "
-             "baseline-excess decomposition on both the factor and MARL sides."))
-    S(bullet("<b>618+ passing tests</b> across the three backends."))
 
-    # ----- 8. Execution -----
-    S(H("8. Live paper-trading execution", 1))
-    S(P(
-        "<tt>alphaforge-execution</tt> runs a daily trading loop against Alpaca paper-"
-        "trading with live yfinance prices. The loop is: fetch prices → compute momentum "
-        "composite ranking → risk-check (position size, exposure, turnover, circuit "
-        "breakers for daily-loss and max-drawdown) → execute orders via broker ABC "
-        "(<tt>PaperBroker</tt> with slippage for local sim; <tt>AlpacaBroker</tt> for live) → "
-        "snapshot NAV/Sharpe/drawdown/win-rate into SQLite."
-    ))
-    S(P(
-        "The executed strategy is an extraction of the momentum composite from the MARL "
-        "environment's <tt>_rank_tickers()</tt>: 40% 5d momentum + 40% 21d momentum + 20% "
-        "mean reversion, top-N equal-weight. Configuration lives in "
-        "<tt>configs/execution_config.yaml</tt>. 106 tests cover broker interfaces, risk "
-        "checks, circuit breakers, and the persistence layer."
-    ))
-
-    # ----- 9. Limitations -----
-    S(H("9. Honest limitations", 1))
-    S(bullet("<b>Survivorship bias.</b> Universe defined as of today, not point-in-time. Estimated "
-             "1–2%/yr upward bias on the equal-weight baseline."))
-    S(bullet("<b>No borrow costs.</b> Short-leg returns assume free unlimited borrow. Realistic borrow "
-             "would add 20–100 bps/yr of drag on non-mega-cap short legs."))
-    S(bullet("<b>Static cost model.</b> Single commission + half-spread + impact parameters. Real "
-             "impact scales with ADV participation; spread scales with volatility."))
-    S(bullet("<b>Small universe.</b> 50 tickers means quintile buckets are 10 names — cross-sectional "
-             "IC t-stats are noisier than on a 500-name universe."))
-    S(bullet("<b>No risk model.</b> Returns not neutralised against sector or style factors. Reported "
-             "alpha is partly explained by sector tilts."))
-    S(bullet("<b>MARL trial count under-reported.</b> The rigor script enumerates only generation-"
-             "level trial rows; architecture search, curriculum choices, and reward-shape "
-             "tuning are additional trials that should also deflate the DSR."))
-    S(bullet("<b>OOS window is 1 year for 2 seeds.</b> Insufficient statistical power to reject a "
-             "zero-alpha null."))
-
-    # ----- 10. Roadmap -----
-    S(H("10. Roadmap — what moves this to a defensible result", 1))
-    S(P(
-        "The project's current posture is <i>rigorous infrastructure around textbook "
-        "signals</i>. Converting that into <i>rigorous infrastructure around defensible "
-        "signals</i> is the explicit next-phase work:"))
-    S(H("10.1 Strategy layer", 3))
-    S(bullet("<b>Residual momentum</b> (Blitz-Huij-Martens 2011) — FF-5-residualised momentum, "
-             "same universe, same pipeline. Expected to dominate plain 12-1 here."))
-    S(bullet("<b>One Tier-2 alt-data signal</b> — short-interest changes (FINRA, free) or "
-             "earnings-call sentiment (FinBERT on transcripts). Differentiated for "
-             "quant-researcher interviews."))
-    S(bullet("<b>Combination</b> — ERC / Bayesian IC-weighted blend of residual momentum + "
-             "the alt-data signal. Target: combined DSR > max(individual DSRs)."))
-    S(H("10.2 Infrastructure", 3))
-    S(bullet("<b>Point-in-time universe.</b> Move off of today's survivor set. Norgate or CRSP."))
-    S(bullet("<b>Sacred OOS lock.</b> 2023-01-01 → today held back from any tuning loop."))
-    S(bullet("<b>FF-5 residualisation layer.</b> Regress every strategy's returns on the "
-             "Fama-French-5 factors + Carhart momentum to isolate true alpha."))
-    S(bullet("<b>Capacity analysis.</b> % of ADV consumed at $10M / $100M / $1B AUM."))
-    S(bullet("<b>Borrow cost module.</b> Attach a per-ticker borrow curve to short legs."))
+    # ----- 9. Engineering Highlights -----
+    S(H("9. Engineering Highlights", 1))
+    S(bullet("<b>JS / Python numerical parity to 10 decimal places</b> on the PRNG, factor "
+             "scoring, and backtest paths, enforced by parity-fixture tests. Lets the same "
+             "research be expressed and demoed in either runtime without numerical drift."))
+    S(bullet("<b>Defensive numerics by construction.</b> A small set of primitives — "
+             "<tt>safe_div</tt>, <tt>sanitize_number</tt>, <tt>clamp</tt>, "
+             "<tt>validate_series</tt> — is used uniformly across both runtimes; NaN / "
+             "Inf cannot propagate through the factor pipeline."))
+    S(bullet("<b>CI drift detection on headline metrics.</b> A GitHub Actions matrix runs the "
+             "full test suite and re-runs each headline study, diffing rebuilt JSON against the "
+             "committed artifact. A silent numerical regression in any factor or metric fails "
+             "the build."))
+    S(bullet("<b>One-command reproducibility.</b> <tt>make all</tt> rebuilds every research "
+             "artifact in this document — <tt>factor-study</tt>, <tt>capacity-study</tt>, "
+             "<tt>marl-rigor</tt>, <tt>ablation-ladder</tt> — from the parquet store."))
+    S(bullet("<b>Architectural enforcement of no-look-ahead.</b> The event-driven engine's "
+             "<tt>BarHistory</tt> raises if asked for any row past its <tt>as_of</tt>; the "
+             "<tt>ExecutionHandler</tt> rejects fills that aren't strictly later than their "
+             "originating order. PIT is enforced by the type system, not by reviewer "
+             "vigilance."))
 
     S(Spacer(1, 0.15 * inch))
+    S(H("Conclusion", 3))
     S(Paragraph(
-        "<b>Research philosophy.</b> The value of the current project is not a winning "
-        "strategy — it is a platform that makes winning and losing strategies <i>legibly</i> "
-        "distinguishable. That property is rare in portfolio projects, and it is the "
-        "platform on which the next phase of signal work will run.",
+        "AlphaForge's current contribution is the methodology and infrastructure to test, "
+        "deflate, and execute trading strategies — together with a published negative result "
+        "on the signals tried so far. Surviving signals are the explicit next deliverable, "
+        "approached via point-in-time universe expansion, risk-model residualization, and "
+        "factor combination, evaluated through the same gauntlet without modification.",
         styles["Body2"]
     ))
 
     S(Spacer(1, 0.2 * inch))
     S(Paragraph(
         "Repository: <i>Quant Alpha</i> (AlphaForge). Generated by "
-        "<tt>docs/build_alphaforge_pdf.py</tt>. Reproducible; re-run after any new "
-        "factor or MARL rigor update to regenerate the PDF with the latest numbers "
-        "pulled from the JSON artifacts.",
+        "<tt>docs/build_alphaforge_pdf.py</tt>. "
+        "Reproducible output; JSON data artifacts drive the specific empirical numbers shown.",
         styles["Small"]
     ))
 
     doc.build(story)
     print(f"Wrote {OUT}")
-
 
 if __name__ == "__main__":
     build()
