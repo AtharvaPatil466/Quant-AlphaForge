@@ -1,0 +1,146 @@
+{
+  "timestamp": "2026-04-25T16:41:40.541259Z",
+  "dry_run": false,
+  "results": [
+    {
+      "label": "momentum",
+      "account_id": "444f0015-7293-44ae-8ebf-2dd0cc8b0745",
+      "equity_before": 103081.9,
+      "n_positions": 5,
+      "positions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "market_value": 5150.14,
+          "unrealized_pl": 352.104105
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "market_value": 5495.88,
+          "unrealized_pl": 307.45
+        },
+        {
+          "ticker": "META",
+          "qty": 8.0,
+          "market_value": 5400.24,
+          "unrealized_pl": 538.7
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 13.0,
+          "market_value": 5520.06,
+          "unrealized_pl": 516.165
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 27.0,
+          "market_value": 5623.29,
+          "unrealized_pl": 853.337538
+        }
+      ],
+      "actions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "order_id": "568811d5-a17d-4f1f-b749-a1a2200437cb",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "order_id": "1e4e444d-3173-4c42-b22d-013de6942073",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "META",
+          "qty": 8.0,
+          "order_id": "a7c24bc8-9478-46cd-8095-aee4a5729367",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 13.0,
+          "order_id": "fb423cdc-585a-49e4-b2f4-e95638b72285",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 27.0,
+          "order_id": "5d8e90b4-e11b-462b-a77f-646bd5582312",
+          "status": "OrderStatus.ACCEPTED"
+        }
+      ]
+    },
+    {
+      "label": "marl",
+      "account_id": "8d21b131-8fce-485d-aa6a-f9984b0dafe7",
+      "equity_before": 100609.06,
+      "n_positions": 5,
+      "positions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "market_value": 5150.14,
+          "unrealized_pl": 34.39
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "market_value": 5495.88,
+          "unrealized_pl": 305.5
+        },
+        {
+          "ticker": "GOOGL",
+          "qty": 15.0,
+          "market_value": 5166.0,
+          "unrealized_pl": 110.890005
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 12.0,
+          "market_value": 5095.44,
+          "unrealized_pl": -9.72
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 25.0,
+          "market_value": 5206.75,
+          "unrealized_pl": 168.0
+        }
+      ],
+      "actions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "order_id": "a0da63dd-1eae-4880-80bd-b3c34798e0f9",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "order_id": "e36e1bec-4d31-42af-955c-b7e7ca1ced25",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "GOOGL",
+          "qty": 15.0,
+          "order_id": "32f83b10-e12e-4316-9106-3af9eb0ef5d7",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 12.0,
+          "order_id": "7f03675e-d79a-454f-b9a6-b1854dfcd10a",
+          "status": "OrderStatus.ACCEPTED"
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 25.0,
+          "order_id": "6818c1c6-b0d5-406b-b43e-6cf9f9678f1b",
+          "status": "OrderStatus.ACCEPTED"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "timestamp": "2026-04-25T16:41:23.651478Z",
+  "dry_run": true,
+  "results": [
+    {
+      "label": "momentum",
+      "account_id": "444f0015-7293-44ae-8ebf-2dd0cc8b0745",
+      "equity_before": 103081.9,
+      "n_positions": 5,
+      "positions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "market_value": 5150.14,
+          "unrealized_pl": 352.104105
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "market_value": 5495.88,
+          "unrealized_pl": 307.45
+        },
+        {
+          "ticker": "META",
+          "qty": 8.0,
+          "market_value": 5400.24,
+          "unrealized_pl": 538.7
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 13.0,
+          "market_value": 5520.06,
+          "unrealized_pl": 516.165
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 27.0,
+          "market_value": 5623.29,
+          "unrealized_pl": 853.337538
+        }
+      ],
+      "actions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "META",
+          "qty": 8.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 13.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 27.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        }
+      ]
+    },
+    {
+      "label": "marl",
+      "account_id": "8d21b131-8fce-485d-aa6a-f9984b0dafe7",
+      "equity_before": 100609.06,
+      "n_positions": 5,
+      "positions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "market_value": 5150.14,
+          "unrealized_pl": 34.39
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "market_value": 5495.88,
+          "unrealized_pl": 305.5
+        },
+        {
+          "ticker": "GOOGL",
+          "qty": 15.0,
+          "market_value": 5166.0,
+          "unrealized_pl": 110.890005
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 12.0,
+          "market_value": 5095.44,
+          "unrealized_pl": -9.72
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 25.0,
+          "market_value": 5206.75,
+          "unrealized_pl": 168.0
+        }
+      ],
+      "actions": [
+        {
+          "ticker": "AAPL",
+          "qty": 19.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "AVGO",
+          "qty": 13.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "GOOGL",
+          "qty": 15.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "MSFT",
+          "qty": 12.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        },
+        {
+          "ticker": "NVDA",
+          "qty": 25.0,
+          "would_submit": "MARKET SELL (queued for next open if market closed)"
+        }
+      ]
+    }
+  ]
+}

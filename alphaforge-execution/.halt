@@ -1,0 +1,24 @@
+Tier 1 methodology-validation pause — engaged 2026-04-25.
+
+Reason: live loop runs an unvalidated momentum strategy on a 6-name
+mega-cap tech universe with extreme survivorship bias. During Tier 1
+(point-in-time universe reconstruction, risk-model residualization,
+deflation-aware signal evaluation) it is incorrect to continue
+generating a "live track record" on a strategy we are simultaneously
+declaring un-validated.
+
+Re-launch conditions (any earlier removal of this file is a mistake):
+  1. Tier 1 gate passed: ≥1 signal with DSR > 0.95 OOS net of costs on
+     point-in-time S&P 500, replicated across two non-overlapping OOS
+     windows.
+  2. The signal that re-launches the live loop is the *survivor* from
+     Tier 1 — not the legacy momentum composite, not the MARL
+     checkpoint, not anything else.
+  3. Universe expanded from the current 6-name list to (at minimum) the
+     surviving names from Tier 1's PIT-S&P-500 substrate.
+  4. Minimum 6 months of paper trading required before any external
+     claim of "live track record."
+
+See docs/TIER1_PAUSE.md for full context.
+To resume: delete this file. Do not delete it without satisfying all
+four conditions above.

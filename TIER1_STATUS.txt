@@ -1,0 +1,557 @@
+TIER 1 — MASTER PLAN AND PROGRESS
+==================================
+Generated: 2026-04-29
+Owner: Atharva Patil
+
+This is a single reference document for where we are, where we're going,
+and what was concluded along the way. Treat it as the live status of
+the AlphaForge → hedge-fund seed effort.
+
+
+THE FRAMING
+-----------
+
+AlphaForge is being built as the FOUNDATIONAL STACK FOR A FUTURE HEDGE
+FUND, not as a portfolio project. Every decision is rated against the
+fund-seed bar (provable edge, capital-grade infra, LP-credible
+reporting), not the student/intern bar.
+
+Current rating against that bar: 2.5 / 10  (where 10 is launch-ready).
+
+Tier 1 is the next thing that has to happen. It is methodology
+validation: re-run the existing factor research stack on a defensible
+substrate to find out whether ANY signal in this universe survives a
+deflation-aware, cost-honest gauntlet. Pass or fail decides whether
+Tier 2 is justified.
+
+
+THE TIER 1 BINARY GATE  (write it on a wall)
+--------------------------------------------
+
+By end of month 9-10, on a point-in-time S&P 500 universe, with a
+realistic cost model, deflated for the full search:
+
+  PASS:  at least one signal (single or combined) has DSR > 0.95 OOS
+         net of costs, with bootstrap Sharpe CI excluding zero,
+         replicated across two non-overlapping OOS sub-windows.
+
+  FAIL:  no survivor → do not proceed to Tier 2. Reassess via the
+         failure-path decision matrix.
+
+The gate is binary. Not "I tried hard." Not "the methodology is good."
+Did a signal survive — yes or no.
+
+
+THE FULL PHASE PLAN
+-------------------
+
+  Phase  | What                                      | Hrs  | Wks | Status
+  -------|-------------------------------------------|------|-----|-----------------------------
+  0      | Pause live execution loop                 |   5  |  1  | DONE
+  1      | Point-in-time S&P 500 universe            |  90  |  6  | DONE
+  2      | Engine consolidation (ρ=0.93 gap)         |  ~11 |  2  | DONE
+  3      | FF5 + momentum risk-model residualization |  70  |  4  | IN PROGRESS (pipeline runs; overlap gate failing)
+  3.5    | Compute audit before Phase 4              |   6  | 0.5 | not started
+  4      | Single-factor gauntlet (PIT + residuals)  | 100  |  6  | not started
+  5      | Factor combination + capacity + gauntlet  | 120  |  8  | not started
+  6      | LP-grade writeup; Tier 2 decision         | 150  | 13  | not started
+
+Sustainable budget assumed at ~15-20 hrs/week alongside coursework.
+Total ~571 hours, ~10 months.
+
+
+[DONE]  PHASE 0 — LIVE EXECUTION PAUSE  (2026-04-25)
+====================================================
+
+Why
+---
+The live loop was running an unvalidated momentum strategy on a 6-name
+mega-cap tech universe with extreme survivorship bias. Continuing to
+accumulate a "live track record" on a strategy we are simultaneously
+declaring un-validated is incoherent.
+
+What got done
+-------------
+  - .halt file engaged at  alphaforge-execution/.halt
+    run_daily.sh exits with HALTED on every cron fire. Fully reversible.
+  - Pause memo at  alphaforge-execution/docs/TIER1_PAUSE.md
+  - 10 open Alpaca paper positions across momentum + MARL accounts
+    flattened via  alphaforge-execution/scripts/tier1_close_positions.py
+  - Slippage-calibration mode refactor explicitly DEFERRED
+    (only 7 lifetime fills exist; not load-bearing)
+
+Re-launch conditions  (all four required)
+-----------------------------------------
+  1. Tier 1 gate passed
+  2. The signal that re-launches is the Tier 1 survivor
+     (not legacy momentum, not MARL)
+  3. Universe expanded from 6 → at minimum the surviving Tier 1 names
+  4. ≥6 months paper trading before any external claim of
+     "live track record"
+
+
+[DONE]  PHASE 1 — POINT-IN-TIME S&P 500 UNIVERSE  (2026-04-26)
+==============================================================
+
+Why
+---
+Every result downstream is meaningless without a defensible universe.
+The legacy 50-name today-surviving universe survivorship-biases
+long-only baselines upward by ~1-2%/year, which made every prior
+factor study impossible to interpret cleanly.
+
+Five sessions, ~90 hours of work, with 5 sessions of lessons captured
+in  alphaforge-python/data/market/PIT_UNIVERSE_DESIGN.md.
+
+Session results
+---------------
+  S1: Parse one verified Wikipedia revision (TSLA add 2020-12-21)
+      → CIK-enriched DataFrame. 505 rows, TSLA CIK correct.
+      5 finding lessons captured.
+
+  S2: Enumerate every revision 2010-2026, calibrate byte-delta filter.
+      2,811 revisions, hybrid filter (byte-delta OR comment-keyword)
+      → 1,118 candidates.
+
+  S3: Bulk fetch wikitext, parse, CIK-based diff → event log.
+      837 events (407 REMOVE + 352 ADD + 78 RENAME).
+      4 documented parser bugs found and fixed.
+
+  S4: Validation suite. 12/12 pytest fixtures pass; 84% match against
+      Wikipedia changes table (semi-independent); 15/16 year-ends
+      within [495, 510] band.
+
+  S5: yfinance OHLCV pull + SPX TR reconciliation.
+      621/829 tickers pulled (75% — delisted are the 25%).
+      Monthly return correlation 0.9895 vs ^SP500EW.
+
+Headline artifact:  alphaforge-python/data/market/pit/
+  - parser.py    (multi-format constituents parser)
+  - cik.py       (EDGAR ticker→CIK with .↔- normalization)
+  - differ.py    (CIK-based ADD/REMOVE/RENAME differ
+                  with action-precedence + suspect-pair guard)
+  - enumerate_revisions.py, fetch_content.py,
+    changes_parser.py, validator.py
+  - artifacts/_event_log.parquet            ← the universe
+  - artifacts/_baseline_2010-01-10.parquet  ← bootstrap baseline
+  - artifacts/_session{1..5}_audit.json
+
+Canonical accessor for downstream code:
+  from data.market.pit.validator import membership_on_date
+  members = membership_on_date(events, baseline, "2018-04-15")
+  # returns set[ticker]
+
+Known limitations carried forward
+---------------------------------
+  - 226/881 ever-member tickers have no yfinance data (delisted /
+    restructured). Phase 4-5 must treat these as data gaps in any
+    reported metric.
+  - Siblis paid cross-check deferred (no free programmatic API).
+    Wikipedia changes-table partial substitute at 84% is what we have.
+
+
+[DONE]  PHASE 2 — ENGINE CONSOLIDATION  (2026-04-29)
+====================================================
+
+Why
+---
+Two engines (engine.py synthetic + real_engine.py real-data) reconcile
+against the architecturally-correct event_driven/ engine at only
+ρ=0.93. Need a single canonical engine before Phase 4-5 backtest work.
+
+Survey reframing  (session 1 finding)
+-------------------------------------
+The original "30-hour merge of two engines into one" was wrong.
+The reality:
+  - engine.py (synthetic) MUST STAY — has a unique JS-parity contract
+    that EventDrivenEngine cannot satisfy.
+  - real_engine.py GETS DELETED — architecturally wrong on
+    costs/fills/factor windows; nothing to preserve.
+  - event_driven/ becomes canonical for all real-data backtests.
+  - Headline research artifacts (factor_study.py, capacity_study.py)
+    and MARL NEVER USED THESE ENGINES — they have their own
+    panel-based backtest paths. So the consolidation does not affect
+    Tier 1 critical path.
+
+Session results
+---------------
+  S1: Design memo  alphaforge-python/backtest/ENGINE_CONSOLIDATION_DESIGN.md
+      DONE.
+
+  S2: Rename engine.py → synthetic_demo.py, update 7 import sites.
+      DONE — 508/508 tests still pass including test_parity.py
+      (JS bit-for-bit at 10 decimal places).
+
+  S3: EventDrivenEngine adapter for the real-data API route.
+      DONE — adapter + 7 regression tests.
+      API endpoint returns realistic Sharpe 0.47, +1.64% return,
+      7% max DD on 68 NAV points.
+
+  S4: Delete real_engine.py, archive 4 reconciliation scripts under
+      research/_archived/, add the "I deleted it on purpose"
+      regression test.
+      DONE — real_engine.py removed, 4 historical scripts preserved
+      under alphaforge-python/research/_archived/, new
+      tests/test_engine_consolidation.py gates the deletion.
+
+  S5: Doc cleanup (CLAUDE.md / AGENTS.md / __init__.py docstrings).
+      DONE — top-level docs now describe synthetic_demo as the
+      surviving JS-parity path and event_driven/ as the canonical
+      real-data engine.
+
+Bug worth remembering  (session 3)
+----------------------------------
+The adapter shipped flat NAV first.
+  - EngineConfig.min_order_notional=100 (sensible for $1M cash)
+    clashed with my initial_cash=100 (legacy display scale)
+  - every order sized at ~$25 was silently skipped below the floor
+  - false-positive test (benchmark_diverges_from_portfolio) hid it
+The fix: run engine at $1M, rescale NAV to base-100 only at output.
+Added explicit  test_adapter_portfolio_actually_trades  to gate that
+regression class going forward.
+
+Test status post-session-5:  526 passed, 2 warnings
+  (524 prior + 2 reference-factor-loader tests)
+  on 2026-04-29 via:
+    cd alphaforge-python && python3 -m pytest tests/ -q
+
+
+[IN PROGRESS]  PHASE 3 — RISK-MODEL RESIDUALIZATION  (pipeline runs end-to-end; methodology gate failing)
+============================================================================
+
+Why
+---
+Every IC and Sharpe in the legacy factor study is contaminated by
+FF5 + momentum exposure. The equal-weight baseline crushes everything
+because the universe's beta is the dominant return source.
+Residualizing strips that out so we measure ALPHA, not BETA.
+
+Required validation before Phase 4 trusts it
+--------------------------------------------
+  - FF5 factors built from the universe must have correlation > 0.85
+    against Ken French's published factor returns over the overlap
+    period (MKT, SMB, HML, RMW, CMA, plus UMD).
+  - Below 0.85 → factor construction is wrong; do NOT proceed.
+  - Spot-test: residualizing the size factor against itself must drive
+    its SMB-loading to ≈ 0.
+
+Math depth note: this phase requires re-deriving Fama-MacBeth
+regressions by hand. That is not overhead — it is the parallel skill
+work happening anyway.
+
+Implementation shipped  (2026-04-29)
+------------------------------------
+  - `alphaforge-python/data/market/pit/history.py`
+      PIT membership-aware panel loader over the broad
+      `data/quarantine/market/` parquet store. This is the missing
+      bridge between the Phase-1 universe substrate and any Phase-3/4
+      study code.
+  - `alphaforge-python/data/market/pit/sector_map.py`
+      Static ever-member ticker→sector map builder from the cached
+      snapshot corpus. This unblocks the D2 sector-neutral path on the
+      PIT universe without falling back to the legacy 50-name manifest.
+  - `alphaforge-python/research/risk_model.py`
+      Generic OLS factor model, no-look-ahead rolling residualization,
+      replica-vs-reference factor correlation checks, and the explicit
+      local reference-factor contract (`load_reference_factor_table`).
+      This is the validation/mechanics layer Phase 3 will build on.
+  - `alphaforge-python/research/factor_study.py`
+      Now defaults to the PIT/quarantine substrate and uses the PIT
+      sector-map cache for sector-neutralization. The study path is no
+      longer hard-wired to the legacy surviving-50 universe. It also
+      now supports a residualized-return mode behind an explicit local
+      factor-file contract. When
+      `ALPHAFORGE_FACTOR_STUDY_RESIDUALIZE=1` and
+      `ALPHAFORGE_REFERENCE_FACTORS=/path/to/file` are set, ICs,
+      baselines, and quintile backtests run on no-look-ahead rolling
+      FF5+UMD residual returns rather than raw returns.
+  - `alphaforge-python/research/ff5_replication.py`
+      Defines the strict local characteristics contract and builds
+      daily PIT-based MKT/SMB/HML/RMW/CMA/UMD replicas over
+      PIT-masked close panels. The Ken French overlap gate is now
+      executable without depending on any notebook-only logic.
+  - `alphaforge-python/research/phase3_validate_ff5.py`
+      Single CLI entrypoint for the actual gate: load PIT close data,
+      load local characteristics + local reference factors, build the
+      replica, compute overlap correlations, write JSON, and fail fast
+      if any factor lands below 0.85.
+  - `alphaforge-python/research/PHASE3_DATA_CONTRACT.md`
+      Canonical doc for the two local Phase-3 inputs, their schema,
+      and the staging/check/validate command flow.
+  - `alphaforge-python/research/phase3_stage_inputs.py`
+      Normalizes raw local reference-factor and characteristics files
+      into the canonical Phase-3 schema and fails fast on duplicate
+      date or `(date, ticker)` keys.
+  - `alphaforge-python/research/phase3_check_inputs.py`
+      Sanity-checks staged Phase-3 inputs for date coverage,
+      missingness, duplicate keys, and obvious percent-vs-decimal
+      unit mistakes before the overlap gate.
+  - New regression tests:
+      `tests/test_pit_history.py`, `tests/test_risk_model.py`,
+      `tests/test_reference_factor_loader.py`,
+      `tests/test_ff5_replication.py`
+      plus residualized-study helper coverage in
+      `tests/test_factor_study_helpers.py`.
+  - Verification:
+      `cd alphaforge-python && python3 -m pytest tests/ -q`
+      → 531 passed, 2 warnings on 2026-04-29.
+
+Current measured state  (2026-04-29)
+------------------------------------
+  - Local inputs are staged:
+      `alphaforge-python/research/out/phase3_reference_staged.csv`
+      `alphaforge-python/research/out/phase3_characteristics_staged.csv`
+  - Characteristics build now runs from SEC Company Facts + the PIT
+    OHLCV store and currently stages 85,350 rows across 572 tickers
+    and 179 month-ends (2011-06-30 → 2026-04-30).
+  - The actual Ken French overlap gate has been executed multiple times
+    and is now blocked on factor-construction quality, not on missing
+    data or broken tooling.
+  - Latest overlap correlations from
+      `alphaforge-python/research/out/phase3_ff5_validation.json`
+      are:
+        MKT  0.9132
+        SMB  0.6456
+        HML  0.8676
+        RMW  0.2321
+        CMA  0.6325
+        UMD  0.8236
+  - Interpretation:
+      HML has cleared the 0.85 threshold, and the latest replica-side
+      sort refinements materially improved SMB/RMW/CMA, but all three
+      still remain below gate. The current best-measured replica
+      variant uses annual June sorts plus OP/Inv-specific exclusions
+      for Financials, Real Estate, and Utilities. The remaining blocker
+      is still replica methodology, especially issuer eligibility and
+      accounting comparability in the profitability/investment sorts.
+  - No residualized factor-study rerun artifact exists yet because the
+    >0.85 overlap gate is still not cleared.
+
+Immediate next gating steps
+---------------------------
+  1. Keep the current staged inputs as the working baseline and debug
+       factor construction rather than re-solving data acquisition.
+  2. Diagnose why SMB, RMW, and CMA remain below the >0.85 overlap
+       gate despite HML now clearing it.
+  3. Focus the next pass on:
+       - book-equity construction and accounting exclusions
+       - operating-profitability tag mapping / issuer coverage
+       - investment timing / eligibility details
+       - any remaining annual-sort breakpoint mismatches
+  4. Re-run:
+       `python3 research/phase3_validate_ff5.py \
+         --reference research/out/phase3_reference_staged.csv \
+         --characteristics research/out/phase3_characteristics_staged.csv`
+       after each methodology change and do not proceed until
+       MKT/SMB/HML/RMW/CMA/UMD all clear 0.85.
+  5. Only after that gate passes, rerun `research/factor_study.py` with
+       `ALPHAFORGE_FACTOR_STUDY_RESIDUALIZE=1` and the same reference
+       file to produce the first residualized Phase-3 headline artifact.
+
+
+[NOT STARTED]  PHASE 3.5 — COMPUTE AUDIT  (~6 hrs)
+==================================================
+
+Why
+---
+Phase 4 will run 11 factors × 877 tickers × purged CV × two OOS
+windows × bootstrap reps. Without a profiling pass first, we either
+OOM or find out the headline run takes 200 hours of single-machine
+compute.
+
+Decision criterion
+------------------
+If projected wall-clock > 40 hours, redesign before running.
+Likely mitigations:
+  - vectorize per-ticker loops
+  - cache intermediate panels
+  - parallelize across factors with multiprocessing
+  - reduce bootstrap reps from 2000 → 1000 in Phase 4
+    (final survivors get 2000)
+  - rent a $0.50/hr cloud box for the headline run only
+
+
+[NOT STARTED]  PHASE 4 — SINGLE-FACTOR GAUNTLET  (~100 hrs / 6 wks)
+===================================================================
+
+Re-run all 11 factors on PIT S&P 500 with risk-model-residualized
+returns. Apply:
+  - Hansen SPA + White's Reality Check across the full trial set
+  - Deflated Sharpe (Bailey & López de Prado)
+  - Purged-embargoed walk-forward CV with 21-day embargo
+  - TWO non-overlapping OOS windows (e.g., 2022-2023 and 2024-2025);
+    a signal must survive BOTH.
+
+Decision at week 14
+-------------------
+  - ≥1 single factor survives → Phase 5 is upside (combine for
+    stronger Sharpe)
+  - None survive → Phase 5 must clear the gate alone, or Tier 1 fails
+
+
+[NOT STARTED]  PHASE 5 — FACTOR COMBINATION  (~120 hrs / 8 wks)
+===============================================================
+
+Edge typically lives in combinations, not single factors. This phase:
+  - Cross-sectional combination
+    (IC-weighted ensemble OR Markowitz overlay
+    with factor-blended expected returns)
+  - Turnover-penalized portfolio construction
+  - Sector + beta neutralization at the portfolio level
+  - Capacity number: AUM at which square-root impact eats the edge
+    to zero
+  - Full gauntlet (DSR, SPA, RC, purged CV, two OOS) on the combined
+    signal
+
+Kill criterion at week 22
+-------------------------
+If combined still fails DSR > 0.95 on both OOS, THE GATE HAS FAILED.
+Proceed to Phase 6 to write the failure honestly. Do not rationalize.
+
+
+[NOT STARTED]  PHASE 6 — HONEST WRITEUP + TIER 2 DECISION  (~150 hrs / 13 wks)
+==============================================================================
+
+The most important phase, pass or fail.
+
+If gate passed
+--------------
+  - LP-grade research memo: thesis, methodology, results with all CIs
+    and deflation, capacity, costs, limitations, what would change
+    my mind
+  - Begin live paper-trading the survivor signal (the 2-yr
+    live-vs-backtest record is the single most credibility-generating
+    future artifact)
+  - Begin Tier 2 sub-plan
+
+If gate failed
+--------------
+Equally rigorous memo: what was tested, what didn't survive, what the
+failure tells you about the inefficiency space.
+THIS IS THE DOCUMENT THAT GETS YOU INTO A TOP QUANT MASTER'S OR ONTO
+A DESK.
+
+Apply the failure-path decision matrix:
+
+  Diagnostic                                | Diagnosis            | Tier 2 pivot
+  ------------------------------------------|----------------------|-------------------------------------
+  Raw IC > 0 but residualized IC ≈ 0        | Beta/style was the   | WRONG SIGNAL CLASS — pivot to
+                                            | whole story          | event-driven, microstructure, alt-data
+  IC > 0 raw + residualized but             | Real signal eaten    | EXECUTION PROBLEM — lower turnover,
+  net Sharpe ≤ 0                            | by costs             | futures/FX
+  IC ≈ 0 raw and residualized,              | No signal in this    | WRONG CONSTRUCTION OR UNIVERSE TOO
+  both OOS                                  | construction         | EFFICIENT — refine OR move to
+                                            |                      | Russell 1000 paid data
+  IC > 0 in one OOS but not the other       | Regime-dependent     | CAPACITY-VS-REGIME — only justification
+                                            |                      | to revisit MARL
+  Combined survives but capacity AUM < $1M  | Edge exists but not  | PROOF OF METHODOLOGY ONLY — pivot
+                                            | tradable at scale    | asset class
+  All single + combination fail             | The whole approach   | UNIVERSE-LEVEL PIVOT (futures/crypto)
+                                            | did not work         | OR accept negative + double down on
+                                            |                      | desk-track path
+
+
+PARALLEL SKILL TRACK
+====================
+(every week, ~5-8 hrs, NON-NEGOTIABLE)
+
+Code is half of what is needed for fund-founder credibility.
+The other half:
+
+1. MATH FOUNDATIONS
+   Strang/Axler → measure-theoretic probability →
+   Shreve I & II (stochastic calculus) → Boyd convex optimization.
+   GOAL: derive every formula in AlphaForge from first principles by
+   month 9 — Markowitz from Lagrangian, Black-Litterman, Fama-MacBeth
+   standard errors, PPO clipped surrogate, HMM Baum-Welch updates.
+
+2. COMPETITIONS
+   Pick 1-2 finishing inside this window. Top of list:
+     - WorldQuant Brain  (alpha submission platform, free, real
+                          signal-discovery on real data)
+     - IMC Prosperity
+     - Citadel datathons
+     - Jane Street puzzles
+   Even one top-X% placement is real pedigree.
+
+3. ONE PAPER EVERY TWO WEEKS
+   Fully understood, derivations re-done by hand.
+   Front-loaded order:
+     - Week 1:  Hou, Xue & Zhang (2020) "Replicating Anomalies"
+                — calibrates expectations; reframes "I am finding
+                nothing" as "I am joining a known-hard problem"
+     - Week 1:  Bailey & López de Prado (2014) on Deflated Sharpe
+     - Wks 2-5: López de Prado "Advances in Financial Machine Learning"
+                end-to-end
+     - Wks 6-9: Fama-French (1993), Carhart (1997),
+                Jegadeesh-Titman (1993)
+     - Week 10: Daniel-Moskowitz (2016) on Momentum Crashes
+     - Week 12: Harvey, Liu & Zhu (2016) on multiple-testing
+                in cross-section
+
+4. ONE BLOG POST PER MONTH
+   On what you learned. Public, on a personal site.
+   The artifact recruiters and admissions committees actually read.
+
+
+EXPLICIT NOT-DOING LIST
+=======================
+(more important than the do-list)
+
+  - No new MARL work (revisit in Tier 2 with rigor or cut)
+  - No new factors beyond the 11 in repo
+  - No frontend work
+  - No new sub-projects
+  - No options/futures/crypto/alt-data exploration
+  - No premature LP-courting, fund-name brainstorming, "personal brand"
+  - No paid data subscriptions (free was sufficient for Phase 1;
+    Norgate $60/mo only if Phase 1 reconciliation gates fail)
+  - No premature engineering polish (Docker, k8s, framework migration)
+
+
+REVIEW CADENCE
+==============
+
+  Weekly:                 30-min self-review against gate.
+                          Did this week move it closer?
+  Monthly:                review against phase plan. Adjust next
+                          month's allocation.
+  End of each phase:      deliverables exist or they don't.
+                          No "almost done."
+  Phase slip > 50%:       the plan is wrong. Rewrite, don't push
+                          through.
+
+
+WHERE EVERYTHING LIVES
+======================
+
+  Reference                          | Location
+  -----------------------------------|------------------------------------------------------------
+  Active plan + phase status         | ~/.claude/projects/.../memory/project_tier1_plan.md
+                                     | (loaded automatically by Claude Code each session)
+  Phase 1 design contract + lessons  | alphaforge-python/data/market/PIT_UNIVERSE_DESIGN.md
+  Phase 2 design contract            | alphaforge-python/backtest/ENGINE_CONSOLIDATION_DESIGN.md
+  Live execution pause memo          | alphaforge-execution/docs/TIER1_PAUSE.md
+  Cross-project reference for        | CLAUDE.md and AGENTS.md (top-level, both updated)
+    future agents                    |
+  This file                          | TIER1_STATUS.txt (top-level)
+
+
+WHAT'S NEXT  (right now)
+========================
+
+Phase 3 (FF5 + momentum risk-model residualization) is now the next
+active deliverable.
+
+Immediate entry criteria:
+  - Build FF5 + UMD factors from the PIT universe substrate
+  - Validate each constructed factor return stream against Ken French
+    over the overlap period (target correlation > 0.85)
+  - Run the self-residualization spot-check (SMB residualized on SMB
+    should drive SMB loading to ~= 0)
+
+Do not start Phase 4 until those validation gates pass.
+
+============================================================
+End of TIER1_STATUS.txt
+============================================================
