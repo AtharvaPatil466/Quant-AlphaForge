@@ -1,0 +1,215 @@
+{
+  "session": "Phase 1 Session 1 \u2014 atom build",
+  "built_at": "2026-04-26T04:32:01.678334+00:00",
+  "source": {
+    "page": "List of S&P 500 companies",
+    "revision_id": "995546256",
+    "revision_ts": "2020-12-21T17:10:08Z",
+    "revision_comment": "TSLA added to SP500",
+    "raw_json": "_session1_rev995546256.json"
+  },
+  "snapshot": {
+    "rows": 505,
+    "unique_tickers": 505,
+    "non_null_cik": 505,
+    "null_cik": 0,
+    "non_null_sector": 505,
+    "non_null_date_added": 449
+  },
+  "verification": {
+    "tesla_headline": {
+      "tsla_in_snapshot": true,
+      "tsla_cik_correct": true,
+      "tsla_date_added_text": "",
+      "note_on_date_added_blank": "Source-data limitation: the editor who added TSLA in this revision left the date_added cell blank. The differ in later sessions must fall back to the revision timestamp when the cell is empty for a newly-added ticker."
+    },
+    "fixture": [
+      {
+        "ticker": "AAPL",
+        "expected_cik": "0000320193",
+        "observed_in_table_cik": "0000320193",
+        "edgar_cik": "0000320193",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      },
+      {
+        "ticker": "MSFT",
+        "expected_cik": "0000789019",
+        "observed_in_table_cik": "0000789019",
+        "edgar_cik": "0000789019",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      },
+      {
+        "ticker": "TSLA",
+        "expected_cik": "0001318605",
+        "observed_in_table_cik": "0001318605",
+        "edgar_cik": "0001318605",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      },
+      {
+        "ticker": "GOOGL",
+        "expected_cik": "0001652044",
+        "observed_in_table_cik": "0001652044",
+        "edgar_cik": "0001652044",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      },
+      {
+        "ticker": "META",
+        "expected_cik": "0001326801",
+        "observed_in_table_cik": null,
+        "edgar_cik": "0001326801",
+        "in_table_matches_expected": false,
+        "edgar_matches_expected": true,
+        "in_snapshot": false
+      },
+      {
+        "ticker": "JPM",
+        "expected_cik": "0000019617",
+        "observed_in_table_cik": "0000019617",
+        "edgar_cik": "0000019617",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      },
+      {
+        "ticker": "BRK.B",
+        "expected_cik": "0001067983",
+        "observed_in_table_cik": "0001067983",
+        "edgar_cik": "0001067983",
+        "in_table_matches_expected": true,
+        "edgar_matches_expected": true,
+        "in_snapshot": true
+      }
+    ],
+    "cik_universe": {
+      "wikipedia_vs_edgar_match_rate": 0.8891089108910891,
+      "first_20_mismatches": [
+        {
+          "ticker": "ABMD",
+          "cik": "0000815094",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "ATVI",
+          "cik": "0000718877",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "ALXN",
+          "cik": "0000899866",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "ABC",
+          "cik": "0001140859",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "ANSS",
+          "cik": "0001013462",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "ANTM",
+          "cik": "0001156039",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "APA",
+          "cik": "0000006769",
+          "cik_edgar": "0001841666"
+        },
+        {
+          "ticker": "BLL",
+          "cik": "0000009389",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "BLK",
+          "cik": "0001364742",
+          "cik_edgar": "0002012383"
+        },
+        {
+          "ticker": "COG",
+          "cik": "0000858470",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "CTLT",
+          "cik": "0001596783",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "CERN",
+          "cik": "0000804753",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "CTXS",
+          "cik": "0000877890",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "CMA",
+          "cik": "0000028412",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "CXO",
+          "cik": "0001358071",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "DFS",
+          "cik": "0001393612",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "DISCA",
+          "cik": "0001437107",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "DISCK",
+          "cik": "0001437107",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "DISH",
+          "cik": "0001001082",
+          "cik_edgar": null
+        },
+        {
+          "ticker": "DRE",
+          "cik": "0000783280",
+          "cik_edgar": null
+        }
+      ]
+    }
+  },
+  "artifact": {
+    "parquet": "_session1_2020-12-21.parquet",
+    "schema": [
+      "ticker",
+      "company_name",
+      "gics_sector",
+      "gics_sub_industry",
+      "headquarters",
+      "date_added_text",
+      "cik",
+      "founded_text",
+      "cik_edgar",
+      "cik_match",
+      "source",
+      "source_revision_id",
+      "source_revision_ts"
+    ]
+  }
+}

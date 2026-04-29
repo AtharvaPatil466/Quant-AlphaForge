@@ -1,0 +1,17 @@
+revid,error,tb_first
+389847709,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+427992852,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+473579705,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+480369363,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+544194785,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+544194940,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+678820919,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+781675667,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+920603674,ValueError: parsed only 0 constituent rows — below sanity floor of 400. Likely parser misfire on this revision.,ValueError: parsed only 0 constituent rows — below sanity floor of 400. Likely parser misfire on this revision.
+959328698,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+980783349,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+1024410628,ValueError: constituents table not properly closed,ValueError: constituents table not properly closed
+1050068011,ValueError: constituents table not properly closed,ValueError: constituents table not properly closed
+1282987589,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)
+1291194191,ValueError: parsed only 0 constituent rows — below sanity floor of 400. Likely parser misfire on this revision.,ValueError: parsed only 0 constituent rows — below sanity floor of 400. Likely parser misfire on this revision.
+1324067948,ValueError: constituents table not found in wikitext (best fallback score: 0),ValueError: constituents table not found in wikitext (best fallback score: 0)

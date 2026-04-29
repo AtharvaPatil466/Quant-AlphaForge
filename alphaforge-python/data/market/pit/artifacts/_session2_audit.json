@@ -1,0 +1,124 @@
+{
+  "session": "Phase 1 Session 2 \u2014 revision enumeration + hybrid candidate filter",
+  "built_at": "2026-04-26T04:40:20.789946+00:00",
+  "config": {
+    "MIN_BYTE_DELTA": 50,
+    "comment_regex": "\\b(replac\\w*|added|adds|adding|removed|removes|removing|delisted|delist|merger|merged|acquisition|acquired|ticker\\s*chg|ticker\\s*change|name\\s*chg|name\\s*change|renamed|rename|effective\\s+\\d|spinoff|spin[\\-\\s]off|spun\\s*off)\\b",
+    "page": "List of S&P 500 companies",
+    "window": [
+      "2010-01-10 20:24:57+00:00",
+      "2026-04-19 14:59:47+00:00"
+    ]
+  },
+  "outputs": {
+    "full_revisions_parquet": "_revisions_full.parquet",
+    "byte_delta_histogram_csv": "_byte_delta_histogram.csv",
+    "candidate_revisions_parquet": "_candidate_revisions.parquet"
+  },
+  "summary": {
+    "total_revisions": 2811,
+    "first_revision_ts": "2010-01-10 20:24:57+00:00",
+    "last_revision_ts": "2026-04-19 14:59:47+00:00",
+    "byte_delta_percentiles": {
+      "min": 0.0,
+      "p25": 2.0,
+      "median": 13.0,
+      "p75": 104.0,
+      "p90": 413.0999999999999,
+      "p95": 684.0,
+      "p99": 39718.50999999985,
+      "max": 163103.0
+    },
+    "candidate_count": 1118,
+    "candidate_pct": 39.77,
+    "candidate_breakdown": {
+      "bytedelta_only": 531,
+      "comment_only": 267,
+      "both_signals": 320
+    },
+    "known_events_in_candidate_set": {
+      "tesla_add_995546256": true,
+      "fb_meta_rename_1092243288": true,
+      "ge_remove_847597537": true,
+      "twtr_delist_1119345461": true
+    }
+  },
+  "lessons_for_session_3": [
+    "CIK identity is the primary key, not ticker \u2014 the differ must compare CIK sets between snapshots, not ticker sets, or it will miss renames classified as REMOVE+ADD.",
+    "For ADD events whose source revision left date_added blank, fall back to the revision timestamp as effective_date.",
+    "The hybrid filter has a tunable false-positive rate (~30-40%). The differ MUST be cheap to run on a no-change snapshot \u2014 parsed-set comparison only, no further work.",
+    "Some comment-only matches are genuine non-events (e.g., article-meta edits matching keyword \"added\" on tags). These are filtered downstream by the differ producing no set change."
+  ],
+  "histogram": [
+    {
+      "byte_delta": "[0,10)",
+      "count": 1204,
+      "pct": 42.85
+    },
+    {
+      "byte_delta": "[10,25)",
+      "count": 512,
+      "pct": 18.22
+    },
+    {
+      "byte_delta": "[25,50)",
+      "count": 243,
+      "pct": 8.65
+    },
+    {
+      "byte_delta": "[50,75)",
+      "count": 86,
+      "pct": 3.06
+    },
+    {
+      "byte_delta": "[75,100)",
+      "count": 60,
+      "pct": 2.14
+    },
+    {
+      "byte_delta": "[100,150)",
+      "count": 82,
+      "pct": 2.92
+    },
+    {
+      "byte_delta": "[150,200)",
+      "count": 77,
+      "pct": 2.74
+    },
+    {
+      "byte_delta": "[200,300)",
+      "count": 109,
+      "pct": 3.88
+    },
+    {
+      "byte_delta": "[300,500)",
+      "count": 235,
+      "pct": 8.36
+    },
+    {
+      "byte_delta": "[500,1000)",
+      "count": 111,
+      "pct": 3.95
+    },
+    {
+      "byte_delta": "[1000,2500)",
+      "count": 35,
+      "pct": 1.25
+    },
+    {
+      "byte_delta": "[2500,5000)",
+      "count": 5,
+      "pct": 0.18
+    },
+    {
+      "byte_delta": "[5000,10000)",
+      "count": 16,
+      "pct": 0.57
+    },
+    {
+      "byte_delta": "[10000,1000000)",
+      "count": 35,
+      "pct": 1.25
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "session": "Phase 1 Session 3 \u2014 fetch + parse + diff",
+  "built_at": "2026-04-26T13:22:58.225577+00:00",
+  "inputs": {
+    "candidate_revisions_parquet": "_candidate_revisions.parquet",
+    "metadata_parquet": "_revisions_full.parquet"
+  },
+  "outputs": {
+    "event_log_parquet": "_event_log.parquet",
+    "parse_failures_csv": "_parse_failures.csv"
+  },
+  "summary": {
+    "candidate_revisions_fetched": 1118,
+    "parsed_ok": 1102,
+    "parse_failures": 16,
+    "events_emitted": 837,
+    "action_breakdown": {
+      "REMOVE": 407,
+      "ADD": 352,
+      "RENAME": 78
+    }
+  },
+  "named_event_verification": [
+    {
+      "label": "TSLA add",
+      "ticker": "TSLA",
+      "expected_action": "ADD",
+      "expected_window": [
+        "2020-12-21",
+        "2020-12-22"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2020-12-21",
+        "action": "ADD",
+        "counterparty_ticker": null,
+        "source_revision_id": "995546256"
+      }
+    },
+    {
+      "label": "FB\u2192META rename",
+      "ticker": "META",
+      "expected_action": "RENAME",
+      "expected_window": [
+        "2022-06-08",
+        "2022-06-12"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2022-06-09",
+        "action": "RENAME",
+        "counterparty_ticker": "FB",
+        "source_revision_id": "1092243288"
+      }
+    },
+    {
+      "label": "TWTR delist",
+      "ticker": "TWTR",
+      "expected_action": "REMOVE",
+      "expected_window": [
+        "2022-10-29",
+        "2022-11-05"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2022-10-29",
+        "action": "REMOVE",
+        "counterparty_ticker": null,
+        "source_revision_id": "1118820590"
+      }
+    },
+    {
+      "label": "GEHC spinoff add",
+      "ticker": "GEHC",
+      "expected_action": "ADD",
+      "expected_window": [
+        "2023-01-03",
+        "2023-01-06"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2023-01-04",
+        "action": "ADD",
+        "counterparty_ticker": null,
+        "source_revision_id": "1131427753"
+      }
+    },
+    {
+      "label": "GEV spinoff add",
+      "ticker": "GEV",
+      "expected_action": "ADD",
+      "expected_window": [
+        "2024-04-01",
+        "2024-04-05"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2024-04-03",
+        "action": "ADD",
+        "counterparty_ticker": null,
+        "source_revision_id": "1216978973"
+      }
+    },
+    {
+      "label": "SYMC\u2192NLOK rename",
+      "ticker": "NLOK",
+      "expected_action": "RENAME",
+      "expected_window": [
+        "2019-11-04",
+        "2019-11-15"
+      ],
+      "matches": 1,
+      "first_match": {
+        "effective_date": "2019-11-09",
+        "action": "RENAME",
+        "counterparty_ticker": "SYMC",
+        "source_revision_id": "925276622"
+      }
+    }
+  ]
+}

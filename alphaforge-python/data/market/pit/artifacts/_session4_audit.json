@@ -1,0 +1,393 @@
+{
+  "session": "Phase 1 Session 4 \u2014 validation",
+  "built_at": "2026-04-26T13:28:42.047803+00:00",
+  "baseline": {
+    "source_revision_id": 339455897,
+    "timestamp": "2010-01-23 01:21:31+00:00",
+    "n_tickers": 500,
+    "baseline_path": "_baseline_2010-01-10.parquet"
+  },
+  "event_log_size": 837,
+  "changes_table": {
+    "source_revision_id": 1347841961,
+    "n_rows": 289,
+    "min_date": "1976-07-01",
+    "max_date": "2026-04-09"
+  },
+  "cross_check": {
+    "n_changes_checked": 245,
+    "matched_add": 199,
+    "missing_add_count": 34,
+    "missing_add_examples": [
+      {
+        "effective_date": "2020-06-22",
+        "ticker": "TDY",
+        "security": "Teledyne",
+        "in_log_dates": [
+          "2020-07-22"
+        ]
+      },
+      {
+        "effective_date": "2020-03-02",
+        "ticker": "IR",
+        "security": "Ingersoll Rand",
+        "in_log_dates": [
+          "2011-03-09"
+        ]
+      },
+      {
+        "effective_date": "2019-06-11",
+        "ticker": "AMCR",
+        "security": "Amcor",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2019-03-19",
+        "ticker": "FOXA",
+        "security": "Fox Corporation",
+        "in_log_dates": [
+          "2013-07-08"
+        ]
+      },
+      {
+        "effective_date": "2019-03-19",
+        "ticker": "FOX",
+        "security": "Fox Corporation",
+        "in_log_dates": [
+          "2015-09-26"
+        ]
+      },
+      {
+        "effective_date": "2017-09-01",
+        "ticker": "DWDP",
+        "security": "DuPont",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2017-07-26",
+        "ticker": "AOS",
+        "security": "A. O. Smith",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2016-12-02",
+        "ticker": "EVHC",
+        "security": "Envision Healthcare",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2016-04-08",
+        "ticker": "UA",
+        "security": "Under Armour (Class C)",
+        "in_log_dates": [
+          "2014-04-30"
+        ]
+      },
+      {
+        "effective_date": "2015-07-06",
+        "ticker": "KHC",
+        "security": "Kraft Heinz",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2014-08-18",
+        "ticker": "MNK",
+        "security": "Mallinckrodt",
+        "in_log_dates": [
+          "2014-09-27"
+        ]
+      },
+      {
+        "effective_date": "2014-05-01",
+        "ticker": "NAVI",
+        "security": "Navient",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2013-10-29",
+        "ticker": "RIG",
+        "security": "Transocean",
+        "in_log_dates": [
+          "2013-12-10"
+        ]
+      },
+      {
+        "effective_date": "2013-09-20",
+        "ticker": "VRTX",
+        "security": "Vertex Pharmaceuticals",
+        "in_log_dates": [
+          "2013-11-03"
+        ]
+      },
+      {
+        "effective_date": "2013-09-20",
+        "ticker": "AME",
+        "security": "Ametek",
+        "in_log_dates": [
+          "2013-11-03"
+        ]
+      },
+      {
+        "effective_date": "2013-07-01",
+        "ticker": "NWSA",
+        "security": "21st Century Fox",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2013-06-21",
+        "ticker": "ZTS",
+        "security": "Zoetis",
+        "in_log_dates": [
+          "2013-08-24"
+        ]
+      },
+      {
+        "effective_date": "2012-03-13",
+        "ticker": "CCI",
+        "security": "Crown Castle",
+        "in_log_dates": [
+          "2012-04-07"
+        ]
+      },
+      {
+        "effective_date": "2011-12-16",
+        "ticker": "BWA",
+        "security": "BorgWarner",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2011-12-16",
+        "ticker": "PRGO",
+        "security": "Perrigo",
+        "in_log_dates": []
+      }
+    ],
+    "matched_remove": 206,
+    "missing_remove_count": 31,
+    "missing_remove_examples": [
+      {
+        "effective_date": "2022-12-19",
+        "ticker": "MBC",
+        "security": "MasterBrand",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2022-04-11",
+        "ticker": "DISCK",
+        "security": "Discovery, Inc.",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2020-06-22",
+        "ticker": "HOG",
+        "security": "Harley-Davidson",
+        "in_log_dates": [
+          "2020-07-22"
+        ]
+      },
+      {
+        "effective_date": "2020-04-06",
+        "ticker": "RTN",
+        "security": "Raytheon Company",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2019-12-05",
+        "ticker": "VIAB",
+        "security": "Viacom",
+        "in_log_dates": [
+          "2010-10-10",
+          "2011-11-06"
+        ]
+      },
+      {
+        "effective_date": "2019-06-11",
+        "ticker": "BMS",
+        "security": "Bemis",
+        "in_log_dates": [
+          "2014-12-04"
+        ]
+      },
+      {
+        "effective_date": "2019-03-19",
+        "ticker": "FOXA",
+        "security": "21st Century Fox",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2019-03-19",
+        "ticker": "FOX",
+        "security": "21st Century Fox",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2017-09-01",
+        "ticker": "DOW",
+        "security": "Dow Chemical Company",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2017-07-26",
+        "ticker": "BBBY",
+        "security": "Bed Bath & Beyond",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2016-01-19",
+        "ticker": "ACE",
+        "security": "Chubb",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2015-07-06",
+        "ticker": "KRFT",
+        "security": "Kraft Foods",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2014-08-18",
+        "ticker": "RDC",
+        "security": "Rowan Companies",
+        "in_log_dates": [
+          "2014-09-27"
+        ]
+      },
+      {
+        "effective_date": "2013-10-29",
+        "ticker": "DELL",
+        "security": "Dell",
+        "in_log_dates": [
+          "2013-12-10"
+        ]
+      },
+      {
+        "effective_date": "2013-09-20",
+        "ticker": "AMD",
+        "security": "Advanced Micro Devices",
+        "in_log_dates": [
+          "2013-11-03"
+        ]
+      },
+      {
+        "effective_date": "2013-09-20",
+        "ticker": "SAI",
+        "security": "SAIC",
+        "in_log_dates": [
+          "2013-10-25"
+        ]
+      },
+      {
+        "effective_date": "2013-06-21",
+        "ticker": "FHN",
+        "security": "First Horizon",
+        "in_log_dates": [
+          "2013-08-24"
+        ]
+      },
+      {
+        "effective_date": "2012-03-13",
+        "ticker": "CEG",
+        "security": "Constellation Energy Group",
+        "in_log_dates": [
+          "2012-04-07"
+        ]
+      },
+      {
+        "effective_date": "2011-12-20",
+        "ticker": "TLAB",
+        "security": "Tellabs",
+        "in_log_dates": []
+      },
+      {
+        "effective_date": "2011-12-16",
+        "ticker": "AKS",
+        "security": "AK Steel",
+        "in_log_dates": []
+      }
+    ],
+    "summary_text": "changes table cross-check (2010+, \u00b121d): ADD 199/245 (81.2%); REMOVE 206/245 (84.1%)"
+  },
+  "yearend_membership": [
+    {
+      "year_end": "2010-12-31",
+      "n_members": 499,
+      "in_band": true
+    },
+    {
+      "year_end": "2011-12-31",
+      "n_members": 498,
+      "in_band": true
+    },
+    {
+      "year_end": "2012-12-31",
+      "n_members": 500,
+      "in_band": true
+    },
+    {
+      "year_end": "2013-12-31",
+      "n_members": 500,
+      "in_band": true
+    },
+    {
+      "year_end": "2014-12-31",
+      "n_members": 503,
+      "in_band": true
+    },
+    {
+      "year_end": "2015-12-31",
+      "n_members": 505,
+      "in_band": true
+    },
+    {
+      "year_end": "2016-12-31",
+      "n_members": 502,
+      "in_band": true
+    },
+    {
+      "year_end": "2017-12-31",
+      "n_members": 501,
+      "in_band": true
+    },
+    {
+      "year_end": "2018-12-31",
+      "n_members": 498,
+      "in_band": true
+    },
+    {
+      "year_end": "2019-12-31",
+      "n_members": 498,
+      "in_band": true
+    },
+    {
+      "year_end": "2020-12-31",
+      "n_members": 499,
+      "in_band": true
+    },
+    {
+      "year_end": "2021-12-31",
+      "n_members": 500,
+      "in_band": true
+    },
+    {
+      "year_end": "2022-12-31",
+      "n_members": 500,
+      "in_band": true
+    },
+    {
+      "year_end": "2023-12-31",
+      "n_members": 497,
+      "in_band": true
+    },
+    {
+      "year_end": "2024-12-31",
+      "n_members": 497,
+      "in_band": true
+    },
+    {
+      "year_end": "2025-12-31",
+      "n_members": 494,
+      "in_band": false
+    }
+  ],
+  "yearend_in_band_count": 15
+}

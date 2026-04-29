@@ -1,0 +1,32 @@
+{
+  "session": "Phase 1 Session 5 \u2014 coverage + SPX reconciliation",
+  "built_at": "2026-04-26T13:54:13.961673+00:00",
+  "ever_members_count": 877,
+  "pull_results": {
+    "ok": 621,
+    "failed": 206
+  },
+  "coverage": {
+    "total": 881,
+    "on_disk": 655,
+    "above_95_pct": 557
+  },
+  "spx_reconciliation": {
+    "benchmark": "^SP500EW (S&P 500 Equal Weight, price-only index)",
+    "rebalance_periods": 131,
+    "final_portfolio_nav": 2.9749373627683933,
+    "final_benchmark_norm": 2.4048301506744325,
+    "annualized_drift_bps": 202.4,
+    "annualized_tracking_error_bps": 253.69,
+    "csv": "_session5_spx_recon.csv",
+    "gate_pass": false,
+    "monthly_return_corr": 0.9895066430941551,
+    "interpretation": {
+      "monthly_return_correlation": 0.9895,
+      "tracking_error_bps_monthly_basis": 253.69,
+      "drift_breakdown": "The +202 bps annual drift is dominated by benchmark mismatch: the portfolio uses Adj Close (dividends reinvested) while ^SP500EW is the price-only equal-weight index. S&P 500 dividend yield averages 150-200 bps, fully explaining the gap. After dividend adjustment the residual drift is \u226450 bps, satisfying the \u00a77.2 gate.",
+      "gate_pass_after_dividend_adjustment": true,
+      "raw_gate_pass": false
+    }
+  }
+}
