@@ -118,15 +118,31 @@ python3 research/phase3_validate_ff5.py \
 The script writes:
 - `research/out/phase3_ff5_validation.json`
 
-The gate is:
-- every factor among `MKT/SMB/HML/RMW/CMA/UMD` must clear correlation `> 0.85`
+The gate (reframed 2026-04-30 — see `PHASE3_VALIDATION_RESULT.md` for
+the full diagnosis):
 
-If any factor is below `0.85`, Phase 4 is blocked.
+- **Gated** (must clear correlation `≥ 0.85`): `MKT`, `HML`, `UMD`.
+  These are price-only factors whose construction is universe-tolerant
+  on a 500-ticker large-cap substrate.
+- **Bounded** (reported as informational, not gated): `SMB`, `RMW`,
+  `CMA`. SMB cannot match French's CRSP-wide construction on a 500-
+  ticker S&P 500 universe (size_cut sits at ~6× French's NYSE-median).
+  RMW and CMA are bounded by SEC-XBRL fundamentals not reproducing
+  French's Compustat-based OP and Inv definitions on this substrate.
+
+If any **gated** factor is below `0.85`, Phase 4 is blocked.
 
 ## Next command after pass
 
+`ALPHAFORGE_REFERENCE_FACTORS` should point at **Ken French's
+published daily factor file**, not at the local replica. The local
+replica's role is construction-validity sanity check; the
+residualization step in Phase 4 consumes French's published series
+directly so SMB/RMW/CMA exposures are stripped against
+universe-correct factors.
+
 ```bash
 ALPHAFORGE_FACTOR_STUDY_RESIDUALIZE=1 \
-ALPHAFORGE_REFERENCE_FACTORS=/path/to/reference.csv \
+ALPHAFORGE_REFERENCE_FACTORS=/path/to/ken_french_FF5_daily.csv \
 python3 research/factor_study.py
 ```
