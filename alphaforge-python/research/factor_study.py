@@ -54,6 +54,15 @@ STUDY_END   = "2025-12-31"
 # matches the maximum IC horizon so label windows cannot leak across the cut.
 OOS_START   = "2024-01-02"
 OOS_EMBARGO_DAYS = 21
+
+# Phase 4 — two non-overlapping OOS windows. Each ~2 years; embargoed
+# from training and from each other. The Phase 4 gate (DSR > 0.95 +
+# bootstrap-CI-excludes-zero + sign-agreement) must hold in BOTH windows
+# for a factor to count as a Phase 4 survivor. See PHASE4_DESIGN.md.
+OOS_WINDOWS: List[Tuple[str, str, str]] = [
+    ("OOS-A", "2022-01-03", "2023-12-29"),
+    ("OOS-B", "2024-01-02", "2025-12-31"),
+]
 HORIZONS    = [1, 5, 10, 21, 63]
 HOLDING_PERIOD_DAYS = 21      # monthly rebal
 N_QUINTILES = 5
@@ -158,10 +167,28 @@ def prepare_analysis_returns(
     window: int = RESIDUAL_WINDOW,
     min_obs: int = RESIDUAL_MIN_OBS,
 ) -> Tuple[pd.DataFrame, pd.DataFrame | None]:
-    """Return the daily return panel used by IC/backtest logic.
+    """Return the daily return panel used by IC/backtest logic, plus the
+    reference factor table when residualization is requested.
 
-    When `residualize=True`, returns are no-look-ahead residuals from a
-    rolling factor model fit on a local FF5+UMD reference table.
+    IMPORTANT (Phase 4 session 2a): the returns panel is ALWAYS the raw
+    daily returns. The previous implementation residualized per-ticker
+    daily returns at the panel level and ran factor pipelines against
+    the residualized panel — that double-removed factor exposure
+    (residualizing momentum then ranking by momentum mechanically bets
+    against momentum) and produced extreme negative Sharpes that were
+    methodology artifacts, not research findings.
+
+    The correct residualization layer is **post-portfolio-formation**:
+    each factor's long-short portfolio return series is regressed on
+    FF5+UMD via `research.portfolio_alpha.compute_portfolio_alpha`.
+    The α intercept is the FF5-residual abnormal return; the Sharpe of
+    `α + ε` is the FF5-residual headline. See PHASE4_DESIGN.md and
+    PHASE4_RESIDUALIZATION_FIX.md.
+
+    When `residualize=True`, this function still loads the reference
+    factor table (so the caller can pass it to the post-hoc alpha
+    computation), but returns it ALONGSIDE raw returns rather than
+    replacing them.
     """
     raw_returns = close.pct_change()
     if not residualize:
@@ -172,13 +199,7 @@ def prepare_analysis_returns(
             "or an explicit `reference_factor_path`."
         )
     reference = load_reference_factor_table(reference_factor_path)
-    residual = rolling_factor_residuals_panel(
-        raw_returns,
-        reference,
-        window=window,
-        min_obs=min_obs,
-    )
-    return residual.reindex_like(raw_returns), reference
+    return raw_returns, reference
 
 
 # ---------- vectorized factor panels (matches compute_js exactly) ----------
@@ -197,10 +218,10 @@ def rsi14(close: pd.DataFrame) -> pd.DataFrame:
 def build_factor_panels(close: pd.DataFrame, volume: pd.DataFrame) -> Dict[str, pd.DataFrame]:
     """Vectorized factor panels.
 
-    Five JS-parity factors + three Python-only factors (Amihud illiquidity,
-    idiosyncratic volatility, residual reversal). The last two residualize
-    against the equal-weighted universe log return; beta is estimated in a
-    60-day rolling window.
+    Five JS-parity factors + four Python-only factors (Amihud illiquidity,
+    idiosyncratic volatility, residual reversal, low volatility). IVOL and
+    Residual Reversal residualize against the equal-weighted universe log
+    return; beta is estimated in a 60-day rolling window.
     """
     mom = (close.shift(21) - close.shift(252)) / close.shift(252)
     mr5 = -close.pct_change(5)
@@ -235,6 +256,10 @@ def build_factor_panels(close: pd.DataFrame, volume: pd.DataFrame) -> Dict[str, 
     # (Da/Liu/Schaumburg 2014).
     resid_rev = -resid.rolling(5).sum()
 
+    # Low Volatility: -annualized stdev of 60d log returns. Lower vol → higher
+    # score (Ang/Hodrick/Xing/Zhang 2006). Mirrors factors/low_volatility.py.
+    low_vol = -log_ret.rolling(60).std() * math.sqrt(252)
+
     return {
         "Momentum (12-1)": mom,
         "Mean Reversion (5d)": mr5,
@@ -244,6 +269,7 @@ def build_factor_panels(close: pd.DataFrame, volume: pd.DataFrame) -> Dict[str, 
         "Amihud Illiquidity": illiq,
         "Idiosyncratic Volatility": ivol,
         "Residual Reversal (5d)": resid_rev,
+        "Low Volatility": low_vol,
     }
 
 
@@ -578,10 +604,18 @@ def slice_metrics(r: pd.Series) -> Dict[str, float]:
 
 # ---------- main ----------
 def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
-                 asset_returns: pd.DataFrame, fwd: Dict[int, pd.DataFrame], t0: float):
+                 asset_returns: pd.DataFrame, fwd: Dict[int, pd.DataFrame], t0: float,
+                 reference_factors: pd.DataFrame | None = None):
     """Evaluate a dict of factor panels end-to-end (IC + quintile backtest +
     bootstrap CI + DSR). Returns (all_results, net_series, sharpe_candidates).
+
+    If `reference_factors` is provided, also runs a post-portfolio FF5+UMD
+    time-series regression on each factor's net long-short return series
+    and stores the alpha + residual-Sharpe under metrics["ff5_alpha"].
+    This is the correct residualization layer per PHASE4_DESIGN.md.
     """
+    from research.portfolio_alpha import compute_portfolio_alpha
+
     all_results: Dict[str, dict] = {}
     net_series: Dict[str, pd.Series] = {}
     sharpe_candidates_net: List[float] = []
@@ -611,6 +645,15 @@ def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
         boot = stationary_bootstrap_sharpe(ls_net.to_numpy(),
                                            seed=abs(hash((label, name))) % (2**31))
         metrics["net"]["sharpe_bootstrap"] = boot
+
+        if reference_factors is not None and len(ls_net) >= 30:
+            alpha = compute_portfolio_alpha(
+                ls_net, reference_factors,
+                bootstrap_reps=BOOT_REPS, bootstrap_block=BOOT_BLOCKS,
+                bootstrap_seed=abs(hash((label, name, "alpha"))) % (2**31),
+            )
+            metrics["ff5_alpha"] = alpha
+
         all_results[name] = metrics
 
     for name in factors:
@@ -643,11 +686,14 @@ def main():
     fwd = build_forward_returns(analysis_returns)
 
     # --- raw variant ---
-    raw_results, raw_net, raw_cands = _run_variant("raw", raw_factors, analysis_returns, fwd, t0)
+    raw_results, raw_net, raw_cands = _run_variant(
+        "raw", raw_factors, analysis_returns, fwd, t0,
+        reference_factors=reference_factors)
 
     # --- sector-neutral variant ---
     neutral_results, neutral_net, neutral_cands = _run_variant(
-        "neutral", neutral_factors, analysis_returns, fwd, t0)
+        "neutral", neutral_factors, analysis_returns, fwd, t0,
+        reference_factors=reference_factors)
 
     # --- Hansen SPA across factors (C5) ---
     # Align all factors on common index and stack into T × K matrix.
@@ -691,6 +737,60 @@ def main():
             "test":  slice_metrics(parts["test"]),
         }
 
+    # --- Phase 4: per-OOS-window metrics on the headline variant ---
+    # Each window gets full Sharpe + bootstrap CI + slice metrics. The
+    # Phase 4 gate runs over this output (in phase4_gate.py). When
+    # `reference_factors` is provided, ALSO compute the per-window FF5+UMD
+    # alpha residual Sharpe + bootstrap CI — that is the residualized
+    # headline the gate ultimately scores against.
+    from research.portfolio_alpha import slice_portfolio_alpha_per_window
+    print(f"[{time.time()-t0:5.1f}s] OOS per-window metrics ({len(OOS_WINDOWS)} windows)...")
+    oos_windows_neutral: Dict[str, Dict[str, dict]] = {}
+    for name, series in neutral_net.items():
+        per_window: Dict[str, dict] = {}
+        alpha_per_window = (
+            slice_portfolio_alpha_per_window(
+                series, reference_factors, OOS_WINDOWS,
+                bootstrap_reps=BOOT_REPS, bootstrap_block=BOOT_BLOCKS,
+            )
+            if reference_factors is not None else {}
+        )
+        for win_name, win_start, win_end in OOS_WINDOWS:
+            sub = series.loc[win_start:win_end]
+            if len(sub) < 21:
+                per_window[win_name] = {
+                    "n_days": int(len(sub)),
+                    "skipped": "too few observations",
+                }
+                continue
+            sub_arr = sub.to_numpy(dtype=np.float64)
+            boot = stationary_bootstrap_sharpe(sub_arr, reps=BOOT_REPS, mean_block=BOOT_BLOCKS, seed=0)
+            entry = {
+                "start": win_start,
+                "end": win_end,
+                "n_days": int(len(sub)),
+                **slice_metrics(sub),
+                "bootstrap_sharpe_mean": boot["mean"],
+                "bootstrap_sharpe_ci_lo": boot["ci_lo"],
+                "bootstrap_sharpe_ci_hi": boot["ci_hi"],
+                "bootstrap_p_positive": boot["p_positive"],
+            }
+            ap = alpha_per_window.get(win_name)
+            if ap and not ap.get("skipped"):
+                entry["ff5_alpha"] = {
+                    "alpha_annual": ap["alpha_annual"],
+                    "alpha_t": ap["alpha_t"],
+                    "alpha_p_two_sided": ap["alpha_p_two_sided"],
+                    "r_squared": ap["r_squared"],
+                    "residual_sharpe": ap["residual_sharpe"],
+                    "residual_sharpe_ci_lo": ap["residual_sharpe_ci_lo"],
+                    "residual_sharpe_ci_hi": ap["residual_sharpe_ci_hi"],
+                    "residual_p_positive": ap["residual_p_positive"],
+                    "n_obs": ap["n_obs"],
+                }
+            per_window[win_name] = entry
+        oos_windows_neutral[name] = per_window
+
     # --- baselines + regime split (computed on the raw variant as before) ---
     print(f"[{time.time()-t0:5.1f}s] Baseline: equal-weight...")
     ew = equal_weight_benchmark_from_returns(analysis_returns).loc[raw_net[list(raw_factors)[0]].index]
@@ -732,6 +832,10 @@ def main():
         "hansen_spa": {"raw": spa_raw, "sector_neutral": spa_neut},
         "white_reality_check": {"raw": wrc_raw, "sector_neutral": wrc_neut},
         "train_test_split_neutral": train_test,
+        "oos_windows_neutral": oos_windows_neutral,
+        "phase4_oos_windows": [
+            {"name": n, "start": s, "end": e} for n, s, e in OOS_WINDOWS
+        ],
         "baselines": {"equal_weight": eq_metrics, "random_long_short": rand_metrics},
         "best_factor": best,
         "regime_split_best": regime,

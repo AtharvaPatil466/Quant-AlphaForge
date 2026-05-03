@@ -36,14 +36,14 @@ def toy_panel():
 
 
 class TestBuildFactorPanelsExpanded:
-    def test_all_eight_factors_present(self, toy_panel):
+    def test_all_nine_factors_present(self, toy_panel):
         close, vol = toy_panel
         panels = build_factor_panels(close, vol)
         assert set(panels) == {
             "Momentum (12-1)", "Mean Reversion (5d)", "Volume Surge",
             "RSI Divergence", "Earnings Drift",
             "Amihud Illiquidity", "Idiosyncratic Volatility",
-            "Residual Reversal (5d)",
+            "Residual Reversal (5d)", "Low Volatility",
         }
 
     def test_new_panels_shape_and_finiteness(self, toy_panel):
