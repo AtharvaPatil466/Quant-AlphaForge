@@ -12,19 +12,21 @@ AlphaForge is a quantitative alpha research platform with four components:
 
 Each Python sub-project has its own `CLAUDE.md` with detailed architecture. This file covers the cross-cutting concerns and the JS frontend.
 
-## Project Status (active as of 2026-04-29)
+## Project Status (as of 2026-05-02)
 
-The project is now framed as the foundational stack for a future hedge fund (see `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/user_career.md`). It is executing **Tier 1 — Methodology Validation** per `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/project_tier1_plan.md`. Read that plan before starting any new AlphaForge work — it has an explicit "not-doing" list to prevent scope drift.
+The project is framed as the foundational stack for a future hedge fund (see `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/user_career.md`). **Tier 1 closed FAILED on 2026-05-02; Tier 2 closed FAILED the same day.** The project is now in the pre-committed §7 reset cooldown until **2026-06-01**, during which no new gauntlet design or AlphaForge research is permitted. The parallel skill track (math foundations, paper reading, public artifacts) absorbs the time.
 
-**Live execution loop is paused.** `alphaforge-execution/.halt` is engaged; `run_daily.sh` exits with `HALTED` on every cron fire. The 10 Alpaca paper positions across the momentum and MARL accounts were flattened on 2026-04-26 via `alphaforge-execution/scripts/tier1_close_positions.py`. Re-launch requires the four conditions in `alphaforge-execution/docs/TIER1_PAUSE.md` (Tier 1 gate passed, signal is the survivor, universe expanded, ≥6 months paper trade).
+**Live execution loop is paused.** `alphaforge-execution/.halt` is engaged; `run_daily.sh` exits with `HALTED` on every cron fire. The 10 Alpaca paper positions across the momentum and MARL accounts were flattened on 2026-04-26 via `alphaforge-execution/scripts/tier1_close_positions.py`. Re-launch requires the four conditions in `alphaforge-execution/docs/TIER1_PAUSE.md`. With Tier 1 + Tier 2 failed, those conditions cannot be met from the current state; the `.halt` stays on indefinitely.
 
-**Phase 1 (point-in-time S&P 500 universe) is DONE.** New stack at `alphaforge-python/data/market/pit/` produces a 837-event chronological membership log 2010-2026 with 12/12 spot-check fixtures passing and 99% monthly return correlation against `^SP500EW`. Design contract + 5 sessions of lessons in `alphaforge-python/data/market/PIT_UNIVERSE_DESIGN.md`.
+**Tier 1 outcome (2026-05-02):** the pre-committed binary gate (DSR > 0.95 on residualized PIT S&P 500 returns + bootstrap CI excludes zero + sign agreement, both OOS windows) FAILED. 0 of 9 single factors and 0 of 4 combinations cleared. The closest result was an MV combination at alpha-residual OOS Sharpe +3.06 / +2.43 with DSR 0.92 / 0.70 — failed the deflation hurdle. Full writeup: `alphaforge-python/research/PHASE6_WRITEUP.md`. Phase 6 §4 committed the diagnostic to row 2 of the failure-path matrix ("real signal eaten by costs/multiple-testing → execution problem").
 
-**Phase 2 (engine consolidation) is DONE.** `real_engine.py` was removed, `synthetic_demo.py` remains the JS-parity path, and `backtest/event_driven/` is the canonical real-data engine.
+**Tier 2 outcome (2026-05-02):** the row-2 hypothesis was tested on the same PIT S&P 500 substrate with a pre-committed 8-strategy trial set at lower turnover (63d / 126d rebalance) plus volcap and forced-shrinkage variants. **Outcome 3 (clean fail): 0 strategies survive, no near-misses.** MV-21 alpha did not transport to longer rebalance horizons (MV-21: +3.06 alpha → MV-63: +0.79 → MV-126: +0.95). This is the inverse of what row 2 predicted; the MV signal appears to be a short-horizon-specific phenomenon, not a real cross-sectional anomaly eaten by costs. Full verdict: `alphaforge-python/research/TIER2_VERDICT.md`.
 
-**Phase 3 (FF5 + momentum residualization) is the active deliverable.** The local inputs are now staged and the validation pipeline runs end-to-end. Current staged artifacts are `alphaforge-python/research/out/phase3_reference_staged.csv`, `alphaforge-python/research/out/phase3_characteristics_staged.csv`, and `alphaforge-python/research/out/phase3_ff5_validation.json`. The remaining blocker is methodology quality, not plumbing: latest overlap correlations are `MKT 0.9132`, `SMB 0.6456`, `HML 0.8676`, `RMW 0.2321`, `CMA 0.6325`, `UMD 0.8236`. The current best-measured replica variant uses annual June sorts plus OP/Inv-specific exclusions for `Financials`, `Real Estate`, and `Utilities`, but Phase 3 is still blocked on `SMB` / `RMW` / `CMA`.
+**Current state — §7 reset cooldown until 2026-06-01.** No new strategies, no Tier 3 design, no MARL work, no live re-arming. The substrate-change reassessment memo is drafted on 2026-06-01 and asks: is the cross-sectional equity factor + linear combination + parametric cost construction class the right substrate at all, or should the founder path pivot to futures, market-making, options, crypto, or away from systematic alpha entirely. That memo is what unblocks the next decision.
 
-**Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate that all Phase 4-5 work will consume via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
+**Reading order for new sessions:** `TIER1_STATUS.txt` (master plan + outcomes) → `PHASE6_WRITEUP.md` (Tier 1 final writeup) → `TIER2_VERDICT.md` (Tier 2 verdict) → `TIER2_DESIGN.md` §7 (the reset). Do not start any new gauntlet design before reading these.
+
+**Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate consumed via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
 
 ## Commands
 
@@ -182,3 +184,42 @@ yfinance ───(bulk pull)──▶  data/quarantine/market/<TICKER>/<YEAR>.p
 ## Defensive Numerics
 
 All three Python backends and the JS frontend use the same pattern: `safe_div()`, `sanitize_number()`, `clamp()`, and `validate_series()` to prevent NaN/Infinity propagation. Always use these when writing new numeric code.
+
+<!-- code-review-graph MCP tools -->
+## MCP Tools: code-review-graph
+
+**IMPORTANT: This project has a knowledge graph. ALWAYS use the
+code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
+the codebase.** The graph is faster, cheaper (fewer tokens), and gives
+you structural context (callers, dependents, test coverage) that file
+scanning cannot.
+
+### When to use graph tools FIRST
+
+- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
+- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
+- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
+- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
+- **Architecture questions**: `get_architecture_overview` + `list_communities`
+
+Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+### Key Tools
+
+| Tool | Use when |
+|------|----------|
+| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
+| `get_review_context` | Need source snippets for review — token-efficient |
+| `get_impact_radius` | Understanding blast radius of a change |
+| `get_affected_flows` | Finding which execution paths are impacted |
+| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes` | Finding functions/classes by name or keyword |
+| `get_architecture_overview` | Understanding high-level codebase structure |
+| `refactor_tool` | Planning renames, finding dead code |
+
+### Workflow
+
+1. The graph auto-updates on file changes (via hooks).
+2. Use `detect_changes` for code review.
+3. Use `get_affected_flows` to understand impact.
+4. Use `query_graph` pattern="tests_for" to check coverage.

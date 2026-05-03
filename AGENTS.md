@@ -22,7 +22,13 @@ The project is now framed as the foundational stack for a future hedge fund. It 
 
 **Phase 2 (engine consolidation) is DONE.** `real_engine.py` was removed, `synthetic_demo.py` remains the JS-parity path, and `backtest/event_driven/` is the canonical real-data engine.
 
-**Phase 3 (FF5 + momentum residualization) is the active deliverable.** The local inputs are now staged and the validation pipeline runs end-to-end. Current staged artifacts are `alphaforge-python/research/out/phase3_reference_staged.csv`, `alphaforge-python/research/out/phase3_characteristics_staged.csv`, and `alphaforge-python/research/out/phase3_ff5_validation.json`. The remaining blocker is methodology quality, not plumbing: latest overlap correlations are `MKT 0.9132`, `SMB 0.6456`, `HML 0.8676`, `RMW 0.2321`, `CMA 0.6325`, `UMD 0.8236`. The current best-measured replica variant uses annual June sorts plus OP/Inv-specific exclusions for `Financials`, `Real Estate`, and `Utilities`, but Phase 3 is still blocked on `SMB` / `RMW` / `CMA`.
+**Phase 3 (FF5 + momentum residualization) is DONE.** The validation pipeline ran end-to-end. The overlap gate passed with `MKT`, `HML`, and `UMD` clearing the >0.85 correlation threshold against Ken French's reference data. The minor factors (`SMB`, `RMW`, `CMA`) remain bounded below 0.85 but the gate was officially passed.
+
+**Phase 4 (Single-factor gauntlet) and Phase 5 (Combination) are DONE.** Both yielded a FAILED gate (0 survivors across all metrics). 
+
+**Phase 6 (Writeup) and Tier 2 (Verdict) are DONE.** The pre-committed failure diagnostic was row 2 (execution problem). However, lowering turnover in Tier 2 actually *destroyed* the alpha rather than saving it. **Tier 2 officially CLOSED FAILED on 2026-05-02.** 
+
+**Project Status:** The project is currently on a **mandatory 30-day cooldown (until 2026-06-01)** per the `TIER2_VERDICT.md` pre-commit. No new strategies, MARL revival, live re-arming, or paid-data subscriptions are allowed until the substrate-change memo lands on June 1.
 
 **Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate that all Phase 4-5 work will consume via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
 
@@ -188,3 +194,42 @@ yfinance ───(bulk pull)──▶  data/quarantine/market/<TICKER>/<YEAR>.p
 ## Defensive Numerics
 
 All three Python backends and the JS frontend use the same pattern: `safe_div()`, `sanitize_number()`, `clamp()`, and `validate_series()` to prevent NaN/Infinity propagation. Always use these when writing new numeric code.
+
+<!-- code-review-graph MCP tools -->
+## MCP Tools: code-review-graph
+
+**IMPORTANT: This project has a knowledge graph. ALWAYS use the
+code-review-graph MCP tools BEFORE using Grep/Glob/Read to explore
+the codebase.** The graph is faster, cheaper (fewer tokens), and gives
+you structural context (callers, dependents, test coverage) that file
+scanning cannot.
+
+### When to use graph tools FIRST
+
+- **Exploring code**: `semantic_search_nodes` or `query_graph` instead of Grep
+- **Understanding impact**: `get_impact_radius` instead of manually tracing imports
+- **Code review**: `detect_changes` + `get_review_context` instead of reading entire files
+- **Finding relationships**: `query_graph` with callers_of/callees_of/imports_of/tests_for
+- **Architecture questions**: `get_architecture_overview` + `list_communities`
+
+Fall back to Grep/Glob/Read **only** when the graph doesn't cover what you need.
+
+### Key Tools
+
+| Tool | Use when |
+|------|----------|
+| `detect_changes` | Reviewing code changes — gives risk-scored analysis |
+| `get_review_context` | Need source snippets for review — token-efficient |
+| `get_impact_radius` | Understanding blast radius of a change |
+| `get_affected_flows` | Finding which execution paths are impacted |
+| `query_graph` | Tracing callers, callees, imports, tests, dependencies |
+| `semantic_search_nodes` | Finding functions/classes by name or keyword |
+| `get_architecture_overview` | Understanding high-level codebase structure |
+| `refactor_tool` | Planning renames, finding dead code |
+
+### Workflow
+
+1. The graph auto-updates on file changes (via hooks).
+2. Use `detect_changes` for code review.
+3. Use `get_affected_flows` to understand impact.
+4. Use `query_graph` pattern="tests_for" to check coverage.

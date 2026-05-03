@@ -4,7 +4,7 @@
 
 AlphaForge is an end-to-end system for discovering, validating, and trading equity signals — spanning data infrastructure, factor research, multi-agent reinforcement learning, portfolio optimization, and live execution. The distinguishing feature is not the strategies; it's the statistical discipline applied to evaluating them.
 
-> **Current status:** Executing *Tier 1 — Methodology Validation*. A binary gate determines whether any signal in this universe survives a deflation-aware, cost-honest gauntlet. If none does, the writeup documents that honestly. See [TIER1_STATUS.txt](TIER1_STATUS.txt) for the full plan.
+> **Current status:** Tier 1 and Tier 2 concluded with a FAILED verdict on 2026-05-02. Zero strategies cleared the deflation-aware, cost-honest gauntlet. The project is in a mandatory 30-day cooldown (until 2026-06-01) before any substrate pivot. See [TIER2_VERDICT.md](alphaforge-python/research/TIER2_VERDICT.md) for the final analysis.
 
 ---
 
@@ -96,7 +96,7 @@ The [factor study report](alphaforge-python/research/out/factor_study_report.md)
 4. **Equal-weight beats every factor overlay** at Sharpe +0.92. The universe's beta is the dominant return source.
 5. **MARL agents show zero excess Sharpe over equal-weight** — the absolute Sharpe of ~1 is entirely market beta.
 
-**This is the expected result on a narrow, mega-cap-survivorship-biased universe.** The Tier 1 plan re-runs everything on the PIT S&P 500 with FF5 residualization to test whether alpha exists after stripping style exposure.
+**This was the expected result.** The Tier 1 and Tier 2 plans re-ran everything on the PIT S&P 500 with FF5+UMD residualization. The outcome was 0 survivors across all single factors and combination overlays. Lowering turnover destroyed the remaining alpha rather than saving it, falsifying the "eaten by costs" hypothesis. The approach conclusively failed the gate.
 
 ---
 
@@ -143,7 +143,7 @@ Deterministic seeds are documented in [SEEDS.md](SEEDS.md). The [CI workflow](.g
 3. **No TAQ-calibrated impact** — square-root k = 15 bps is a literature default
 4. **No fundamentals** — value/quality factors approximated from OHLCV
 5. **226/881 ever-member tickers have no yfinance data** — delisted/restructured gaps
-6. **MARL shows no alpha over equal-weight** — paused pending Tier 1 outcome
+6. **MARL shows no alpha over equal-weight** — permanently paused per Tier 2 failure.
 
 These are explicitly documented, not hidden. Fixing 1–4 requires data subscriptions (CRSP/Norgate, IBKR stock loan, TAQ) outside the scope of a public repo.
 
@@ -154,6 +154,8 @@ These are explicitly documented, not hidden. Fixing 1–4 requires data subscrip
 | Document | Purpose |
 |---|---|
 | [TIER1_STATUS.txt](TIER1_STATUS.txt) | Master plan + phase progress for the hedge-fund-seed validation |
+| [PHASE6_WRITEUP.md](alphaforge-python/research/PHASE6_WRITEUP.md) | The Tier 1 honest writeup of the failed result |
+| [TIER2_VERDICT.md](alphaforge-python/research/TIER2_VERDICT.md) | Final failure verdict and 30-day cooldown pre-commit |
 | [RESEARCH_WRITEUP.md](RESEARCH_WRITEUP.md) | Full research narrative and methodology |
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design and technical architecture |
 | [LESSONS_LEARNED.md](docs/LESSONS_LEARNED.md) | Engineering lessons from building a PIT universe from scratch |

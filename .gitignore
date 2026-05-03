@@ -51,6 +51,13 @@ htmlcov/
 *.swp
 .DS_Store
 .claude/
+.claudeignore
+.cursor/
+.cursorrules
+.kiro/
+.mcp.json
+.opencode.json
+.windsurfrules
 
 # Jupyter
 .ipynb_checkpoints/
@@ -142,3 +149,5 @@ scratch/
 tmp/
 *.bak
 *.orig
+# Added by code-review-graph
+.code-review-graph/
