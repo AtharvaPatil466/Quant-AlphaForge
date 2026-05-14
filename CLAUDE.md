@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AlphaForge is a quantitative alpha research platform with four components:
+AlphaForge is a quantitative alpha research platform with five components:
 1. **Frontend** — Vanilla JS single-page app (`index.html`), no build system. Open directly in a browser.
 2. **`alphaforge-python/`** — Python port of the JS data/simulation layer with REST API and mean-variance optimizer.
 3. **`alphaforge-marl/`** — Neuroevolution + PPO multi-agent RL framework for evolving trading strategies.
 4. **`alphaforge-execution/`** — Live paper trading system with yfinance data, Alpaca broker, and SQLite persistence.
+5. **`alphaforge-crypto/`** — Crypto-substrate research stack on Binance public data. Spun up 2026-05-15 after the equity gauntlet failed. v0 scope: data layer + funding-rate carry / spot-perp basis studies. The active research surface; the equity sub-projects (2-4) are frozen.
 
 Each Python sub-project has its own `CLAUDE.md` with detailed architecture. This file covers the cross-cutting concerns and the JS frontend.
 
@@ -22,9 +23,9 @@ The project is framed as the foundational stack for a future hedge fund (see `~/
 
 **Tier 2 outcome (2026-05-02):** the row-2 hypothesis was tested on the same PIT S&P 500 substrate with a pre-committed 8-strategy trial set at lower turnover (63d / 126d rebalance) plus volcap and forced-shrinkage variants. **Outcome 3 (clean fail): 0 strategies survive, no near-misses.** MV-21 alpha did not transport to longer rebalance horizons (MV-21: +3.06 alpha → MV-63: +0.79 → MV-126: +0.95). This is the inverse of what row 2 predicted; the MV signal appears to be a short-horizon-specific phenomenon, not a real cross-sectional anomaly eaten by costs. Full verdict: `alphaforge-python/research/TIER2_VERDICT.md`.
 
-**Current state — §7 reset cooldown until 2026-06-01.** No new strategies, no Tier 3 design, no MARL work, no live re-arming. The substrate-change reassessment memo is drafted on 2026-06-01 and asks: is the cross-sectional equity factor + linear combination + parametric cost construction class the right substrate at all, or should the founder path pivot to futures, market-making, options, crypto, or away from systematic alpha entirely. That memo is what unblocks the next decision.
+**Current state — equity stack frozen; crypto substrate active.** On 2026-05-15 the user explicitly overrode the §7 reset cooldown (originally locked until 2026-06-01) and pivoted to a crypto substrate via Binance public data. The equity sub-projects (`alphaforge-python/`, `-marl/`, `-execution/`) are frozen; `.halt` stays engaged on the execution loop. New research happens in `alphaforge-crypto/`. The substrate-change reassessment memo originally planned for 2026-06-01 is now historical, not predictive — the decision was already made. Methodology hygiene (pre-commit gates, DSR, bootstrap CIs, honest costs) carries over unchanged; the pivot is to a different alpha class, not to weaker methodology. See `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/substrate_pivot_crypto.md`.
 
-**Reading order for new sessions:** `TIER1_STATUS.txt` (master plan + outcomes) → `PHASE6_WRITEUP.md` (Tier 1 final writeup) → `TIER2_VERDICT.md` (Tier 2 verdict) → `TIER2_DESIGN.md` §7 (the reset). Do not start any new gauntlet design before reading these.
+**Reading order for new sessions:** `alphaforge-crypto/CLAUDE.md` (active surface) → `alphaforge-crypto/research/CARRY_STUDY_DESIGN.md` (current pre-commit doc). For equity-stack history: `TIER1_STATUS.txt` → `PHASE6_WRITEUP.md` → `TIER2_VERDICT.md` → `TIER2_DESIGN.md` §7. The equity history matters for *why we pivoted*, not for *what to do next*.
 
 **Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate consumed via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
 

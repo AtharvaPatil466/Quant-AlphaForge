@@ -95,6 +95,7 @@ credentials.json
 /data/market/
 /data/quarantine/
 /data/reports/
+/data/binance/
 
 # Sub-project runtime caches
 alphaforge-marl/.data_cache/
