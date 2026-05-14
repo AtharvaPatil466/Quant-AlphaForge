@@ -1,0 +1,385 @@
+[
+  {
+    "trial_id": 1,
+    "ts_utc": "2026-05-14T21:44:25.598770+00:00",
+    "parameter": "signal_aggregator",
+    "value": "median",
+    "rationale": "Robust against funding spikes (per inspection, |max| up to 1.9% per 8h).",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      "mean"
+    ]
+  },
+  {
+    "trial_id": 2,
+    "ts_utc": "2026-05-14T21:44:25.599061+00:00",
+    "parameter": "signal_aggregator",
+    "value": "mean",
+    "rationale": "Considered as alternative; rejected pre-IS because median is robust.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 3,
+    "ts_utc": "2026-05-14T21:44:25.599241+00:00",
+    "parameter": "embargo_events",
+    "value": 21,
+    "rationale": "7-day embargo at 8h cadence; matches design-doc embargo for IS/OOS boundary.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      14,
+      42
+    ]
+  },
+  {
+    "trial_id": 4,
+    "ts_utc": "2026-05-14T21:44:25.599394+00:00",
+    "parameter": "embargo_events",
+    "value": 14,
+    "rationale": "Tighter embargo considered; rejected because 7d standardizes with IS/OOS boundary.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 5,
+    "ts_utc": "2026-05-14T21:44:25.599541+00:00",
+    "parameter": "embargo_events",
+    "value": 42,
+    "rationale": "Wider embargo considered; rejected as wasteful given autocorr decay structure.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 6,
+    "ts_utc": "2026-05-14T21:44:25.599840+00:00",
+    "parameter": "cv_n_folds",
+    "value": 5,
+    "rationale": "5-fold purged CV per design doc, balances bias and variance.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      3,
+      10
+    ]
+  },
+  {
+    "trial_id": 7,
+    "ts_utc": "2026-05-14T21:44:25.599986+00:00",
+    "parameter": "cv_n_folds",
+    "value": 3,
+    "rationale": "3-fold considered; rejected as too few folds for stability estimate.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 8,
+    "ts_utc": "2026-05-14T21:44:25.600133+00:00",
+    "parameter": "cv_n_folds",
+    "value": 10,
+    "rationale": "10-fold considered; rejected because purging burns too much data.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 9,
+    "ts_utc": "2026-05-14T21:44:25.600517+00:00",
+    "parameter": "min_basket_eligibility",
+    "value": 15,
+    "rationale": "Half the top-30 universe; below this, cross-section is too thin to rank.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      10,
+      20
+    ]
+  },
+  {
+    "trial_id": 10,
+    "ts_utc": "2026-05-14T21:44:25.600813+00:00",
+    "parameter": "min_basket_eligibility",
+    "value": 10,
+    "rationale": "Looser threshold considered; rejected to avoid noisy small cross-sections.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 11,
+    "ts_utc": "2026-05-14T21:44:25.600966+00:00",
+    "parameter": "min_basket_eligibility",
+    "value": 20,
+    "rationale": "Stricter threshold considered; rejected because too restrictive in early-2020 history.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 12,
+    "ts_utc": "2026-05-14T21:44:25.601285+00:00",
+    "parameter": "direction",
+    "value": "short_high_funding",
+    "rationale": "H1 hypothesis: short top-funding earns funding net of costs. Locked pre-IS.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      "long_high_funding"
+    ]
+  },
+  {
+    "trial_id": 13,
+    "ts_utc": "2026-05-14T21:44:25.601444+00:00",
+    "parameter": "direction",
+    "value": "long_high_funding",
+    "rationale": "Null alternative considered; not tested per sign discipline.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 14,
+    "ts_utc": "2026-05-14T21:44:25.601601+00:00",
+    "parameter": "bucket_count",
+    "value": 5,
+    "rationale": "Quintile per design doc; balances basket size and dispersion at top-30 universe.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      3,
+      10
+    ]
+  },
+  {
+    "trial_id": 15,
+    "ts_utc": "2026-05-14T21:44:25.601763+00:00",
+    "parameter": "bucket_count",
+    "value": 3,
+    "rationale": "Tercile considered; rejected because basket too large dilutes signal.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 16,
+    "ts_utc": "2026-05-14T21:44:25.601928+00:00",
+    "parameter": "bucket_count",
+    "value": 10,
+    "rationale": "Decile considered; rejected because basket too small with ~25 eligible symbols.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 17,
+    "ts_utc": "2026-05-14T21:44:26.243211+00:00",
+    "parameter": "lookback_K",
+    "value": 21,
+    "rationale": "Anchor pass: weekly lookback (21\u00d78h = 7d). IC CV-mean=0.5264.",
+    "scope": "IS-only",
+    "is_metric": {
+      "cv_mean_ic": 0.5263669612302098,
+      "cv_std_ic": 0.05954190780380282,
+      "per_fold_ic_mean": [
+        0.42416462469579524,
+        0.5325594309212655,
+        0.6109803447065575,
+        0.5350789274143668,
+        0.5290514784130643
+      ]
+    }
+  },
+  {
+    "trial_id": 18,
+    "ts_utc": "2026-05-14T21:44:26.835430+00:00",
+    "parameter": "lookback_K",
+    "value": 3,
+    "rationale": "K sweep: 3 funding events lookback. IC CV-mean=0.5884.",
+    "scope": "IS-only",
+    "is_metric": {
+      "cv_mean_ic": 0.5884280593004858,
+      "cv_std_ic": 0.0147220320271831,
+      "per_fold_ic_mean": [
+        0.5793787325846423,
+        0.5853165660681557,
+        0.6162129782312508,
+        0.5736138145675526,
+        0.5876182050508277
+      ]
+    }
+  },
+  {
+    "trial_id": 19,
+    "ts_utc": "2026-05-14T21:44:27.424848+00:00",
+    "parameter": "lookback_K",
+    "value": 9,
+    "rationale": "K sweep: 9 funding events lookback. IC CV-mean=0.5521.",
+    "scope": "IS-only",
+    "is_metric": {
+      "cv_mean_ic": 0.5520807433015279,
+      "cv_std_ic": 0.0409313073295652,
+      "per_fold_ic_mean": [
+        0.48704562963358844,
+        0.5503996501904665,
+        0.6131041580814652,
+        0.5407073217405185,
+        0.5691469568616009
+      ]
+    }
+  },
+  {
+    "trial_id": 20,
+    "ts_utc": "2026-05-14T21:44:28.547564+00:00",
+    "parameter": "lookback_K",
+    "value": 63,
+    "rationale": "K sweep: 63 funding events lookback. IC CV-mean=0.4617.",
+    "scope": "IS-only",
+    "is_metric": {
+      "cv_mean_ic": 0.46170623565877805,
+      "cv_std_ic": 0.08867830540533217,
+      "per_fold_ic_mean": [
+        0.28871787441144353,
+        0.48858414682894585,
+        0.5386205281489906,
+        0.48285159148945234,
+        0.5097570374150576
+      ]
+    }
+  },
+  {
+    "trial_id": 21,
+    "ts_utc": "2026-05-14T21:44:28.548481+00:00",
+    "parameter": "rebalance_interval_equals_K",
+    "value": true,
+    "rationale": "Per design doc \u00a75: rebalance interval matches signal lookback K.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null
+  },
+  {
+    "trial_id": 22,
+    "ts_utc": "2026-05-14T21:44:28.548697+00:00",
+    "parameter": "perp_taker_bps",
+    "value": 4.0,
+    "rationale": "Locked at Binance VIP-0 retail tier per design doc \u00a76.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null
+  },
+  {
+    "trial_id": 23,
+    "ts_utc": "2026-05-14T21:44:28.548882+00:00",
+    "parameter": "spot_taker_bps",
+    "value": 10.0,
+    "rationale": "Locked at Binance VIP-0 retail tier per design doc \u00a76.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null
+  },
+  {
+    "trial_id": 24,
+    "ts_utc": "2026-05-14T21:44:28.549061+00:00",
+    "parameter": "slippage_bps_per_leg",
+    "value": 2.0,
+    "rationale": "v0 flat slippage; upgrade to sqrt-impact when L2 data lands.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null
+  },
+  {
+    "trial_id": 25,
+    "ts_utc": "2026-05-14T21:44:28.549253+00:00",
+    "parameter": "spot_short_borrow_annual_bps",
+    "value": 30.0,
+    "rationale": "Locked at 30bps annualized per design doc \u00a76.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null
+  },
+  {
+    "trial_id": 26,
+    "ts_utc": "2026-05-14T21:44:28.549573+00:00",
+    "parameter": "basis_drift_modeled",
+    "value": false,
+    "rationale": "Perfect-basis-hedge approximation in v0. Documented as a known limitation.",
+    "scope": "design-locked-no-sweep",
+    "is_metric": null,
+    "considered_alternatives": [
+      true
+    ]
+  },
+  {
+    "trial_id": 27,
+    "ts_utc": "2026-05-14T21:44:28.549861+00:00",
+    "parameter": "basis_drift_modeled",
+    "value": true,
+    "rationale": "Considered: include realized basis drift in PnL. Rejected for v0 because basis hedge tracking error is small for top symbols (BTC/ETH std ~1bps) and would compound trial count.",
+    "scope": "considered-not-run",
+    "is_metric": null
+  },
+  {
+    "trial_id": 28,
+    "ts_utc": "2026-05-14T21:44:31.732582+00:00",
+    "parameter": "K_backtest_is_sharpe",
+    "value": 3,
+    "rationale": "IS backtest at K=3: annualized Sharpe=-10.220, CV-mean Sharpe=-10.225.",
+    "scope": "IS-only",
+    "is_metric": {
+      "annualized_sharpe": -10.220385149090898,
+      "annualized_return_pct": -28.92198038692569,
+      "annualized_vol_pct": 2.8298327279279,
+      "cv_mean_sharpe": -10.225181870313822,
+      "cv_std_sharpe": 4.2701661182544655,
+      "annualized_turnover_proxy_pct": 22975.075815011372
+    }
+  },
+  {
+    "trial_id": 29,
+    "ts_utc": "2026-05-14T21:44:33.996514+00:00",
+    "parameter": "K_backtest_is_sharpe",
+    "value": 9,
+    "rationale": "IS backtest at K=9: annualized Sharpe=-2.866, CV-mean Sharpe=-2.593.",
+    "scope": "IS-only",
+    "is_metric": {
+      "annualized_sharpe": -2.8662105179869517,
+      "annualized_return_pct": -4.839654205724305,
+      "annualized_vol_pct": 1.6885201471953908,
+      "cv_mean_sharpe": -2.593143143723871,
+      "cv_std_sharpe": 2.9337470117649844,
+      "annualized_turnover_proxy_pct": 7846.531463229718
+    }
+  },
+  {
+    "trial_id": 30,
+    "ts_utc": "2026-05-14T21:44:36.034593+00:00",
+    "parameter": "K_backtest_is_sharpe",
+    "value": 21,
+    "rationale": "IS backtest at K=21: annualized Sharpe=0.909, CV-mean Sharpe=0.982.",
+    "scope": "IS-only",
+    "is_metric": {
+      "annualized_sharpe": 0.9087530356975482,
+      "annualized_return_pct": 1.1197970176083092,
+      "annualized_vol_pct": 1.2322346926178533,
+      "cv_mean_sharpe": 0.9820221998348428,
+      "cv_std_sharpe": 1.9269346982740894,
+      "annualized_turnover_proxy_pct": 3625.094768764215
+    }
+  },
+  {
+    "trial_id": 31,
+    "ts_utc": "2026-05-14T21:44:37.881797+00:00",
+    "parameter": "K_backtest_is_sharpe",
+    "value": 63,
+    "rationale": "IS backtest at K=63: annualized Sharpe=3.547, CV-mean Sharpe=3.473.",
+    "scope": "IS-only",
+    "is_metric": {
+      "annualized_sharpe": 3.5474507810043425,
+      "annualized_return_pct": 2.760417327570083,
+      "annualized_vol_pct": 0.7781411210414488,
+      "cv_mean_sharpe": 3.4731835336875023,
+      "cv_std_sharpe": 1.6044946986945128,
+      "annualized_turnover_proxy_pct": 1250.7960576194084
+    }
+  },
+  {
+    "trial_id": 32,
+    "ts_utc": "2026-05-14T21:44:37.882844+00:00",
+    "parameter": "K_primary_selection",
+    "value": 63,
+    "rationale": "Per CARRY_STUDY_DESIGN.md \u00a78: argmax CV-mean Sharpe, tie-break larger K.",
+    "scope": "IS-only",
+    "is_metric": {
+      "K_primary_cv_mean_sharpe": 3.4731835336875023
+    }
+  }
+]
