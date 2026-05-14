@@ -1,0 +1,53 @@
+{
+  "generated_at": "2026-05-14T21:54:24.621494+00:00",
+  "K_primary": 63,
+  "OOS_START_TS": "2025-01-08 00:00:00",
+  "n_oos_events": 2952,
+  "oos_years": 1.3465662787727837,
+  "annualized_return_pct": 1.2771174221831474,
+  "annualized_vol_pct": 0.8621819848615189,
+  "annualized_sharpe": 1.481262012669256,
+  "bootstrap_ci_annualized": [
+    -1.387428165794814,
+    4.325190201140634
+  ],
+  "deflated_sharpe_ratio": 0.62362796777076,
+  "dsr_n_trials": 32,
+  "realized_annualized_turnover_pct": 1700.6218231508299,
+  "skewness": -1.8750089795505758,
+  "kurtosis_raw": 52.11808279618363,
+  "is_sharpe_at_K_primary": 3.5474507810043425,
+  "sign_agreement": true,
+  "gates": {
+    "1_net_sharpe_gt_0.5": {
+      "value": 1.481262012669256,
+      "threshold": 0.5,
+      "passed": true
+    },
+    "2_bootstrap_ci_excludes_zero": {
+      "value": [
+        -1.387428165794814,
+        4.325190201140634
+      ],
+      "threshold": "CI excludes 0",
+      "passed": false
+    },
+    "3_dsr_gt_0.95": {
+      "value": 0.62362796777076,
+      "threshold": 0.95,
+      "n_trials_used": 32,
+      "passed": false
+    },
+    "4_turnover_lt_800pct": {
+      "value": 1700.6218231508299,
+      "threshold": 800.0,
+      "passed": false
+    },
+    "5_sign_agreement_is_vs_oos": {
+      "is_sharpe": 3.5474507810043425,
+      "oos_sharpe": 1.481262012669256,
+      "passed": true
+    }
+  },
+  "verdict": "CLOSED FAILED"
+}

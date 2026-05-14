@@ -692,7 +692,244 @@ def run_is_pipeline() -> dict:
     return summary
 
 
+# ---- OOS evaluation (runs only AFTER trial_log SHA is anchored) -----------
+
+from research.carry_primitives import deflated_sharpe_ratio
+
+
+def load_full_funding_panel_for_oos() -> pd.DataFrame:
+    """Load the full funding panel including the lookback prefix needed to
+    compute a fully-warm signal at OOS_START_MS. PnL is then post-filtered to
+    OOS-only timestamps.
+
+    Per design doc §3: the 7-day embargo prevents OOS evaluation from STARTING
+    within 7 days of IS_END; it does NOT prevent the OOS signal from drawing on
+    funding events inside the embargo for lookback purposes. The signal is a
+    backward-looking function of past funding only.
+    """
+    manifest = load_universe_manifest()
+    symbols = [s["symbol"] for s in manifest["symbols"]]
+    return load_funding_panel(symbols)
+
+
+def _filter_to_oos(pnl_frame: pd.DataFrame) -> pd.DataFrame:
+    return pnl_frame[pnl_frame["funding_time"] >= OOS_START_MS].copy()
+
+
+def run_oos_evaluation(
+    K_primary: int,
+    n_trials_from_log: int,
+) -> dict:
+    """Single-shot OOS evaluation at K_primary. Computes per-event PnL on the
+    OOS slice using a fully-warm signal, applies all 5 gates from design doc §9.
+    """
+    print(f"[OOS] Loading full funding panel (signal needs lookback into pre-OOS).")
+    funding = load_full_funding_panel_for_oos()
+    print(f"  total funding rows loaded (all-time): {len(funding)}")
+
+    # Run the same backtest mechanics but get the full PnL series, then OOS-filter.
+    signal = build_signal_panel(K_primary, funding)
+    funding_pivot = _build_funding_pivot(funding)
+
+    rebalance_times = sorted(signal["funding_time"].unique())
+    rebalance_times = [t for t in rebalance_times if t in funding_pivot.index]
+    rebalance_times = rebalance_times[K_primary::K_primary]
+
+    last_long: tuple[str, ...] = ()
+    last_short: tuple[str, ...] = ()
+    half_round_trip_bps = COST_CFG.round_trip_combined_bps() / 2
+
+    event_pnl_rows: list[dict] = []
+    held_long: tuple[str, ...] = ()
+    held_short: tuple[str, ...] = ()
+
+    sorted_all_times = sorted(funding_pivot.index)
+    rebal_set = set(rebalance_times)
+    dollar_turnover_running = 0.0  # for proper turnover accounting
+
+    for ft in sorted_all_times:
+        rebalance_cost_bps = 0.0
+        rebalance_dollar_turnover = 0.0
+        if ft in rebal_set:
+            scores_at_t = signal[signal["funding_time"] == ft]
+            buckets = form_buckets(
+                scores_at_t[["symbol", "funding_time", "cs_score"]],
+                n_buckets=LOCKED_BUCKETS,
+                direction=LOCKED_DIRECTION,
+                min_eligible=LOCKED_MIN_ELIGIBLE,
+            )
+            if buckets and buckets[0].long_symbols and buckets[0].short_symbols:
+                new_long = buckets[0].long_symbols
+                new_short = buckets[0].short_symbols
+                turnover_long = _rebalance_turnover(last_long, new_long)
+                turnover_short = _rebalance_turnover(last_short, new_short)
+                cost_bps_long = turnover_long * half_round_trip_bps * 0.5
+                cost_bps_short = turnover_short * half_round_trip_bps * 0.5
+                rebalance_cost_bps = cost_bps_long + cost_bps_short
+                # dollar turnover for proper annualization:
+                rebalance_dollar_turnover = 0.5 * turnover_long + 0.5 * turnover_short
+                held_long, held_short = new_long, new_short
+                last_long, last_short = new_long, new_short
+
+        if held_long or held_short:
+            row = funding_pivot.loc[ft]
+            long_pnl_bps = _per_event_pnl_bps_for_basket(held_long, "long", row)
+            short_pnl_bps = _per_event_pnl_bps_for_basket(held_short, "short", row)
+            net_pnl_bps = 0.5 * long_pnl_bps + 0.5 * short_pnl_bps - rebalance_cost_bps
+        else:
+            net_pnl_bps = 0.0
+
+        event_pnl_rows.append({
+            "funding_time": ft,
+            "pnl_bps": net_pnl_bps,
+            "cost_bps": rebalance_cost_bps,
+            "dollar_turnover": rebalance_dollar_turnover,
+        })
+
+    full = pd.DataFrame(event_pnl_rows).sort_values("funding_time").reset_index(drop=True)
+    oos = _filter_to_oos(full)
+    if oos.empty:
+        raise RuntimeError("No OOS rows produced — check OOS_START_MS and data range.")
+
+    pnl = oos["pnl_bps"].astype(float).to_numpy()
+    events_per_year = 3 * 365
+
+    # 1. Annualized Sharpe
+    if pnl.size > 1 and pnl.std(ddof=1) > 0:
+        sharpe_event = float(pnl.mean() / pnl.std(ddof=1))
+    else:
+        sharpe_event = float("nan")
+    annualized_sharpe = sharpe_event * np.sqrt(events_per_year)
+
+    # 2. Bootstrap CI on per-event Sharpe → annualized
+    point_per_event, lo_per_event, hi_per_event = stationary_bootstrap_sharpe_ci(
+        pnl, n_resamples=5000, mean_block_length=12.0, seed=42,
+    )
+    annualized_lo = lo_per_event * np.sqrt(events_per_year)
+    annualized_hi = hi_per_event * np.sqrt(events_per_year)
+    ci_excludes_zero = (annualized_lo > 0 and annualized_hi > 0) or (annualized_lo < 0 and annualized_hi < 0)
+
+    # 3. DSR using N_trials from the committed trial log
+    skew = float(pd.Series(pnl).skew())
+    kurt = float(pd.Series(pnl).kurt()) + 3.0  # pandas returns excess kurtosis; DSR formula expects raw kurt
+    dsr = deflated_sharpe_ratio(
+        observed_sharpe=sharpe_event,
+        n_trials=n_trials_from_log,
+        skewness=skew,
+        kurtosis=kurt,
+        n_observations=int(pnl.size),
+    )
+
+    # 4. Realized annualized turnover (proper, in $ terms not proxy)
+    total_dollar_turnover = float(oos["dollar_turnover"].sum())
+    oos_seconds = (oos["funding_time"].max() - oos["funding_time"].min()) / 1000
+    oos_years = oos_seconds / (365.25 * 24 * 3600)
+    realized_annualized_turnover_pct = (total_dollar_turnover / oos_years) * 100 if oos_years > 0 else float("nan")
+
+    # 5. Sign agreement: load IS Sharpe from the committed is_results.json
+    is_results_path = PROJECT_ROOT / "research" / "out" / "carry_study" / "is_results.json"
+    is_results = json.loads(is_results_path.read_text())
+    is_sharpe_for_kprimary = next(
+        r["annualized_sharpe"] for r in is_results["backtest_results"] if r["K"] == K_primary
+    )
+    sign_agree = (is_sharpe_for_kprimary > 0 and annualized_sharpe > 0) or \
+                 (is_sharpe_for_kprimary < 0 and annualized_sharpe < 0)
+
+    # Build gates table
+    gates = {
+        "1_net_sharpe_gt_0.5": {"value": float(annualized_sharpe), "threshold": 0.5,
+                                 "passed": bool(annualized_sharpe > 0.5)},
+        "2_bootstrap_ci_excludes_zero": {"value": [float(annualized_lo), float(annualized_hi)],
+                                          "threshold": "CI excludes 0",
+                                          "passed": bool(ci_excludes_zero)},
+        "3_dsr_gt_0.95": {"value": float(dsr), "threshold": 0.95,
+                          "n_trials_used": int(n_trials_from_log),
+                          "passed": bool(dsr > 0.95)},
+        "4_turnover_lt_800pct": {"value": float(realized_annualized_turnover_pct),
+                                  "threshold": 800.0,
+                                  "passed": bool(realized_annualized_turnover_pct < 800.0)},
+        "5_sign_agreement_is_vs_oos": {
+            "is_sharpe": float(is_sharpe_for_kprimary),
+            "oos_sharpe": float(annualized_sharpe),
+            "passed": bool(sign_agree),
+        },
+    }
+    all_pass = all(g["passed"] for g in gates.values())
+    verdict = "PASS" if all_pass else "CLOSED FAILED"
+
+    summary = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "K_primary": int(K_primary),
+        "OOS_START_TS": OOS_START_TS,
+        "n_oos_events": int(pnl.size),
+        "oos_years": float(oos_years),
+        "annualized_return_pct": float(pnl.mean() * events_per_year / 100),
+        "annualized_vol_pct": float(pnl.std(ddof=1) * np.sqrt(events_per_year) / 100) if pnl.size > 1 else None,
+        "annualized_sharpe": float(annualized_sharpe),
+        "bootstrap_ci_annualized": [float(annualized_lo), float(annualized_hi)],
+        "deflated_sharpe_ratio": float(dsr),
+        "dsr_n_trials": int(n_trials_from_log),
+        "realized_annualized_turnover_pct": float(realized_annualized_turnover_pct),
+        "skewness": float(skew),
+        "kurtosis_raw": float(kurt),
+        "is_sharpe_at_K_primary": float(is_sharpe_for_kprimary),
+        "sign_agreement": bool(sign_agree),
+        "gates": gates,
+        "verdict": verdict,
+    }
+    return summary
+
+
+def run_oos_pipeline() -> dict:
+    """OOS entry point. Reads K_primary and trial count from the committed IS
+    artifacts, runs single-shot OOS evaluation at K_primary, applies the 5
+    gates, prints verdict.
+    """
+    out_dir = PROJECT_ROOT / "research" / "out" / "carry_study"
+    is_results_path = out_dir / "is_results.json"
+    if not is_results_path.exists():
+        raise RuntimeError("IS results not found. Run run_is_pipeline first.")
+
+    is_results = json.loads(is_results_path.read_text())
+    K_primary = int(is_results["K_primary"])
+    n_trials = int(trial_count())
+
+    print(f"[OOS] K_primary={K_primary}, N_trials (from log)={n_trials}")
+    print(f"  OOS window: {OOS_START_TS} → present")
+
+    summary = run_oos_evaluation(K_primary=K_primary, n_trials_from_log=n_trials)
+
+    print(f"\n[OOS results]")
+    print(f"  events: {summary['n_oos_events']}   span: {summary['oos_years']:.2f} years")
+    print(f"  annualized return: {summary['annualized_return_pct']:+.3f}%")
+    print(f"  annualized vol:    {summary['annualized_vol_pct']:.3f}%")
+    print(f"  annualized Sharpe: {summary['annualized_sharpe']:+.3f}")
+    print(f"  bootstrap 95% CI:  [{summary['bootstrap_ci_annualized'][0]:+.3f}, {summary['bootstrap_ci_annualized'][1]:+.3f}]")
+    print(f"  DSR:               {summary['deflated_sharpe_ratio']:.4f}  (N_trials={summary['dsr_n_trials']})")
+    print(f"  realized turnover: {summary['realized_annualized_turnover_pct']:.0f}% annualized")
+    print(f"  IS Sharpe / OOS Sharpe: {summary['is_sharpe_at_K_primary']:+.3f} / {summary['annualized_sharpe']:+.3f}  → sign agree: {summary['sign_agreement']}")
+
+    print(f"\n[Gates]")
+    for name, g in summary["gates"].items():
+        mark = "PASS" if g["passed"] else "FAIL"
+        print(f"  [{mark}] {name}: {g}")
+
+    print(f"\n*** VERDICT: {summary['verdict']} ***")
+
+    out_path = out_dir / "oos_results.json"
+    out_path.write_text(json.dumps(summary, indent=2, default=str))
+    print(f"\n  results: {out_path}")
+    return summary
+
+
 if __name__ == "__main__":
-    summary = run_is_pipeline()
-    print(f"\nK_primary = {summary['K_primary']}, IS NOT YET COMMITTED — do not open OOS.")
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["is", "oos"], default="is")
+    args = parser.parse_args()
+    if args.mode == "is":
+        summary = run_is_pipeline()
+        print(f"\nK_primary = {summary['K_primary']}, IS NOT YET COMMITTED — do not open OOS.")
+    else:
+        summary = run_oos_pipeline()
     raise SystemExit(0)

@@ -308,8 +308,11 @@ def deflated_sharpe_ratio(
     var_factor = 1.0 - skewness * observed_sharpe + ((kurtosis - 1.0) / 4.0) * observed_sharpe ** 2
     if var_factor <= 0:
         return 0.0
-    denom = sqrt(var_factor) / sqrt(max(1, n_observations - 1))
-    if denom <= 0:
-        return 0.0
-    z = (observed_sharpe - expected_max) / denom
+    # López de Prado (2018) DSR: scale SR_obs to z-units (multiply by sqrt(T-1))
+    # then subtract the expected max-z under N trials. expected_max is already in
+    # z-units (it's a Gumbel/normal-order-statistics quantity), so it does NOT get
+    # scaled. The variance correction in the denominator only adjusts for non-
+    # normality in the SR estimator.
+    numerator = observed_sharpe * sqrt(max(1, n_observations - 1)) - expected_max
+    z = numerator / sqrt(var_factor)
     return nd.cdf(z)

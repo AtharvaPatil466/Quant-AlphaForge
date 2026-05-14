@@ -134,14 +134,17 @@ def test_stationary_bootstrap_returns_valid_interval() -> None:
 
 
 def test_dsr_decreases_with_more_trials() -> None:
-    sharpe = 1.0
+    # Use a per-event Sharpe consistent with realistic strategy returns
+    # (annualized ~1.6 at 1095 events/year cadence) — at SR=1 per event, DSR
+    # saturates to 1.0 numerically regardless of trial count.
+    sharpe = 0.05
     dsr_1 = deflated_sharpe_ratio(
-        sharpe, n_trials=1, skewness=0.0, kurtosis=3.0, n_observations=250,
+        sharpe, n_trials=1, skewness=0.0, kurtosis=3.0, n_observations=1095,
     )
     dsr_50 = deflated_sharpe_ratio(
-        sharpe, n_trials=50, skewness=0.0, kurtosis=3.0, n_observations=250,
+        sharpe, n_trials=50, skewness=0.0, kurtosis=3.0, n_observations=1095,
     )
-    assert dsr_50 < dsr_1, "DSR should decrease as trial count rises"
+    assert dsr_50 < dsr_1, f"DSR should decrease as trial count rises, got {dsr_1=}, {dsr_50=}"
 
 
 def test_dsr_increases_with_higher_sharpe() -> None:
@@ -152,3 +155,18 @@ def test_dsr_increases_with_higher_sharpe() -> None:
         2.0, n_trials=10, skewness=0.0, kurtosis=3.0, n_observations=250,
     )
     assert dsr_high > dsr_low
+
+
+def test_dsr_per_event_sharpe_at_reasonable_T_is_in_expected_range() -> None:
+    """Regression for the 2026-05-15 DSR scaling bug.
+
+    With per-event SR = 0.045 (≈ annualized 1.5 at 1095 events/year), 2952
+    observations, N_trials = 32, near-Gaussian moments, the DSR should land
+    in the 0.5-0.8 range — meaningfully positive but below the 0.95 gate.
+    Prior to the fix this returned 0.0 because expected_max was implicitly
+    rescaled by sqrt(T-1).
+    """
+    dsr = deflated_sharpe_ratio(
+        0.045, n_trials=32, skewness=0.0, kurtosis=3.0, n_observations=2952,
+    )
+    assert 0.4 < dsr < 0.9, f"expected DSR in (0.4, 0.9), got {dsr}"
