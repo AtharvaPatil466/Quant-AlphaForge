@@ -2,6 +2,24 @@
 
 Sub-project for the crypto-substrate research stack. Spun up 2026-05-15 after the equity-substrate gauntlet (Tier 1 + Tier 2) closed FAILED on 2026-05-02. See `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/substrate_pivot_crypto.md` for the decision context.
 
+## Status (as of 2026-05-15)
+
+**Carry study CLOSED FAILED.** Full retrospective in `research/CARRY_STUDY_VERDICT.md`. Headline: 3 of 5 pre-committed gates failed (CI straddles zero, DSR=0.624 < 0.95, turnover 1701% > 800%). The signal is real (IC ~0.5 cross-sectional) but costs (36 bps round-trip) and multiple-testing deflation (N_trials=32) ate the marginal Sharpe.
+
+**Diagnosis matches equity Tier 1/2:** row 2 of the failure-path matrix — "real signal eaten by costs/multiple-testing". The substrate pivot did not change the failure mode.
+
+**Pre-commit anchors in git history:**
+- `dbd77ad` — design doc commit
+- `4277eba` — trial-log commit
+- `0d35e41` — OOS commit + DSR formula fix
+
+**What does NOT happen next from this codebase:**
+- No re-fitting carry_study.py with different K values or cost assumptions
+- No auto-activation of `basis_study.py` (still a stub; design-doc §10 said "basis activates only if carry passes" — carry definitively closed, so basis stays closed)
+- No live trading
+
+The next decision is a founder-track substrate/strategy-class question, not a code question. See `CARRY_STUDY_VERDICT.md` §"What this means for the next substrate decision".
+
 ## Scope
 
 - **In:** data layer (Binance public REST → local parquet store), minimal factor study targeting **funding-rate carry** and **spot-perp basis** as the crypto-native alpha class.

@@ -23,9 +23,21 @@ The project is framed as the foundational stack for a future hedge fund (see `~/
 
 **Tier 2 outcome (2026-05-02):** the row-2 hypothesis was tested on the same PIT S&P 500 substrate with a pre-committed 8-strategy trial set at lower turnover (63d / 126d rebalance) plus volcap and forced-shrinkage variants. **Outcome 3 (clean fail): 0 strategies survive, no near-misses.** MV-21 alpha did not transport to longer rebalance horizons (MV-21: +3.06 alpha → MV-63: +0.79 → MV-126: +0.95). This is the inverse of what row 2 predicted; the MV signal appears to be a short-horizon-specific phenomenon, not a real cross-sectional anomaly eaten by costs. Full verdict: `alphaforge-python/research/TIER2_VERDICT.md`.
 
-**Current state — equity stack frozen; crypto substrate active.** On 2026-05-15 the user explicitly overrode the §7 reset cooldown (originally locked until 2026-06-01) and pivoted to a crypto substrate via Binance public data. The equity sub-projects (`alphaforge-python/`, `-marl/`, `-execution/`) are frozen; `.halt` stays engaged on the execution loop. New research happens in `alphaforge-crypto/`. The substrate-change reassessment memo originally planned for 2026-06-01 is now historical, not predictive — the decision was already made. Methodology hygiene (pre-commit gates, DSR, bootstrap CIs, honest costs) carries over unchanged; the pivot is to a different alpha class, not to weaker methodology. See `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/substrate_pivot_crypto.md`.
+**Current state — three failed substrate attempts. Founder-track substrate decision pending.**
 
-**Reading order for new sessions:** `alphaforge-crypto/CLAUDE.md` (active surface) → `alphaforge-crypto/research/CARRY_STUDY_DESIGN.md` (current pre-commit doc). For equity-stack history: `TIER1_STATUS.txt` → `PHASE6_WRITEUP.md` → `TIER2_VERDICT.md` → `TIER2_DESIGN.md` §7. The equity history matters for *why we pivoted*, not for *what to do next*.
+| Substrate | Outcome | Date | Diagnosis |
+|---|---|---|---|
+| Equity Tier 1 (PIT S&P 500 cross-section) | CLOSED FAILED | 2026-05-02 | Row 2: real signal, costs+multiple-testing |
+| Equity Tier 2 (lower-turnover variant) | CLOSED FAILED | 2026-05-02 | Same substrate, different parameters — clean fail |
+| Crypto Carry (Binance USDT-M funding) | CLOSED FAILED | 2026-05-15 | Same row 2 diagnosis — signal IC=0.5 but costs+DSR penalty win |
+
+On 2026-05-15 the user explicitly overrode the §7 reset cooldown (originally locked until 2026-06-01) and pivoted to a crypto substrate via Binance public data. The crypto pivot tested whether the equity-factor failure was substrate-specific. **It wasn't.** Both substrates failed via the same row-2 mechanism (real signal eaten by honest costs and multiple-testing deflation).
+
+The equity sub-projects (`alphaforge-python/`, `-marl/`, `-execution/`) remain frozen; `.halt` stays engaged on the execution loop. The crypto sub-project (`alphaforge-crypto/`) has the carry study CLOSED FAILED; the basis study stub is NOT auto-activated. Methodology hygiene (pre-commit gates, DSR, bootstrap CIs, honest costs) is the load-bearing piece across both substrates — it worked exactly as designed, and it kept failing strategies from being deployed.
+
+**The honest question is no longer "what substrate?" It's "what strategy class?"** Cross-sectional rank-based signals with linear combinations and parametric costs do not survive in either equity or crypto. The remaining unexplored options — futures term-structure / roll-yield, options vol surface, market-making (execution alpha), or pivoting away from systematic alpha entirely — are different *classes*, not different *substrates*. That decision is the next gate. See `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` §"What this means for the next substrate decision".
+
+**Reading order for new sessions:** `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` (most recent failure) → `alphaforge-crypto/research/CARRY_STUDY_DESIGN.md` (the methodology that worked) → `alphaforge-crypto/CLAUDE.md` (sub-project context). For equity-stack history: `TIER1_STATUS.txt` → `PHASE6_WRITEUP.md` → `TIER2_VERDICT.md`. The equity history matters for *why we pivoted*; the crypto history matters for *why the pivot didn't help*; neither matters for *what to do next* — that's a founder decision.
 
 **Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate consumed via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
 
