@@ -138,7 +138,12 @@ def _is_weekday(d: date) -> bool:
 
 def _load_processed_parquet(processed_dir: Path) -> pd.DataFrame | None:
     """Load all bhavcopy parquets concatenated. Returns None if none exist."""
-    files = sorted(processed_dir.rglob("bhavcopy_*.parquet"))
+    # Accept either {YYYY}.parquet (canonical, written by ingest.build_parquet)
+    # or legacy bhavcopy_*.parquet test fixtures.
+    files = sorted(
+        list(processed_dir.rglob("[0-9][0-9][0-9][0-9].parquet"))
+        + list(processed_dir.rglob("bhavcopy_*.parquet"))
+    )
     if not files:
         return None
     return pd.concat([pd.read_parquet(f) for f in files], ignore_index=True)

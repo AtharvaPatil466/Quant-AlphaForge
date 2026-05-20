@@ -61,7 +61,8 @@ def build_pipeline(data_root: Path) -> dict:
         log.info(f"Parsing unified year {year}...")
         year_stats = parse_unified_year(
             unified_dir=unified_dir,
-            out_path=out_path
+            out_path=out_path,
+            holiday_path=processed_dir / "_holidays.jsonl"
         )
         stats[str(year)] = year_stats
         

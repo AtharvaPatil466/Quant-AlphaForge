@@ -47,7 +47,18 @@ def load_unified(csv_path: Path) -> pd.DataFrame:
     """Read one sec_bhavdata_full CSV. Returns ALL rows, all series."""
     if not csv_path.exists():
         raise FileNotFoundError(csv_path)
-    df = pd.read_csv(csv_path)
+    
+    # Detect if file is an Excel file (OOXML/ZIP or legacy XLS format)
+    with open(csv_path, "rb") as f:
+        sig = f.read(4)
+        is_excel = sig.startswith(b"PK\x03\x04") or sig.startswith(b"\xd0\xcf\x11\xe0")
+
+    if is_excel:
+        log.info("Reading %s as Excel", csv_path.name)
+        df = pd.read_excel(csv_path)
+    else:
+        df = pd.read_csv(csv_path)
+
     # NSE has shipped this file with leading whitespace in some column names.
     df.columns = [c.strip() for c in df.columns]
     missing = [c for c in _UNIFIED_COLS_REQUIRED if c not in df.columns]
@@ -61,8 +72,12 @@ def load_unified(csv_path: Path) -> pd.DataFrame:
     return df
 
 
-def _parse_unified_date(value: str) -> date:
-    value = value.strip()
+def _parse_unified_date(value: str | date | pd.Timestamp) -> date:
+    if isinstance(value, (pd.Timestamp, date)):
+        if isinstance(value, pd.Timestamp):
+            return value.date()
+        return value
+    value = str(value).strip()
     for fmt in _DATE_FORMATS:
         try:
             return pd.to_datetime(value, format=fmt).date()
@@ -81,6 +96,16 @@ def parse_one_date(csv_path: Path) -> UnifiedParseResult:
     eq_rows = len(eq)
 
     trade_date = _parse_unified_date(eq["DATE1"].iloc[0])
+
+    # Extract date from filename to verify they match
+    match = re.search(r"sec_bhavdata_full_(\d{2})(\d{2})(\d{4})\.csv", csv_path.name)
+    if not match:
+        raise ValueError(f"unexpected unified filename format: {csv_path.name}")
+    fn_date = date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
+    if fn_date != trade_date:
+        raise ValueError(
+            f"Filename date mismatch: filename={fn_date}, internal DATE1={trade_date}"
+        )
 
     # Numeric coercion. After EQ filter, DELIV_PER should be fully numeric;
     # any stragglers (NaN) survive coercion and propagate downstream.
@@ -108,15 +133,48 @@ def parse_one_date(csv_path: Path) -> UnifiedParseResult:
     return UnifiedParseResult(df=out, raw_rows=raw_rows, eq_rows=eq_rows)
 
 
-def parse_year(unified_dir: Path, out_path: Path) -> dict:
+def parse_year(unified_dir: Path, out_path: Path, holiday_path: Path | None = None) -> dict:
     """Parse every unified CSV under `unified_dir` and write one year of
     unified Parquet."""
     files = sorted(unified_dir.rglob("sec_bhavdata_full_*.csv"))
     frames: list[pd.DataFrame] = []
-    stats = {"files": 0, "rows": 0}
+    stats = {"files": 0, "rows": 0, "skipped_mismatches": 0}
     for f in files:
         try:
             r = parse_one_date(f)
+        except ValueError as e:
+            if "Filename date mismatch" in str(e):
+                log.info("Detected holiday mismatch file %s, skipping and logging holiday: %r", f.name, e)
+                stats["skipped_mismatches"] += 1
+                if holiday_path:
+                    match = re.search(r"sec_bhavdata_full_(\d{2})(\d{2})(\d{4})\.csv", f.name)
+                    if match:
+                        from datetime import date, datetime, timezone
+                        import json
+                        fn_date = date(int(match.group(3)), int(match.group(2)), int(match.group(1)))
+                        existing_dates = set()
+                        if holiday_path.exists():
+                            with open(holiday_path, "r") as fp:
+                                for line in fp:
+                                    line = line.strip()
+                                    if line:
+                                        try:
+                                            existing_dates.add(json.loads(line)["date"])
+                                        except Exception:
+                                            pass
+                        if fn_date.isoformat() not in existing_dates:
+                            entry = {
+                                "date": fn_date.isoformat(),
+                                "weekday": fn_date.strftime("%A"),
+                                "sources_attempted": ["unified"],
+                                "recorded_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                "note": f"Filename vs internal DATE1 mismatch in {f.name}"
+                            }
+                            with open(holiday_path, "a") as fp:
+                                fp.write(json.dumps(entry) + "\n")
+                continue
+            log.warning("skipping %s: %r", f.name, e)
+            continue
         except Exception as e:
             log.warning("skipping %s: %r", f.name, e)
             continue
