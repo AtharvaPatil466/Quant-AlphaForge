@@ -4,18 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-AlphaForge is a quantitative alpha research platform with five components:
+AlphaForge is a quantitative alpha research platform with eight components:
 1. **Frontend** — Vanilla JS single-page app (`index.html`), no build system. Open directly in a browser.
-2. **`alphaforge-python/`** — Python port of the JS data/simulation layer with REST API and mean-variance optimizer.
-3. **`alphaforge-marl/`** — Neuroevolution + PPO multi-agent RL framework for evolving trading strategies.
-4. **`alphaforge-execution/`** — Live paper trading system with yfinance data, Alpaca broker, and SQLite persistence.
-5. **`alphaforge-crypto/`** — Crypto-substrate research stack on Binance public data. Spun up 2026-05-15 after the equity gauntlet failed. v0 scope: data layer + funding-rate carry / spot-perp basis studies. The active research surface; the equity sub-projects (2-4) are frozen.
+2. **`alphaforge-python/`** — Python port of the JS data/simulation layer with REST API and mean-variance optimizer. FROZEN (factor/research modules) post-Tier-2; data layer (PIT universe, OHLCV store, cost model, stats hygiene) is read-only consumed by other sub-projects.
+3. **`alphaforge-marl/`** — Neuroevolution + PPO multi-agent RL framework. FROZEN.
+4. **`alphaforge-execution/`** — Live paper trading. FROZEN; `.halt` engaged.
+5. **`alphaforge-crypto/`** — Crypto carry/basis research stack on Binance public data. Carry study CLOSED FAILED 2026-05-15.
+6. **`alphaforge-microstructure/`** — Microstructure research stack on Binance BTC-USDT L2 + tape. Active substrate #4. Phase 0 in progress (book-data accumulation, started 2026-05-17; earliest Phase 1 execution 2026-06-17). Phase 1/2/3 pre-committed.
+7. **`alphaforge-pead/`** — Post-Earnings Announcement Drift research stack on EDGAR XBRL + the existing PIT equity substrate. Substrate #5, **CLOSED FAILED 2026-05-17.** 0 of 10 pre-committed trials cleared the gauntlet; "real but weak" diagnosis with positive IC but DSR < 0.95. Full verdict: `research/PHASE1_VERDICT.md`.
+8. **`alphaforge-india/`** — NSE event-driven + flow-based research stack on bhavcopy + delivery percentage + F&O expiry. Active substrate #6, **parallel to microstructure during the 30-day book-data wait**. Phase 0/1/3 orchestrators all BUILT 2026-05-18 → 2026-05-20 (323 tests, ~6,300 LOC). Design contract: `research/INDIA_DESIGN.md` (SHA-256 `3b397262...`). 22-trial set (was 31; FII/DII dropped via §17 ADDENDUM after spike test showed no historical daily data is freely accessible). Five-gate gauntlet (DSR > 0.95, bootstrap CI excludes zero, sign agreement, full-Indian-cost-stack survival, 4-of-4 regime stress + 60% positive months), four-factor residualization (market, risk-free, size, liquidity). **Downloader currently running** (started 2026-05-20; ~2017 in progress). Phase 0 cert + Phase 1 + Phase 3 verdicts produced once download completes.
 
 Each Python sub-project has its own `CLAUDE.md` with detailed architecture. This file covers the cross-cutting concerns and the JS frontend.
 
-## Project Status (as of 2026-05-02)
+## Project Status (as of 2026-05-20)
 
-The project is framed as the foundational stack for a future hedge fund (see `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/user_career.md`). **Tier 1 closed FAILED on 2026-05-02; Tier 2 closed FAILED the same day.** The project is now in the pre-committed §7 reset cooldown until **2026-06-01**, during which no new gauntlet design or AlphaForge research is permitted. The parallel skill track (math foundations, paper reading, public artifacts) absorbs the time.
+The project is framed as the foundational stack for a future hedge fund (see `~/.claude/projects/-Users-atharva-Quant-Projects-Quant-Alpha/memory/user_career.md`). **Four substrates have closed FAILED: equity Tier 1 (2026-05-02), equity Tier 2 (2026-05-02), crypto carry (2026-05-15), and PEAD (2026-05-17).** The pre-committed §7 reset cooldown has been overridden three times — for crypto (2026-05-15, failed), for PEAD-parallel-to-microstructure (2026-05-17, failed), and for India-parallel-to-microstructure (2026-05-18, in Phase 0). As of end-of-day 2026-05-18:
+
+- **Substrate #4 — Microstructure** (`alphaforge-microstructure/`): BTC-USDT L2 + trade tape on Binance. Phase 0 IN PROGRESS; live collector started 2026-05-17 accumulating book data; Phase 1 pre-committed in `alphaforge-microstructure/research/PHASE1_DESIGN.md` (56 base trials + 112 conditional). Phase 2 + Phase 3 design contracts also pre-committed. Earliest Phase 1 execution: 2026-06-17 (+30d).
+- **Substrate #5 — PEAD** (`alphaforge-pead/`): Post-Earnings Announcement Drift via EDGAR XBRL on the existing PIT equity substrate. **CLOSED FAILED 2026-05-17.** Phase 1 gauntlet ran cleanly; 0 of 10 trials cleared. Closest near-misses K=63 and K=84 quintile (DSR 0.58-0.75 vs 0.95 hurdle). "Real but weak" — IC uniformly positive in both OOS, sign agreement 8/10, peak horizon aligned with literature — but not strong enough to clear deflation. Same row-2 diagnosis as the three prior verdicts. Full verdict: `alphaforge-pead/research/PHASE1_VERDICT.md`.
+- **Substrate #6 — India** (`alphaforge-india/`): NSE event-driven + flow-based stack on bhavcopy + delivery percentage + F&O expiry. Strategy class deliberately chosen to avoid the cross-sectional-rank failure mode common to all five prior verdicts. **Phase 0/1/3 orchestrators all built, 323 tests passing.** 30-date bhavcopy spike test PASSED 2026-05-18 (0/30 IP bans, three file formats verified). FII/DII signal family dropped 2026-05-19 via §17 ADDENDUM after second spike test confirmed `/api/fiidiiTradeReact` returns only current-day data and all historical archive paths 404 — trial set reduced 31 → 22. Design contract `INDIA_DESIGN.md` SHA `3b397262...` (post-addendum). Five-gate gauntlet (DSR > 0.95, bootstrap CI excludes zero, sign agreement, full-Indian-cost-stack survival, 4-of-4 regime stress + 60% positive months), four-factor residualization (market, risk-free, size, liquidity). **Downloader currently running** in a separate session (started 2026-05-20, ~2017 as of last check). On completion: `phase0_certify` → `run_phase1` → `run_phase3` produces `GAUNTLET_VERDICT.md`. **Parallel to microstructure**; does NOT unfreeze any equity sub-project. `.halt` stays engaged regardless of India outcome.
+
+**Six substrates tested. Four closed FAILED, two in flight.** The discipline is calibrated correctly; the substrates tested so far are post-arbitrage. The honest reading is no longer "what's the next substrate?" but "what strategy class has STRUCTURAL retail advantage?" India is the first explicit attempt to answer that question — testing whether geographic-market thinness (Indian quant fund competition is structurally less dense than US/global) provides the structural edge the prior five substrates lacked. The signal class (event-driven + flow-based, not cross-sectional rank) is also explicitly new. The pivot decision waits for either Microstructure's or India's verdict.
 
 **Live execution loop is paused.** `alphaforge-execution/.halt` is engaged; `run_daily.sh` exits with `HALTED` on every cron fire. The 10 Alpaca paper positions across the momentum and MARL accounts were flattened on 2026-04-26 via `alphaforge-execution/scripts/tier1_close_positions.py`. Re-launch requires the four conditions in `alphaforge-execution/docs/TIER1_PAUSE.md`. With Tier 1 + Tier 2 failed, those conditions cannot be met from the current state; the `.halt` stays on indefinitely.
 
@@ -23,21 +32,31 @@ The project is framed as the foundational stack for a future hedge fund (see `~/
 
 **Tier 2 outcome (2026-05-02):** the row-2 hypothesis was tested on the same PIT S&P 500 substrate with a pre-committed 8-strategy trial set at lower turnover (63d / 126d rebalance) plus volcap and forced-shrinkage variants. **Outcome 3 (clean fail): 0 strategies survive, no near-misses.** MV-21 alpha did not transport to longer rebalance horizons (MV-21: +3.06 alpha → MV-63: +0.79 → MV-126: +0.95). This is the inverse of what row 2 predicted; the MV signal appears to be a short-horizon-specific phenomenon, not a real cross-sectional anomaly eaten by costs. Full verdict: `alphaforge-python/research/TIER2_VERDICT.md`.
 
-**Current state — three failed substrate attempts. Founder-track substrate decision pending.**
+**Current state — four failed substrate attempts, two in flight. Founder-track substrate decision pending.**
 
-| Substrate | Outcome | Date | Diagnosis |
-|---|---|---|---|
-| Equity Tier 1 (PIT S&P 500 cross-section) | CLOSED FAILED | 2026-05-02 | Row 2: real signal, costs+multiple-testing |
-| Equity Tier 2 (lower-turnover variant) | CLOSED FAILED | 2026-05-02 | Same substrate, different parameters — clean fail |
-| Crypto Carry (Binance USDT-M funding) | CLOSED FAILED | 2026-05-15 | Same row 2 diagnosis — signal IC=0.5 but costs+DSR penalty win |
+| # | Substrate | Outcome | Date | Diagnosis |
+|---|---|---|---|---|
+| 1 | Equity Tier 1 (PIT S&P 500 cross-section) | CLOSED FAILED | 2026-05-02 | Row 2: real signal, costs+multiple-testing |
+| 2 | Equity Tier 2 (lower-turnover variant) | CLOSED FAILED | 2026-05-02 | Same substrate, different parameters — clean fail |
+| 3 | Crypto Carry (Binance USDT-M funding) | CLOSED FAILED | 2026-05-15 | Same row 2 — signal IC=0.5 but costs+DSR penalty win |
+| 4 | Microstructure (BTC-USDT L2 + tape) | IN PROGRESS | 2026-05-17 → +30d | — (Phase 0 book-data accumulation) |
+| 5 | PEAD (EDGAR XBRL on PIT S&P 500) | CLOSED FAILED | 2026-05-17 | Same row 2 — "real but weak", 0/10 cleared deflation |
+| 6 | India (NSE bhavcopy + delivery + F&O) | IN PROGRESS — code ready, download running | 2026-05-18 | — (Phase 0/1/3 orchestrators all built, awaiting bhavcopy download to fire) |
 
 On 2026-05-15 the user explicitly overrode the §7 reset cooldown (originally locked until 2026-06-01) and pivoted to a crypto substrate via Binance public data. The crypto pivot tested whether the equity-factor failure was substrate-specific. **It wasn't.** Both substrates failed via the same row-2 mechanism (real signal eaten by honest costs and multiple-testing deflation).
 
 The equity sub-projects (`alphaforge-python/`, `-marl/`, `-execution/`) remain frozen; `.halt` stays engaged on the execution loop. The crypto sub-project (`alphaforge-crypto/`) has the carry study CLOSED FAILED; the basis study stub is NOT auto-activated. Methodology hygiene (pre-commit gates, DSR, bootstrap CIs, honest costs) is the load-bearing piece across both substrates — it worked exactly as designed, and it kept failing strategies from being deployed.
 
-**The honest question is no longer "what substrate?" It's "what strategy class?"** Cross-sectional rank-based signals with linear combinations and parametric costs do not survive in either equity or crypto. The remaining unexplored options — futures term-structure / roll-yield, options vol surface, market-making (execution alpha), or pivoting away from systematic alpha entirely — are different *classes*, not different *substrates*. That decision is the next gate. See `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` §"What this means for the next substrate decision".
+**The honest question is no longer "what substrate?" It's "what strategy class?"** Cross-sectional rank-based signals with linear combinations and parametric costs do not survive in either equity or crypto on US-data substrates. India (#6) is the first test of whether geographic-market thinness + event-driven/flow-based signal class (NOT cross-sectional rank) breaks the row-2 pattern. Microstructure (#4) is the first test of whether HFT-saturated execution-alpha capture is reachable at retail latency. If both fail, the remaining unexplored options are different *classes*: spin-off arbitrage (Greenblatt 1997, retail-scale documented), microcap value + quality, vol-surface anomalies, crypto on-chain analytics. See `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` §"What this means for the next substrate decision".
 
-**Reading order for new sessions:** `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` (most recent failure) → `alphaforge-crypto/research/CARRY_STUDY_DESIGN.md` (the methodology that worked) → `alphaforge-crypto/CLAUDE.md` (sub-project context). For equity-stack history: `TIER1_STATUS.txt` → `PHASE6_WRITEUP.md` → `TIER2_VERDICT.md`. The equity history matters for *why we pivoted*; the crypto history matters for *why the pivot didn't help*; neither matters for *what to do next* — that's a founder decision.
+**Reading order for new sessions:**
+- For substrate #6 context: `alphaforge-india/research/INDIA_DESIGN.md` → `alphaforge-india/CLAUDE.md`.
+- For substrate #5 verdict: `alphaforge-pead/research/PHASE1_VERDICT.md` → `alphaforge-pead/CLAUDE.md`.
+- For substrate #4 plan: `alphaforge-microstructure/research/PHASE1_DESIGN.md` → `alphaforge-microstructure/CLAUDE.md`.
+- For substrate #3 verdict: `alphaforge-crypto/research/CARRY_STUDY_VERDICT.md` → `alphaforge-crypto/research/CARRY_STUDY_DESIGN.md` → `alphaforge-crypto/CLAUDE.md`.
+- For equity-stack history (substrates #1 + #2): `TIER1_STATUS.txt` → `alphaforge-python/research/PHASE6_WRITEUP.md` → `alphaforge-python/research/TIER2_VERDICT.md`.
+
+The equity history matters for *why we pivoted*; the crypto/PEAD history matters for *why each pivot didn't help*; India + microstructure are the open questions. *What to do next* if those also fail is a founder decision, not a methodology decision.
 
 **Phase-1 universe substrate vs the legacy 50-name universe.** The 50 today-surviving large-caps in `data/market/universe.py` are the LEGACY substrate kept for the headline factor study and JS-parity smoke tests. The PIT 877-ever-member universe is the NEW substrate consumed via `validator.membership_on_date(events, baseline, date) -> set[ticker]`. Don't conflate them.
 
@@ -193,6 +212,7 @@ yfinance ───(bulk pull)──▶  data/quarantine/market/<TICKER>/<YEAR>.p
 - 226 of 881 ever-member tickers have no yfinance data (delisted/restructured). Phase 4-5 must treat these as known data gaps in any reported metric.
 - Synthetic PRNG data still exists for JS parity tests and offline smoke tests, but it is no longer the default training/eval substrate.
 - The JS frontend calls the `alphaforge-python` API for real-data scans/backtests; its local-only mode uses the synthetic fallback.
+- **`alphaforge-microstructure/` and `alphaforge-india/` have INDEPENDENT data flows** that do not touch the equity stack: microstructure pulls BTC-USDT L2 + tape live from Binance; India pulls NSE bhavcopy + MTO + FII/DII from `archives.nseindia.com`. Neither sub-project reads from `data/quarantine/market/` or unfreezes any equity module.
 
 ## Defensive Numerics
 
