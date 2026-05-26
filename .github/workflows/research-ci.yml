@@ -11,7 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        subdir: [alphaforge-python, alphaforge-marl, alphaforge-execution]
+        subdir:
+          - alphaforge-python
+          - alphaforge-marl
+          - alphaforge-execution
+          - alphaforge-crypto
+          - alphaforge-vix
+          - alphaforge-india
+          - alphaforge-pead
+          - alphaforge-options
+          - alphaforge-microstructure
     steps:
       - uses: actions/checkout@v4
 
