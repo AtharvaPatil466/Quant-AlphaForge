@@ -34,8 +34,8 @@ ALERT_LOG = Path(__file__).parent.parent / "alerts.log"
 
 def _alert(level: str, msg: str) -> None:
     """Append a timestamped alert to alerts.log."""
-    from datetime import datetime
-    ts = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+    from datetime import datetime, timezone
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
     line = f"{ts} [{level}] {msg}\n"
     with open(ALERT_LOG, "a") as f:
         f.write(line)

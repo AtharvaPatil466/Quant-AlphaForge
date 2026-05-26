@@ -6,7 +6,7 @@ import logging
 import os
 import time
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional
 
 from dotenv import load_dotenv
@@ -81,7 +81,7 @@ class AlpacaBroker(Broker):
         from alpaca.trading.enums import OrderSide, TimeInForce
         from alpaca.trading.requests import MarketOrderRequest
 
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         order.submitted_at = now
 
         # Round to integer shares — Alpaca paper doesn't support fractional

@@ -23,7 +23,7 @@ import os
 import sqlite3
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -64,14 +64,14 @@ def _record_close(db_path: Path, ticker: str, qty: float, fill_price: float | No
                VALUES (?, ?, ?, 'SELL', ?, ?, ?, ?, NULL, NULL, ?, ?)""",
             (
                 order_id,
-                datetime.utcnow().date().isoformat(),
+                datetime.now(timezone.utc).date().isoformat(),
                 ticker,
                 qty,
                 fill_price,
                 qty if status == "FILLED" else 0.0,
                 status,
-                datetime.utcnow().isoformat(),
-                datetime.utcnow().isoformat() if status == "FILLED" else None,
+                datetime.now(timezone.utc).isoformat(),
+                datetime.now(timezone.utc).isoformat() if status == "FILLED" else None,
             ),
         )
         conn.commit()
@@ -176,7 +176,7 @@ def main() -> int:
     load_dotenv(ROOT / ".env")
 
     print(f"Tier 1 Phase 0.3 — flatten paper accounts (dry_run={args.dry_run})")
-    print(f"Started: {datetime.utcnow().isoformat()}Z")
+    print(f"Started: {datetime.now(timezone.utc).isoformat()}Z")
     print("-" * 60)
 
     results = []
@@ -195,9 +195,9 @@ def main() -> int:
         print(json.dumps(res, indent=2, default=str))
         print("-" * 60)
 
-    log_path = ROOT / f"tier1_close_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
+    log_path = ROOT / f"tier1_close_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
     log_path.write_text(json.dumps({
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
         "dry_run": args.dry_run,
         "results": results,
     }, indent=2, default=str))

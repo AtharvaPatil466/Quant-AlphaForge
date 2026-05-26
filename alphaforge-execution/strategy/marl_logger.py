@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -30,7 +30,7 @@ def log_marl_decision(
 ) -> None:
     """Append one decision record to the JSONL log."""
     record = {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "trade_date": date,
         "action": action,
         "action_name": action_name,

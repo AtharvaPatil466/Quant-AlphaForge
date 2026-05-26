@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict
 
 from execution.broker import AccountState, Broker, Order, Position
@@ -37,7 +37,7 @@ class PaperBroker(Broker):
             fill_price = ref_price * (1 - slip)
 
         cost = fill_price * order.quantity
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
 
         if order.side == "BUY":
             if cost > self._cash:

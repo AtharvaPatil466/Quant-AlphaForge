@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import sqlite3
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
@@ -260,7 +260,7 @@ class KillSwitch:
 
     def _write_pager(self, trade_date: str, reasons: List[str]) -> None:
         self.pager_path.parent.mkdir(parents=True, exist_ok=True)
-        ts = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         line = (f"{ts} HALT date={trade_date} reasons="
                 + "; ".join(reasons) + "\n")
         with open(self.pager_path, "a") as f:
