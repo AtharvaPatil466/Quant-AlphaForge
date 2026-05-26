@@ -1,0 +1,123 @@
+{
+  "pit_universe": 771,
+  "has_xbrl": 747,
+  "has_ohlcv": 654,
+  "has_both": 634,
+  "has_min_quarters": 723,
+  "eligible_firms": 614,
+  "eligible_firm_quarters": 26908,
+  "substitution": {
+    "primary": 6305,
+    "fallback": 20603,
+    "rate": 0.7656830682324959
+  },
+  "exclusion_reasons": {
+    "no_xbrl_coverage": 24,
+    "eligible": 614,
+    "no_ohlcv_coverage": 113,
+    "under_min_quarters(8)": 20
+  },
+  "min_quarters_required": 8,
+  "eligible_sample": [
+    {
+      "cik": 1800,
+      "ticker": "ABT",
+      "n_quarters": 51
+    },
+    {
+      "cik": 2488,
+      "ticker": "AMD",
+      "n_quarters": 51
+    },
+    {
+      "cik": 2969,
+      "ticker": "APD",
+      "n_quarters": 52
+    },
+    {
+      "cik": 4127,
+      "ticker": "SWKS",
+      "n_quarters": 50
+    },
+    {
+      "cik": 4904,
+      "ticker": "AEP",
+      "n_quarters": 50
+    },
+    {
+      "cik": 4962,
+      "ticker": "AXP",
+      "n_quarters": 45
+    },
+    {
+      "cik": 4977,
+      "ticker": "AFL",
+      "n_quarters": 54
+    },
+    {
+      "cik": 5272,
+      "ticker": "AIG",
+      "n_quarters": 53
+    },
+    {
+      "cik": 5513,
+      "ticker": "UNM",
+      "n_quarters": 52
+    },
+    {
+      "cik": 6201,
+      "ticker": "AAL",
+      "n_quarters": 51
+    },
+    {
+      "cik": 6281,
+      "ticker": "ADI",
+      "n_quarters": 41
+    },
+    {
+      "cik": 6769,
+      "ticker": "APA",
+      "n_quarters": 33
+    },
+    {
+      "cik": 6951,
+      "ticker": "AMAT",
+      "n_quarters": 50
+    },
+    {
+      "cik": 7084,
+      "ticker": "ADM",
+      "n_quarters": 54
+    },
+    {
+      "cik": 8670,
+      "ticker": "ADP",
+      "n_quarters": 52
+    },
+    {
+      "cik": 9389,
+      "ticker": "BALL",
+      "n_quarters": 55
+    },
+    {
+      "cik": 10456,
+      "ticker": "BAX",
+      "n_quarters": 53
+    },
+    {
+      "cik": 10795,
+      "ticker": "BDX",
+      "n_quarters": 49
+    },
+    {
+      "cik": 11199,
+      "ticker": "AMCR",
+      "n_quarters": 28
+    },
+    {
+      "cik": 11544,
+      "ticker": "WRB",
+      "n_quarters": 51
+    }
+  ]
+}
