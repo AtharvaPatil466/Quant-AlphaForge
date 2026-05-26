@@ -9,16 +9,12 @@ Tests cover:
 """
 from __future__ import annotations
 
-import sys
 from datetime import date
-from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from universe.isin_master import ISINMaster  # noqa: E402
-from universe.pit import (  # noqa: E402
+from universe.isin_master import ISINMaster
+from universe.pit import (
     PITUniverse,
     _normalize_aggressive,
     _strip_suffixes,

@@ -54,17 +54,17 @@ def compute_lookback_signal(
     if method not in ("median", "mean"):
         raise ValueError(f"unknown method {method!r}")
 
-    def _apply(group: pd.DataFrame) -> pd.DataFrame:
+    pieces: list[pd.DataFrame] = []
+    for symbol, group in funding_panel_long.groupby("symbol", sort=False):
         g = group.sort_values("funding_time").reset_index(drop=True)
         # shift(1) excludes the current event from the lookback — no look-ahead.
         roll = g["funding_rate"].shift(1).rolling(window=lookback_K, min_periods=lookback_K)
         g["signal"] = roll.median() if method == "median" else roll.mean()
-        return g[["symbol", "funding_time", "signal"]]
-
-    return (
-        funding_panel_long.groupby("symbol", group_keys=False, sort=False)
-        .apply(_apply)
-        .reset_index(drop=True)
+        # Re-attach the grouping key (pandas 3.x excludes it from sub-frames).
+        g["symbol"] = symbol
+        pieces.append(g[["symbol", "funding_time", "signal"]])
+    return pd.concat(pieces, ignore_index=True) if pieces else pd.DataFrame(
+        columns=["symbol", "funding_time", "signal"]
     )
 
 

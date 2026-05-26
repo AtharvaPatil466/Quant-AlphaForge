@@ -8,17 +8,13 @@ Tests cover:
 """
 from __future__ import annotations
 
-import sys
 from datetime import date, timedelta
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from signals.fo_expiry import (  # noqa: E402
+from signals.fo_expiry import (
     FOExpiryTrial,
     _trading_days_around_date,
     compute_window_returns,

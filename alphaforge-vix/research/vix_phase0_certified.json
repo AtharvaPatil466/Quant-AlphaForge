@@ -1,0 +1,115 @@
+{
+  "design_doc_sha": "54e53be92f72e5161a4478cb8e518955d08164bfad0057675278fa2c49367b29",
+  "certified": true,
+  "results": {
+    "term_structure": {
+      "name": "term_structure",
+      "status": "pass",
+      "summary": "5/5 indices present, first dates as expected",
+      "metrics": {
+        "first_dates": {
+          "VIX": "1990-01-02",
+          "VIX1D": "2022-05-13",
+          "VIX3M": "2009-09-18",
+          "VIX6M": "2008-01-02",
+          "VIX9D": "2011-01-04"
+        },
+        "last_date": "2026-05-19",
+        "rows": 9188
+      },
+      "errors": []
+    },
+    "spy_spike_events": {
+      "name": "spy_spike_events",
+      "status": "pass",
+      "summary": "5/5 known volatility-event spikes captured (all PASS)",
+      "metrics": {
+        "n_passed": 5,
+        "n_total": 5,
+        "per_spike": [
+          {
+            "name": "2008_lehman",
+            "passed": true,
+            "observed": 92.54735373023804,
+            "summary": "realized_vol_21 max> 60.0 \u2192 observed 92.5474 (PASS)"
+          },
+          {
+            "name": "2010_flash_crash",
+            "passed": true,
+            "observed": -0.03377756013827084,
+            "summary": "log_return min< -0.03 \u2192 observed -0.0338 (PASS)"
+          },
+          {
+            "name": "2015_china_devaluation",
+            "passed": true,
+            "observed": 32.39334178752199,
+            "summary": "realized_vol_21 max> 20.0 \u2192 observed 32.3933 (PASS)"
+          },
+          {
+            "name": "2018_volmageddon",
+            "passed": true,
+            "observed": 27.47759546599931,
+            "summary": "realized_vol_21 max> 20.0 \u2192 observed 27.4776 (PASS)"
+          },
+          {
+            "name": "2020_covid_monday",
+            "passed": true,
+            "observed": -0.11588653747701536,
+            "summary": "log_return min< -0.1 \u2192 observed -0.1159 (PASS)"
+          }
+        ]
+      },
+      "errors": []
+    },
+    "etp_availability": {
+      "name": "etp_availability",
+      "status": "pass",
+      "summary": "SVXY + VXX coverage as expected per \u00a717 ADDENDUM",
+      "metrics": {
+        "svxy_first": "2011-10-04",
+        "svxy_last": "2026-05-20",
+        "svxy_rows": 3678,
+        "svxy_pre_restructuring_rows": 1609,
+        "svxy_post_restructuring_rows": 2069,
+        "vxx_first": "2018-01-25",
+        "vxx_last": "2026-05-20",
+        "vxx_rows": 2091
+      },
+      "errors": []
+    },
+    "vix_cross_consistency": {
+      "name": "vix_cross_consistency",
+      "status": "pass",
+      "summary": "correlation = 1.0000 over 9158 dates (threshold 0.99)",
+      "metrics": {
+        "n_overlap": 9158,
+        "correlation": 0.999992413726202
+      },
+      "errors": []
+    },
+    "contango_bias": {
+      "name": "contango_bias",
+      "status": "pass",
+      "summary": "VIX3M \u2265 VIX on 92.3% of 4192 days (threshold 70%)",
+      "metrics": {
+        "n_overlap": 4192,
+        "contango_fraction": 0.9227099236641222
+      },
+      "errors": []
+    },
+    "vix_futures_settlements": {
+      "name": "vix_futures_settlements",
+      "status": "skip",
+      "summary": "REMOVED per \u00a717 ADDENDUM (CBOE moved to paid DataShop).",
+      "metrics": {},
+      "errors": []
+    },
+    "fred_dgs3mo": {
+      "name": "fred_dgs3mo",
+      "status": "skip",
+      "summary": "Optional. May time out from some networks. Falls back to constant rates per \u00a714.7.",
+      "metrics": {},
+      "errors": []
+    }
+  }
+}

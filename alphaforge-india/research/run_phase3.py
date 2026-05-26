@@ -267,8 +267,11 @@ def evaluate_trial_deliv_pct(
 
     # §7 residualization — applied if factor data is available.
     residual_ret = portfolio_ret
+    alpha_stats: dict = {}
     if factor_matrix is not None and not factor_matrix.empty:
-        residual_ret = _residualize_returns(portfolio_ret, factor_matrix)
+        residual_ret, alpha_stats = _residualize_returns(
+            portfolio_ret, factor_matrix
+        )
 
     # Ensure DatetimeIndex for gates.py
     residual_ret.index = pd.to_datetime(residual_ret.index)
@@ -316,21 +319,60 @@ def evaluate_trial_fo_expiry(trial_name: str) -> TrialVerdict:
 def _residualize_returns(
     portfolio_ret: pd.Series,
     factor_matrix: pd.DataFrame,
-) -> pd.Series:
-    """Residualize `portfolio_ret` against `factor_matrix`. Returns the
-    residual time series (raw minus factor-explained component)."""
+) -> tuple[pd.Series, dict]:
+    """Residualize `portfolio_ret` against `factor_matrix`. Returns
+    (residual_return_series, alpha_stats) where alpha_stats has the §7
+    hard-rule fields (alpha, t_stat, p_value, betas, r_squared, n_obs).
+
+    The residualize() function in `gauntlet.residualization` returns a
+    ResidualizeResult with alpha + t-stat but does not return the residual
+    series. We compute residuals here using the same OLS as residualize()
+    so the gauntlet operates on the alpha component only.
+    """
     try:
         from gauntlet import residualization as RES
+
+        if "const" not in factor_matrix.columns:
+            log.warning("factor matrix missing 'const' column; using raw.")
+            return portfolio_ret, {}
+
+        # Run residualize() to capture the §7 hard-rule statistics.
         result = RES.residualize(portfolio_ret, factor_matrix)
-        # The user's API returns a result object — extract residuals.
-        residuals = getattr(result, "residuals", None)
-        if residuals is None:
-            log.warning("residualize() returned no `residuals`; using raw.")
-            return portfolio_ret
-        return residuals
+        alpha_stats = {
+            "alpha": result.alpha,
+            "alpha_t_stat": result.alpha_t_stat,
+            "alpha_p_value": result.alpha_p_value,
+            "betas": result.betas,
+            "r_squared": result.r_squared,
+            "n_obs": result.n_obs,
+            "passed_alpha_t_test": result.passed,
+        }
+
+        # Compute residuals directly via OLS on the common date range.
+        common = portfolio_ret.dropna().index.intersection(
+            factor_matrix.dropna(how="any").index
+        )
+        if len(common) < 10:
+            return portfolio_ret, alpha_stats
+        y = portfolio_ret.loc[common].values
+        X = factor_matrix.loc[common].values
+        try:
+            XtX_inv = np.linalg.inv(X.T @ X)
+        except np.linalg.LinAlgError:
+            XtX_inv = np.linalg.pinv(X.T @ X)
+        beta = XtX_inv @ (X.T @ y)
+        # Residuals = y - X @ beta + alpha (we keep alpha; the gauntlet
+        # evaluates whether the residual stream — net of factor exposure —
+        # carries skill).
+        alpha_idx = list(factor_matrix.columns).index("const")
+        factor_only_pred = X @ beta - X[:, alpha_idx] * beta[alpha_idx]
+        residuals = y - factor_only_pred
+        residual_series = pd.Series(residuals, index=common,
+                                     name=portfolio_ret.name)
+        return residual_series, alpha_stats
     except Exception as e:
         log.warning("residualize failed (%r); using raw portfolio returns.", e)
-        return portfolio_ret
+        return portfolio_ret, {}
 
 
 # ---------------------------------------------------------------------------
@@ -556,6 +598,44 @@ def main(argv: list[str] | None = None) -> int:
     close_df, deliv_pct_df = load_oos_panel(args.processed_dir)
     log.info("  loaded %d dates × %d symbols",
              len(close_df.index), len(close_df.columns))
+
+    # PIT membership masking — same logic as `research.run_phase1.main`.
+    # Without this, Phase 3 sees ~4,000 symbols (all-time EQ universe) vs
+    # Phase 1's 1,222 Nifty 500 ever-members → different signal behavior.
+    try:
+        from universe.isin_master import ISINMaster
+        from universe.pit import PITUniverse
+        base_dir = Path(__file__).resolve().parent.parent
+        equity_l_path = base_dir.parent / "EQUITY_L.csv"
+        symbolchange_path = base_dir.parent / "symbolchange.csv"
+        xls_path = base_dir.parent / "IndexInclExcl.xls"
+        nifty500_list_path = base_dir.parent / "ind_nifty500list.csv"
+        if (equity_l_path.exists() and symbolchange_path.exists()
+                and xls_path.exists() and nifty500_list_path.exists()):
+            log.info("Loading PIT universe + applying membership mask...")
+            im = ISINMaster(equity_l_path=equity_l_path,
+                            symbolchange_path=symbolchange_path)
+            pit = PITUniverse(xls_path=xls_path, isin_master=im,
+                              nifty500_list_path=nifty500_list_path)
+            mask_dict: dict = {}
+            for d in close_df.index:
+                members = pit.membership_on_date(d.date())
+                mask_dict[d] = {s: (s in members) for s in close_df.columns}
+            membership_mask = pd.DataFrame.from_dict(mask_dict, orient="index")
+            membership_mask = membership_mask.reindex(
+                index=close_df.index, columns=close_df.columns, fill_value=False,
+            )
+            close_df = close_df.where(membership_mask)
+            deliv_pct_df = deliv_pct_df.where(membership_mask)
+            log.info("  membership masking applied (%d ever-members).",
+                     len(pit.ever_members()))
+        else:
+            log.warning("PIT universe files missing — Phase 3 runs WITHOUT "
+                        "membership masking. Verdict comparable to Phase 1 "
+                        "only if Phase 1 also ran unmasked.")
+    except Exception as e:
+        log.warning("Failed to construct membership mask (%r); proceeding "
+                    "unmasked.", e)
 
     factor_matrix: pd.DataFrame | None = None
     if args.factor_matrix and args.factor_matrix.exists():

@@ -1,6 +1,6 @@
 # alphaforge-india — Sub-Project Context
 
-**Status as of 2026-05-18:** Phase 0 INGEST + VALIDATOR + EXPIRY-CALENDAR LAYERS BUILT. 101 unit tests + end-to-end smoke against real NSE data (legacy 2008-04-01, unified 2024-01-08) all green. Full-history download not yet run. No signal computed. No backtest run.
+**Status as of 2026-05-20: SUBSTRATE #6 CLOSED FAILED at Phase 3.** Full pipeline executed end-to-end on the completed bhavcopy download. Phase 0 CERTIFIED (6/6 active gates pass). Phase 1: 22/22 trials cleared IS pre-filter. Phase 3: **0/18 evaluated trials cleared all 5 gates; 0 cleared even Gates 1-4.** F&O Phase 3 (4 trials) skipped — no per-event high-OI universe data. Sixth credible row-2 verdict in the project. Full machine-generated verdict: `research/GAUNTLET_VERDICT.md`. Test suite: 371/371.
 
 This sub-project is **substrate #6** in the AlphaForge research program. Five prior substrates have closed FAILED (equity Tier 1, Tier 2, crypto carry, PEAD), one is in flight (microstructure #4, Phase 0 book-data accumulation through ≈ 2026-06-17). India is **parallel substrate work** alongside microstructure.
 
@@ -240,7 +240,24 @@ Operational notes:
 
 - **2026-05-20 session 6** (parallel-to-download work — download running externally on user's machine, ~2017 in progress):
   - `ingest/progress.py` — read-only download progress monitor. Reads the live `_download_checkpoint.jsonl`, reports per-result/per-year counts, surfaces halt rows + recent failures, estimates ETA honoring the era split (pre-2020 = 2 sources/weekday, post = 1). 15 tests.
-  - `research/build_factor_matrix.py` — orchestrator around `gauntlet.residualization.build_factor_matrix`. Loads bhavcopy → close + volume panels, builds the four-factor return matrix (MKT, SMB, LIQ), writes CSV consumable by `research/run_phase3.py --factor-matrix`. Risk-free defaults to 7%/yr constant if no CSV supplied. SMB falls back to close × volume proxy when no free-float-mcap data (documented). 14 tests.
-  - `research/cs_calibration.py` — Phase 0 §6 deliverable. Samples 50 Nifty 500 stocks (seeded), computes Corwin-Schultz half-spread per stock per window (IS / OOS-A / OOS-B), compares against parametric 5 bp, flags any window above the 10 bp documentation threshold. **First real-data smoke produced: IS median 16.33 bp (3.3× parametric) — DIVERGENCE FLAGGED per §6 discipline.** OOS_A skipped (no data yet — download still in 2017). OOS_B median 6.62 bp (within threshold). Result documented, gauntlet cost numbers NOT changed (§15 hard rule). 19 tests.
-  - **Defensive fix to four loaders** (`ingest.validator`, `research.run_phase1`, `research.run_phase3`, `research.build_factor_matrix`): added `drop_duplicates(subset=["date","symbol"])` because the user's `build_parquet.py` writes era-overlap dates twice in 2020 (128,806 exact-identical duplicate rows found). Loader files now also accept the `{YYYY}.parquet` canonical naming convention used by the user's build_parquet, not just `bhavcopy*.parquet`.
-  - **371/371 tests passing.** Substrate now executable end-to-end against real downloaded data once download completes. Phase 0 §6 deliverable already produced (partial — needs OOS_A data).
+  - `research/build_factor_matrix.py` — orchestrator around `gauntlet.residualization.build_factor_matrix`. Loads bhavcopy → close + volume panels, builds the four-factor return matrix (MKT, SMB, LIQ, const), writes CSV consumable by `research/run_phase3.py --factor-matrix`. Risk-free defaults to 7%/yr constant if no CSV supplied. SMB falls back to close × volume proxy when no free-float-mcap data (documented). 14 tests.
+  - `research/cs_calibration.py` — Phase 0 §6 deliverable. Samples 50 Nifty 500 stocks (seeded), computes Corwin-Schultz half-spread per stock per window (IS / OOS-A / OOS-B), compares against parametric 5 bp, flags any window above the 10 bp documentation threshold. 19 tests.
+  - **Defensive fix to four loaders** (`ingest.validator`, `research.run_phase1`, `research.run_phase3`, `research.build_factor_matrix`): added `drop_duplicates(subset=["date","symbol"])` because `build_parquet.py` writes era-overlap dates twice in 2020 (128,806 exact-identical duplicate rows found). Loaders also accept the `{YYYY}.parquet` canonical naming convention.
+  - **371/371 tests passing.**
+
+- **2026-05-20 session 7** (download complete — full pipeline + CLOSED FAILED verdict):
+  - **Phase 0 CERTIFIED**: 6/6 active gates pass. 7,764,360 EQ rows across 5,527 dates (2004-01-01 → 2026-05-19), 4,225 unique symbols. 100% DELIV_PER coverage on 3,558,569 Nifty 500 ever-member rows. F&O calendar 57/57 reference months matched. Holiday log 40/40 known holidays. (TRI correlation + FII/DII remain SKIP per design.)
+  - **CS calibration**: IS median 7.09 bp, OOS_A median 20.41 bp ⚠ (4.1× parametric — DIVERGENCE FLAGGED), OOS_B median 7.32 bp. Documented per §6; cost numbers stay frozen per §15.
+  - **Phase 1**: 22/22 survivors. Delivery-pct IC consistently positive (0.034-0.062 full IS, 0.050-0.090 in 2010+ sub-window, rolling 12-month positive 77-100%). F&O expiry post-window t-stats 4.7-5.1 (p < 0.0001).
+  - **Phase 3 — CLOSED FAILED**: 0/18 delivery-pct trials cleared all 5 gates; 0 cleared Gates 1-4. F&O 4 trials SKIPPED (no OI data). **Universal pattern: every trial produced negative Sharpe in BOTH OOS windows.** SR range by holding period: H=21 (lowest cost) -0.62 to -1.37; H=10 -1.56 to -2.66; H=5 (highest cost) -3.24 to -4.94. Cost-doubling test barely moves the needle (-4.80 → -4.88), confirming **costs are NOT the binding constraint — the signal direction itself reversed OOS**.
+  - **Diagnosis**: signal sign inversion + cost drag. The delivery-percentage anomaly that produced positive IC in 2004-2014 (IS) produces negative Sharpe in 2015-2026 (OOS) across all 18 trials, both OOS windows. Same row-2 mechanism as the prior 5 substrates, with a sharper edge — not "real but weak" (PEAD), but real-in-IS, *actively negative* in OOS.
+  - Bugs found and fixed this session: missing `const` column in factor matrix CSV; `_residualize_returns` adapter expected non-existent `.residuals` attribute (manual OLS now); Phase 3 was missing PIT membership masking that Phase 1 had (verdict unchanged after fix).
+  - **Substrate #6 is closed. Per §12 decision matrix, Phase 4 (paper trading) is NOT triggered.** Full verdict: `research/GAUNTLET_VERDICT.md`. Raw metrics: `research/PHASE3_RESULTS.json`.
+
+## What this means for the broader project
+
+**Six substrates tested. Five closed FAILED. Microstructure (#4) still in flight on Binance L2 book-data accumulation through ~2026-06-17.**
+
+The honest pattern: the row-2 failure mode (real-in-sample signal eaten or inverted out-of-sample under honest costs + multiple-testing deflation) is **geographic-agnostic and signal-class-agnostic** within the constraints we've imposed: free public data, parametric cost model, deflation-aware gauntlet. Cross-sectional rank on US equity, cross-sectional rank on Indian equity, funding-rate carry on crypto perps, earnings drift on EDGAR — same row-2 each time.
+
+India does NOT unfreeze any equity sub-project. `.halt` stays engaged.

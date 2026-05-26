@@ -140,10 +140,9 @@ def build_matrix(
         market_cap=None,                  # fall back to close * volume proxy
         risk_free_daily=risk_free_daily,
     )
-    # Drop the 'const' column — `run_phase3.py` does not consume it; the
-    # downstream `residualize()` adds its own intercept.
-    if "const" in matrix.columns:
-        matrix = matrix.drop(columns=["const"])
+    # Keep the 'const' column — `gauntlet.residualization.residualize()`
+    # uses it to identify the intercept coefficient (alpha) for the §7
+    # hard rule (t-stat > 1.96).
     return matrix
 
 

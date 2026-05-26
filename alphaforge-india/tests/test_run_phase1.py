@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import sys
 from datetime import date
 from pathlib import Path
 
@@ -10,11 +9,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from research import run_phase1 as RP  # noqa: E402
-from signals import delivery_pct as DP  # noqa: E402
-from signals import fo_expiry as FOE    # noqa: E402
+from research import run_phase1 as RP
+from signals import delivery_pct as DP
+from signals import fo_expiry as FOE
 
 
 # ---------------------------------------------------------------------------

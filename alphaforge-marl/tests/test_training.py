@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import sys
 import tempfile
 import math
 from types import SimpleNamespace
@@ -11,12 +10,6 @@ from types import SimpleNamespace
 import numpy as np
 import torch
 import pytest
-
-_MARL = os.path.dirname(os.path.dirname(__file__))
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-for p in [os.path.join(_ROOT, "alphaforge-python"), _MARL]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 
 from agents.agent_pool import AgentPool
 from agents.base_agent import AgentType

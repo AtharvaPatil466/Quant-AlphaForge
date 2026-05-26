@@ -1,16 +1,11 @@
 """Tests for gauntlet/residualization.py — Four-factor model."""
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from gauntlet.residualization import (  # noqa: E402
+from gauntlet.residualization import (
     ResidualizeResult,
     build_factor_matrix,
     compute_amihud_illiquidity,

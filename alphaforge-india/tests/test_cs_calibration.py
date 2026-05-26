@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import sys
 from datetime import date
 from pathlib import Path
 
@@ -10,9 +9,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from research import cs_calibration as CS  # noqa: E402
+from research import cs_calibration as CS
 
 
 # ---------------------------------------------------------------------------

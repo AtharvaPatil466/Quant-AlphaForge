@@ -1,17 +1,14 @@
 """Tests for ingest.parser_legacy — legacy bhavcopy + MTO join."""
 from __future__ import annotations
 
-import sys
 from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ingest import parser_legacy as L  # noqa: E402
-from ingest.schema import COLUMNS, LEGACY_ERA  # noqa: E402
+from ingest import parser_legacy as L
+from ingest.schema import COLUMNS, LEGACY_ERA
 
 
 # ---------------------------------------------------------------------------

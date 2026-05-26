@@ -2,18 +2,9 @@
 
 from __future__ import annotations
 
-import sys
-import os
-
 import numpy as np
 import torch
 import pytest
-
-_MARL = os.path.dirname(os.path.dirname(__file__))
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-for p in [os.path.join(_ROOT, "alphaforge-python"), _MARL]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 
 from agents.base_agent import BaseAgent, AgentType
 from agents.agent_pool import AgentPool

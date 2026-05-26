@@ -1,0 +1,3573 @@
+{
+  "design_doc_sha": "54e53be92f72e5161a4478cb8e518955d08164bfad0057675278fa2c49367b29",
+  "phase2_spec_sha": "18173b6d79ffa3ae6c47904d3bfedabb63de80e38f0db683de5d11aedaefc352",
+  "timestamp_utc": "2026-05-21T11:39:23+00:00",
+  "market_frame_summary": {
+    "n_rows": 9188,
+    "first_date": "1990-01-02",
+    "last_date": "2026-05-19"
+  },
+  "summary": {
+    "n_trials_evaluated": 28,
+    "n_all_six_gates_pass": 0,
+    "n_deploy_ready": 0
+  },
+  "per_trial": [
+    {
+      "trial_name": "vrp_L10_thr2_hold5_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 958,
+      "sharpe_oos_a": 0.01781880119197629,
+      "sharpe_oos_b": 0.5152611693789074,
+      "gate1_dsr_oos_a": 0.02245790267395953,
+      "gate1_dsr_oos_b": 0.142888612789133,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9330830076432196,
+        1.274856468339716
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.24282813552390994,
+        1.3337075724048297
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": -0.0005704289953837412,
+      "gate4_sharpe_oos_b": 0.4839791176241827,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1015567.4844558015,
+            "trough_nav": 1006189.8004298997,
+            "max_drawdown": 0.009233934888066009,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1007098.1729477795,
+            "trough_nav": 1005914.4331972694,
+            "max_drawdown": 0.001175396582286825,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.023836565823814344,
+        "cf_sharpe_oos_b": 0.44313799882318305,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.6684000170731062e-06,
+        "alpha_se_hc0": 3.89861433967195e-06,
+        "alpha_t_stat": 0.6844483153718763,
+        "alpha_passes_gate": false,
+        "n_obs": 2192,
+        "coefficients": {
+          "SPY": -0.0021680033286561556,
+          "DeltaVIX": -0.002254327098076168
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr2_hold5_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 958,
+      "sharpe_oos_a": -0.5620175068872302,
+      "sharpe_oos_b": 0.435698662372955,
+      "gate1_dsr_oos_a": 0.00013205639839641847,
+      "gate1_dsr_oos_b": 0.11205391993668223,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.313136851504312,
+        0.6166010778169285
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.31266544163582155,
+        1.2430734972897093
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5834645062742594,
+      "gate4_sharpe_oos_b": 0.3937888006268181,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992011.5002285019,
+            "max_drawdown": 0.0074449952273230036,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992551.7025645946,
+            "trough_nav": 991622.3648619339,
+            "max_drawdown": 0.0009363116301744911,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.2195930349624808,
+        "cf_sharpe_oos_b": 0.37217242849827065,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.6649515716744867e-06,
+        "alpha_se_hc0": 2.947347482291913e-06,
+        "alpha_t_stat": -0.5648982964098244,
+        "alpha_passes_gate": false,
+        "n_obs": 2192,
+        "coefficients": {
+          "SPY": -0.00033838893529940413,
+          "DeltaVIX": -0.0010158731245766715
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr2_hold21_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1451,
+      "sharpe_oos_a": -0.018518974403289597,
+      "sharpe_oos_b": 0.5155284000282319,
+      "gate1_dsr_oos_a": 0.018491224839653708,
+      "gate1_dsr_oos_b": 0.20063363295554437,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9727185805205836,
+        1.220145145631344
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.16655871157667954,
+        1.267825455571658
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.03321631183091142,
+      "gate4_sharpe_oos_b": 0.48984755346443554,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1014392.4305252122,
+            "trough_nav": 1005201.7994061195,
+            "max_drawdown": 0.009060232354389908,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1005877.0914414542,
+            "trough_nav": 1004694.7869459734,
+            "max_drawdown": 0.001175396582286825,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.024367271844070424,
+        "cf_sharpe_oos_b": 0.44579093632020034,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.8044453902558695e-06,
+        "alpha_se_hc0": 3.3727546789550697e-06,
+        "alpha_t_stat": 0.8314999628507606,
+        "alpha_passes_gate": false,
+        "n_obs": 2683,
+        "coefficients": {
+          "SPY": -0.0012877354916988706,
+          "DeltaVIX": -0.002151245230028781
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr2_hold21_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1451,
+      "sharpe_oos_a": -0.5567533087042972,
+      "sharpe_oos_b": 0.47022591071828596,
+      "gate1_dsr_oos_a": 0.00014600244043949662,
+      "gate1_dsr_oos_b": 0.17265498201455448,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.2941608042918613,
+        0.6485139060157078
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.24519918379383615,
+        1.211536221724979
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5719238568961972,
+      "gate4_sharpe_oos_b": 0.43563693489459443,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992095.8150089874,
+            "max_drawdown": 0.007360634252346343,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992595.3269654224,
+            "trough_nav": 991665.9484167277,
+            "max_drawdown": 0.0009363116301746022,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.22438828574591688,
+        "cf_sharpe_oos_b": 0.4046016067521428,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -6.047444375516901e-07,
+        "alpha_se_hc0": 2.6018542842261466e-06,
+        "alpha_t_stat": -0.23242824981321178,
+        "alpha_passes_gate": false,
+        "n_obs": 2683,
+        "coefficients": {
+          "SPY": 4.4759662218462964e-05,
+          "DeltaVIX": -0.0010896857997870924
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr4_hold5_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1243,
+      "sharpe_oos_a": -0.07779128165077273,
+      "sharpe_oos_b": 0.5544845646977185,
+      "gate1_dsr_oos_a": 0.013223734838088363,
+      "gate1_dsr_oos_b": 0.19803162998021934,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9958871577349013,
+        1.091345992172247
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.15764072509590082,
+        1.3309848050408482
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.09579501118921735,
+      "gate4_sharpe_oos_b": 0.5245518676969007,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1011515.9285034349,
+            "trough_nav": 1002659.0763867259,
+            "max_drawdown": 0.00875601843444318,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1003420.2501356048,
+            "trough_nav": 1002240.8334029979,
+            "max_drawdown": 0.001175396582286825,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.1078376839424349,
+        "cf_sharpe_oos_b": 0.4805306785107306,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.2176339331745725e-06,
+        "alpha_se_hc0": 3.594688391821491e-06,
+        "alpha_t_stat": 0.6169196579653623,
+        "alpha_passes_gate": false,
+        "n_obs": 2474,
+        "coefficients": {
+          "SPY": -0.0018099895357292976,
+          "DeltaVIX": -0.0021006131688477256
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr4_hold5_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1243,
+      "sharpe_oos_a": -0.5376668602475161,
+      "sharpe_oos_b": 0.4841669022557462,
+      "gate1_dsr_oos_a": 0.00018401020536762402,
+      "gate1_dsr_oos_b": 0.15923093687337375,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.2401267999138565,
+        0.6619947193806411
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.20225602351827365,
+        1.2324145108939442
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5585620046298563,
+      "gate4_sharpe_oos_b": 0.443842922974278,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992422.2371919603,
+            "max_drawdown": 0.007034033228765613,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992854.7290354394,
+            "trough_nav": 991925.1076055698,
+            "max_drawdown": 0.0009363116301744911,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.20980671280308008,
+        "cf_sharpe_oos_b": 0.417159089715869,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -8.084171736621787e-07,
+        "alpha_se_hc0": 2.710092895213746e-06,
+        "alpha_t_stat": -0.29829869488603583,
+        "alpha_passes_gate": false,
+        "n_obs": 2474,
+        "coefficients": {
+          "SPY": -0.00035988434064170927,
+          "DeltaVIX": -0.0010233494216572098
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr4_hold21_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1451,
+      "sharpe_oos_a": 0.014383633267490058,
+      "sharpe_oos_b": 0.009912610885038855,
+      "gate1_dsr_oos_a": 0.022056692480558082,
+      "gate1_dsr_oos_b": 0.02163786254933564,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.8828699463495182,
+        1.2498920403491873
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.7805821715466078,
+        0.8433613954259136
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": -0.0007397052864029194,
+      "gate4_sharpe_oos_b": -0.013824410370628103,
+      "gate4_passes_a": false,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1014922.2141253556,
+            "trough_nav": 1006196.3931919466,
+            "max_drawdown": 0.008597526797586963,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1006473.842833312,
+            "trough_nav": 1005290.8369182847,
+            "max_drawdown": 0.001175396582286825,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.02053729408237756,
+        "cf_sharpe_oos_b": 0.008725614981532827,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.0409795861799692e-07,
+        "alpha_se_hc0": 3.3970194026372717e-06,
+        "alpha_t_stat": -0.03064391052261303,
+        "alpha_passes_gate": false,
+        "n_obs": 2683,
+        "coefficients": {
+          "SPY": -0.0017834882668625858,
+          "DeltaVIX": -0.0022115146805470713
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L10_thr4_hold21_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1451,
+      "sharpe_oos_a": -0.5493018012738007,
+      "sharpe_oos_b": 0.0038301010489113483,
+      "gate1_dsr_oos_a": 0.00016836845998857708,
+      "gate1_dsr_oos_b": 0.020894633052999267,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.2415368042633848,
+        0.590204330108737
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.7435310273779423,
+        0.842905119233385
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5648305268225773,
+      "gate4_sharpe_oos_b": -0.02910310253112665,
+      "gate4_passes_a": false,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992440.7448444825,
+            "max_drawdown": 0.007015515436246789,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992625.8574571203,
+            "trough_nav": 991696.4503223713,
+            "max_drawdown": 0.0009363116301744911,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.23825894333091396,
+        "cf_sharpe_oos_b": 0.0032740022780556742,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -2.9815616206515785e-06,
+        "alpha_se_hc0": 2.630063929152044e-06,
+        "alpha_t_stat": -1.1336460637338426,
+        "alpha_passes_gate": false,
+        "n_obs": 2683,
+        "coefficients": {
+          "SPY": -0.00037017245941397663,
+          "DeltaVIX": -0.001165034214782785
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L21_thr4_hold5_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1584,
+      "sharpe_oos_a": -0.129855647854759,
+      "sharpe_oos_b": 0.3842785124632773,
+      "gate1_dsr_oos_a": 0.009683297853945338,
+      "gate1_dsr_oos_b": 0.1353164856763437,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.0196542440060257,
+        0.932678403912502
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.1843452119553151,
+        0.9985775481211367
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.14543791614150015,
+      "gate4_sharpe_oos_b": 0.36378552557742694,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1012781.7152429877,
+            "trough_nav": 1004741.8621849078,
+            "max_drawdown": 0.007938386857775148,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002628.9517651176,
+            "trough_nav": 1001440.932203484,
+            "max_drawdown": 0.0011849045048440976,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.1518134261282535,
+        "cf_sharpe_oos_b": 0.3364031840051834,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 1.6568030650593147e-06,
+        "alpha_se_hc0": 3.0744537559377676e-06,
+        "alpha_t_stat": 0.5388934739576065,
+        "alpha_passes_gate": false,
+        "n_obs": 2807,
+        "coefficients": {
+          "SPY": -0.0018768664195494124,
+          "DeltaVIX": -0.0019315881488191507
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L21_thr4_hold5_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1584,
+      "sharpe_oos_a": -0.7670000900365485,
+      "sharpe_oos_b": 0.32414376996764915,
+      "gate1_dsr_oos_a": 2.8707521230186828e-06,
+      "gate1_dsr_oos_b": 0.10619278306938507,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.394114233202872,
+        0.19776618006257113
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.22286188418564634,
+        0.9485578352942836
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.7807816110532921,
+      "gate4_sharpe_oos_b": 0.2963830024372579,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 991910.0170593626,
+            "max_drawdown": 0.007546533997192184,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 990138.9379748863,
+            "trough_nav": 989195.5590885645,
+            "max_drawdown": 0.0009527742523198768,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.2307050624804977,
+        "cf_sharpe_oos_b": 0.2822522795641101,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.763315261479433e-06,
+        "alpha_se_hc0": 2.484183559074131e-06,
+        "alpha_t_stat": -0.7098168148800689,
+        "alpha_passes_gate": false,
+        "n_obs": 2807,
+        "coefficients": {
+          "SPY": -0.0005909163029204224,
+          "DeltaVIX": -0.0010414574931437075
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L21_thr4_hold21_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1584,
+      "sharpe_oos_a": -0.024082153361505185,
+      "sharpe_oos_b": 0.2757317108474678,
+      "gate1_dsr_oos_a": 0.01793723341516973,
+      "gate1_dsr_oos_b": 0.08630683400534261,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9490162436833086,
+        1.1829744372650794
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.2889871101826574,
+        0.9065525204154781
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.038359342653504234,
+      "gate4_sharpe_oos_b": 0.25710455764553025,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1012318.2544795042,
+            "trough_nav": 1004282.0805522581,
+            "max_drawdown": 0.00793838685777526,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1004028.9504032171,
+            "trough_nav": 1002839.2719768905,
+            "max_drawdown": 0.0011849045048439866,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.026365622998750612,
+        "cf_sharpe_oos_b": 0.24053652057179292,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 1.508998474559775e-06,
+        "alpha_se_hc0": 3.089432757318608e-06,
+        "alpha_t_stat": 0.48843868538167196,
+        "alpha_passes_gate": false,
+        "n_obs": 2807,
+        "coefficients": {
+          "SPY": -0.0015787855052939435,
+          "DeltaVIX": -0.002011210421991325
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L21_thr4_hold21_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1584,
+      "sharpe_oos_a": -0.6376554299455129,
+      "sharpe_oos_b": 0.2170257396774041,
+      "gate1_dsr_oos_a": 3.682973675023238e-05,
+      "gate1_dsr_oos_b": 0.06585595326072902,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.321494204854377,
+        0.5847366605320705
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.38627418920677514,
+        0.8631144075723894
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.6513993996870139,
+      "gate4_sharpe_oos_b": 0.19173174193209946,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 991910.0170593626,
+            "max_drawdown": 0.007546533997192184,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 991590.9240364113,
+            "trough_nav": 990646.1617351554,
+            "max_drawdown": 0.0009527742523198768,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.21067653188036672,
+        "cf_sharpe_oos_b": 0.1882409578633248,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.9004223663816962e-06,
+        "alpha_se_hc0": 2.5030864301185045e-06,
+        "alpha_t_stat": -0.7592316204166085,
+        "alpha_passes_gate": false,
+        "n_obs": 2807,
+        "coefficients": {
+          "SPY": -0.0003846595678960969,
+          "DeltaVIX": -0.0010552851583990807
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr2_hold5_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": 0.04352969841893445,
+      "sharpe_oos_b": 0.37932588477519524,
+      "gate1_dsr_oos_a": 0.025635706027256844,
+      "gate1_dsr_oos_b": 0.06954760303252577,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9348739829561844,
+        1.3499157332580551
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.45961321503091884,
+        1.3286038994787779
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": 0.02864649146746165,
+      "gate4_sharpe_oos_b": 0.35843802943012215,
+      "gate4_passes_a": true,
+      "gate4_passes_b": true,
+      "gate4_passes": true,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1012845.0861279421,
+            "trough_nav": 1004090.3783696152,
+            "max_drawdown": 0.008643678957653611,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1005774.2319351479,
+            "trough_nav": 1004786.4653523745,
+            "max_drawdown": 0.0009820957342214776,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.0799122152984367,
+        "cf_sharpe_oos_b": 0.32148442916817566,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.9362053400742503e-06,
+        "alpha_se_hc0": 4.4965005876729674e-06,
+        "alpha_t_stat": 0.6529978775325364,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.002124369436289456,
+          "DeltaVIX": -0.00199057092006863
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr2_hold5_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": -0.5082765866152118,
+      "sharpe_oos_b": 0.3068760011744389,
+      "gate1_dsr_oos_a": 0.0002120614996909964,
+      "gate1_dsr_oos_b": 0.056448766809669204,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.2201253832416212,
+        0.7268002708065061
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.5093310261289054,
+        1.2307614686856974
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5231833185392938,
+      "gate4_sharpe_oos_b": 0.2790741769010279,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992454.4273320986,
+            "max_drawdown": 0.007001825452251698,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 993677.9293929066,
+            "trough_nav": 992917.4665779574,
+            "max_drawdown": 0.0007653011025552381,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.12941471073783092,
+        "cf_sharpe_oos_b": 0.2593352596486985,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -2.0422007660311447e-06,
+        "alpha_se_hc0": 3.295874094363006e-06,
+        "alpha_t_stat": -0.6196234162961377,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.00047628578013461545,
+          "DeltaVIX": -0.0008346989518393568
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr2_hold21_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": -0.08074435764476688,
+      "sharpe_oos_b": 0.2832589200316066,
+      "gate1_dsr_oos_a": 0.012991025461168981,
+      "gate1_dsr_oos_b": 0.05262182466508336,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.0195869832552455,
+        1.1500072475421017
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.6066481287897053,
+        1.1851050069217162
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.09240313796581077,
+      "gate4_sharpe_oos_b": 0.2659149376573039,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1011514.6373964766,
+            "trough_nav": 1002350.0797517983,
+            "max_drawdown": 0.009060232354389686,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002623.9082903068,
+            "trough_nav": 1001639.2356269464,
+            "max_drawdown": 0.0009820957342214776,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.131021982370256,
+        "cf_sharpe_oos_b": 0.23956894750727853,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 1.0194572021117219e-06,
+        "alpha_se_hc0": 4.47699969187145e-06,
+        "alpha_t_stat": 0.22770991116275333,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0017661779031853317,
+          "DeltaVIX": -0.002054264015255155
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr2_hold21_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": -0.6162932394351598,
+      "sharpe_oos_b": 0.19860172304999735,
+      "gate1_dsr_oos_a": 4.862005270300784e-05,
+      "gate1_dsr_oos_b": 0.040452572803838294,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.3031497062472686,
+        0.5297510892996028
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.6096025705798175,
+        1.131329640988099
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.6268475652677319,
+      "gate4_sharpe_oos_b": 0.17558733038485314,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992095.8150089874,
+            "max_drawdown": 0.007360634252346343,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992235.8922946175,
+            "trough_nav": 991476.5330722495,
+            "max_drawdown": 0.0007653011025552381,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.18721128057681533,
+        "cf_sharpe_oos_b": 0.16744840450532197,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -3.2627623364656226e-06,
+        "alpha_se_hc0": 3.329527030300266e-06,
+        "alpha_t_stat": -0.9799476943040097,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0002799127338533811,
+          "DeltaVIX": -0.0008745924326995754
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr4_hold5_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": 0.23300373343475944,
+      "sharpe_oos_b": 0.16757551384759786,
+      "gate1_dsr_oos_a": 0.05997664108973011,
+      "gate1_dsr_oos_b": 0.036568421337910495,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.7255674433565402,
+        1.6969085157338695
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.6363483895177668,
+        1.092242524806939
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": 0.2182286758401253,
+      "gate4_sharpe_oos_b": 0.1442499172916646,
+      "gate4_passes_a": true,
+      "gate4_passes_b": true,
+      "gate4_passes": true,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1012761.8810815678,
+            "trough_nav": 1004852.7506148095,
+            "max_drawdown": 0.007809466977876323,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1007983.874040675,
+            "trough_nav": 1006684.8265367612,
+            "max_drawdown": 0.0012887582206114745,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.7931900882296077,
+        "cf_sharpe_oos_b": 0.14127054875964826,
+        "passes_oos_a": true,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 3.7568077298646937e-06,
+        "alpha_se_hc0": 4.220278366955711e-06,
+        "alpha_t_stat": 0.8901800789445695,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0017849148015550392,
+          "DeltaVIX": -0.001706137327208587
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr4_hold5_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": -0.3976914226581513,
+      "sharpe_oos_b": 0.0868764613178256,
+      "gate1_dsr_oos_a": 0.0008007071445964575,
+      "gate1_dsr_oos_b": 0.027869670606368024,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.1271503802414498,
+        1.0990971793922488
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.7090940142460327,
+        1.0430501568354795
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.4134866527548048,
+      "gate4_sharpe_oos_b": 0.05609240098231851,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992702.8085218433,
+            "max_drawdown": 0.00675330817909936,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 995027.0347350782,
+            "trough_nav": 994007.5807091951,
+            "max_drawdown": 0.0010245490728345574,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.08462162918659803,
+        "cf_sharpe_oos_b": 0.07293954592464545,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.9777085004886923e-06,
+        "alpha_se_hc0": 3.2666480765093837e-06,
+        "alpha_t_stat": -0.6054244149256496,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0005159628770201931,
+          "DeltaVIX": -0.0008059313250146009
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr4_hold21_A",
+      "variant": "A",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": 0.09713351740257846,
+      "sharpe_oos_b": 0.20024710944665633,
+      "gate1_dsr_oos_a": 0.033337845604312966,
+      "gate1_dsr_oos_b": 0.04064066317453274,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9004876174828946,
+        1.4626117697888998
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.6159123311762212,
+        1.1380573440152446
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": 0.0858409400702229,
+      "gate4_sharpe_oos_b": 0.17695196559286053,
+      "gate4_passes_a": true,
+      "gate4_passes_b": true,
+      "gate4_passes": true,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 1012787.026514692,
+            "trough_nav": 1004605.3909016538,
+            "max_drawdown": 0.008078337694740867,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1005300.4929146689,
+            "trough_nav": 1004004.9036402402,
+            "max_drawdown": 0.0012887582206115855,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.215459487937778,
+        "cf_sharpe_oos_b": 0.16877906399940812,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.4920403762154203e-06,
+        "alpha_se_hc0": 4.227800827613646e-06,
+        "alpha_t_stat": 0.5894412905969452,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0015553606735531,
+          "DeltaVIX": -0.0017955569754441818
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "vrp_L63_thr4_hold21_B",
+      "variant": "B",
+      "direction": "short_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 587,
+      "sharpe_oos_a": -0.5645664126055241,
+      "sharpe_oos_b": 0.12122522398353013,
+      "gate1_dsr_oos_a": 9.940529820029465e-05,
+      "gate1_dsr_oos_b": 0.031344513789923756,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.2457356512265785,
+        0.7051137798866063
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.7192524272550085,
+        1.1104739546807825
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": -0.5755075033616469,
+      "gate4_sharpe_oos_b": 0.09050896050837681,
+      "gate4_passes_a": false,
+      "gate4_passes_b": true,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999452.4187157772,
+            "trough_nav": 992440.7448444825,
+            "max_drawdown": 0.007015515436246789,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 992870.5612621249,
+            "trough_nav": 991853.316649139,
+            "max_drawdown": 0.0010245490728345574,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": -0.1566743456957091,
+        "cf_sharpe_oos_b": 0.10176374609976845,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -3.1314784339048595e-06,
+        "alpha_se_hc0": 3.3142732948071073e-06,
+        "alpha_t_stat": -0.9448461715005049,
+        "alpha_passes_gate": false,
+        "n_obs": 1825,
+        "coefficients": {
+          "SPY": -0.0003031035767023702,
+          "DeltaVIX": -0.0008479847406599051
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k1.5_to_MA+1sigma_A",
+      "variant": "A",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1610,
+      "sharpe_oos_a": 0.4491971580931324,
+      "sharpe_oos_b": -0.18429793254274246,
+      "gate1_dsr_oos_a": 0.22361436516332234,
+      "gate1_dsr_oos_b": 0.006615303114330562,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9325307596380229,
+        1.1344434557296206
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.337591854461915,
+        0.6253391146793388
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.4402476418017829,
+      "gate4_sharpe_oos_b": -0.1981519024202923,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999627.0411034264,
+            "trough_nav": 999627.0411034264,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1003322.3269293623,
+            "trough_nav": 1002141.6973692898,
+            "max_drawdown": 0.0011767201111587688,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.04344215400538498,
+        "cf_sharpe_oos_b": -0.026553658805713386,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 2.1219144678842166e-07,
+        "alpha_se_hc0": 2.0043692247221045e-06,
+        "alpha_t_stat": 0.10586445060681916,
+        "alpha_passes_gate": false,
+        "n_obs": 2820,
+        "coefficients": {
+          "SPY": 0.0005676267980705246,
+          "DeltaVIX": 0.0006203796489277134
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k1.5_to_MA+1sigma_B",
+      "variant": "B",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1610,
+      "sharpe_oos_a": 0.3962701280192102,
+      "sharpe_oos_b": -0.17929638774582418,
+      "gate1_dsr_oos_a": 0.17191749455260041,
+      "gate1_dsr_oos_b": 0.006835300110836884,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.8755351590265055,
+        1.0388556975857983
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.3355971576356123,
+        0.5765958218085059
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.38550753406772603,
+      "gate4_sharpe_oos_b": -0.19517440323279037,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999665.2351166538,
+            "trough_nav": 999665.2351166538,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002702.69155101,
+            "trough_nav": 1001583.8475229498,
+            "max_drawdown": 0.0011158282883728665,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.03832830650654173,
+        "cf_sharpe_oos_b": -0.024699702357531213,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 5.80844544785714e-08,
+        "alpha_se_hc0": 1.9037857784256366e-06,
+        "alpha_t_stat": 0.030509973935515577,
+        "alpha_passes_gate": false,
+        "n_obs": 2820,
+        "coefficients": {
+          "SPY": 0.000538929684877897,
+          "DeltaVIX": 0.0005916926963303196
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k1.5_to_MA_A",
+      "variant": "A",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1487,
+      "sharpe_oos_a": 0.2530638215511319,
+      "sharpe_oos_b": -0.53502129143621,
+      "gate1_dsr_oos_a": 0.07873907405778163,
+      "gate1_dsr_oos_b": 0.0008872475135928704,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.9858829787919078,
+        0.9786959825106128
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.8338954506840515,
+        0.4281777112459127
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.24673618904275987,
+      "gate4_sharpe_oos_b": -0.5455230707584791,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999627.0411034264,
+            "trough_nav": 999627.0411034264,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002021.0942333101,
+            "trough_nav": 1000591.1388335618,
+            "max_drawdown": 0.0014270711544674963,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.03183458864820408,
+        "cf_sharpe_oos_b": -0.09813373844420467,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -1.973674877268637e-06,
+        "alpha_se_hc0": 2.165294786107814e-06,
+        "alpha_t_stat": -0.9115040085679882,
+        "alpha_passes_gate": false,
+        "n_obs": 2701,
+        "coefficients": {
+          "SPY": 0.00033855573174233696,
+          "DeltaVIX": 0.0006802273919276846
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k1.5_to_MA_B",
+      "variant": "B",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1487,
+      "sharpe_oos_a": 0.19703052881703903,
+      "sharpe_oos_b": -0.5247021840585981,
+      "gate1_dsr_oos_a": 0.05859432593266761,
+      "gate1_dsr_oos_b": 0.0009570950192573369,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -1.016873479902483,
+        0.9331634672825735
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.8507122168843144,
+        0.40182479461924275
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.18953922591765357,
+      "gate4_sharpe_oos_b": -0.5367648078945731,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999665.2351166538,
+            "trough_nav": 999665.2351166538,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1001467.8225727284,
+            "trough_nav": 1000118.4044652832,
+            "max_drawdown": 0.0013474403041513483,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.025115869471133603,
+        "cf_sharpe_oos_b": -0.09151603320127003,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -2.018074922010404e-06,
+        "alpha_se_hc0": 2.055645381624918e-06,
+        "alpha_t_stat": -0.9817232777840234,
+        "alpha_passes_gate": false,
+        "n_obs": 2701,
+        "coefficients": {
+          "SPY": 0.00032753479709315487,
+          "DeltaVIX": 0.0006488143691988723
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k2.0_to_MA+1sigma_A",
+      "variant": "A",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1610,
+      "sharpe_oos_a": 0.4657596647911677,
+      "sharpe_oos_b": 0.12306403925331781,
+      "gate1_dsr_oos_a": 0.25471372191463537,
+      "gate1_dsr_oos_b": 0.0430222030856231,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.6397668453206367,
+        1.0382952338739642
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.955678114977891,
+        0.7761380899020677
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": 0.4589823800681864,
+      "gate4_sharpe_oos_b": 0.1130787022160048,
+      "gate4_passes_a": true,
+      "gate4_passes_b": true,
+      "gate4_passes": true,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999627.0411034264,
+            "trough_nav": 999627.0411034264,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1003310.3868124587,
+            "trough_nav": 1002698.9380594579,
+            "max_drawdown": 0.0006094312996632878,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.038774169672181495,
+        "cf_sharpe_oos_b": 0.015604075786657585,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 1.6657695463190825e-06,
+        "alpha_se_hc0": 1.955522452931473e-06,
+        "alpha_t_stat": 0.8518283918560845,
+        "alpha_passes_gate": false,
+        "n_obs": 2820,
+        "coefficients": {
+          "SPY": 0.0006797017547255508,
+          "DeltaVIX": 0.0005900061044808771
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k2.0_to_MA+1sigma_B",
+      "variant": "B",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1610,
+      "sharpe_oos_a": 0.4107229789618119,
+      "sharpe_oos_b": 0.12585874385886284,
+      "gate1_dsr_oos_a": 0.1933725064818601,
+      "gate1_dsr_oos_b": 0.04378941985498053,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.6555523645010637,
+        0.937371712306358
+      ],
+      "gate2_boot_ci_oos_b": [
+        -0.9742878721222873,
+        0.8167236794795755
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": true,
+      "gate4_sharpe_oos_a": 0.402498394139154,
+      "gate4_sharpe_oos_b": 0.11444922520353229,
+      "gate4_passes_a": true,
+      "gate4_passes_b": true,
+      "gate4_passes": true,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999665.2351166538,
+            "trough_nav": 999665.2351166538,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002682.17633242,
+            "trough_nav": 1002101.5920729891,
+            "max_drawdown": 0.0005790311956621608,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.03382135257914878,
+        "cf_sharpe_oos_b": 0.01532149125792635,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 1.441983269763801e-06,
+        "alpha_se_hc0": 1.8572908750808159e-06,
+        "alpha_t_stat": 0.7763906500111655,
+        "alpha_passes_gate": false,
+        "n_obs": 2820,
+        "coefficients": {
+          "SPY": 0.0006448424198405172,
+          "DeltaVIX": 0.0005628979096964544
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k2.0_to_MA_A",
+      "variant": "A",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1489,
+      "sharpe_oos_a": 0.37335540560391195,
+      "sharpe_oos_b": -0.17464776481997593,
+      "gate1_dsr_oos_a": 0.15160490653916525,
+      "gate1_dsr_oos_b": 0.0073068110217756055,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.6568175973622546,
+        0.9877606997059618
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.3790045349715951,
+        0.676495401103269
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.36826796662149586,
+      "gate4_sharpe_oos_b": -0.18293855336365572,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999627.0411034264,
+            "trough_nav": 999627.0411034264,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002786.7844633602,
+            "trough_nav": 1001910.9411170856,
+            "max_drawdown": 0.0008734093426882028,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.037561036366039705,
+        "cf_sharpe_oos_b": -0.027543715350275482,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": 6.917127414055262e-08,
+        "alpha_se_hc0": 2.099955932394477e-06,
+        "alpha_t_stat": 0.03293939319082758,
+        "alpha_passes_gate": false,
+        "n_obs": 2702,
+        "coefficients": {
+          "SPY": 0.0006285130646772584,
+          "DeltaVIX": 0.0006486374434375191
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    },
+    {
+      "trial_name": "mr_k2.0_to_MA_B",
+      "variant": "B",
+      "direction": "long_vol",
+      "n_obs_oos_a": 1238,
+      "n_obs_oos_b": 1489,
+      "sharpe_oos_a": 0.3166227817887337,
+      "sharpe_oos_b": -0.16794641578776806,
+      "gate1_dsr_oos_a": 0.1128827783980097,
+      "gate1_dsr_oos_b": 0.007613861786279652,
+      "gate1_passes_a": false,
+      "gate1_passes_b": false,
+      "gate1_passes": false,
+      "gate2_boot_ci_oos_a": [
+        -0.6734492285286816,
+        0.8967657472145355
+      ],
+      "gate2_boot_ci_oos_b": [
+        -1.3816669820224023,
+        0.6516284496289318
+      ],
+      "gate2_passes_a": false,
+      "gate2_passes_b": false,
+      "gate2_passes": false,
+      "gate3_passes": false,
+      "gate4_sharpe_oos_a": 0.31051378967364485,
+      "gate4_sharpe_oos_b": -0.1774262553274771,
+      "gate4_passes_a": true,
+      "gate4_passes_b": false,
+      "gate4_passes": false,
+      "gate5": {
+        "per_period": [
+          {
+            "name": "2008_financial_crisis",
+            "window_start": "2008-09-01",
+            "window_end": "2009-03-31",
+            "effective_start": "2008-09-02",
+            "effective_end": "2009-03-31",
+            "n_days": 146,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2011_debt_ceiling",
+            "window_start": "2011-07-01",
+            "window_end": "2011-10-31",
+            "effective_start": "2011-07-01",
+            "effective_end": "2011-10-31",
+            "n_days": 85,
+            "coverage": "covered",
+            "entry_nav": 1000000.0,
+            "trough_nav": 1000000.0,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2018_volmageddon",
+            "window_start": "2018-02-01",
+            "window_end": "2018-03-31",
+            "effective_start": "2018-02-01",
+            "effective_end": "2018-03-29",
+            "n_days": 40,
+            "coverage": "covered",
+            "entry_nav": 999665.2351166538,
+            "trough_nav": 999665.2351166538,
+            "max_drawdown": 0.0,
+            "drawdown_passes_gate": true
+          },
+          {
+            "name": "2020_covid_crash",
+            "window_start": "2020-02-01",
+            "window_end": "2020-04-30",
+            "effective_start": "2020-02-03",
+            "effective_end": "2020-04-30",
+            "n_days": 62,
+            "coverage": "covered",
+            "entry_nav": 1002181.7241940128,
+            "trough_nav": 1001352.7766779044,
+            "max_drawdown": 0.0008271429183914769,
+            "drawdown_passes_gate": true
+          }
+        ],
+        "n_covered": 4,
+        "n_covered_passing": 4,
+        "passes": true,
+        "rationale": "Covered stress periods: 4/4 pass (2008_financial_crisis, 2011_debt_ceiling, 2018_volmageddon, 2020_covid_crash pass; none fail)."
+      },
+      "gate5_passes": true,
+      "gate6": {
+        "cf_sharpe_oos_a": 0.031870088956740705,
+        "cf_sharpe_oos_b": -0.025325146301772652,
+        "passes_oos_a": false,
+        "passes_oos_b": false,
+        "passes": false
+      },
+      "gate6_passes": false,
+      "residualization": {
+        "alpha": -8.068312371458019e-08,
+        "alpha_se_hc0": 1.993892277691037e-06,
+        "alpha_t_stat": -0.04046513676657231,
+        "alpha_passes_gate": false,
+        "n_obs": 2702,
+        "coefficients": {
+          "SPY": 0.0005971556623776055,
+          "DeltaVIX": 0.0006186403010037858
+        },
+        "factor_availability": {
+          "spy": true,
+          "delta_vix": true,
+          "st_reversal": false,
+          "carry": false,
+          "n_factors": 2,
+          "missing": [
+            "ST_Reversal",
+            "Carry"
+          ]
+        },
+        "provisional": true,
+        "note": "2/4 factors present; missing = ['ST_Reversal', 'Carry']"
+      },
+      "residualization_passes": false,
+      "all_six_gates_pass": false,
+      "deploy_ready": false
+    }
+  ]
+}

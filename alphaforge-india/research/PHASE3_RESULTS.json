@@ -1,0 +1,1692 @@
+{
+  "verdict": "CLOSED FAILED",
+  "survivors": [],
+  "conditional_survivors": [],
+  "failures": [
+    "deliv_pct_L10_Q5_H5",
+    "deliv_pct_L10_Q5_H10",
+    "deliv_pct_L10_Q5_H21",
+    "deliv_pct_L10_Q10_H5",
+    "deliv_pct_L10_Q10_H10",
+    "deliv_pct_L10_Q10_H21",
+    "deliv_pct_L20_Q5_H5",
+    "deliv_pct_L20_Q5_H10",
+    "deliv_pct_L20_Q5_H21",
+    "deliv_pct_L20_Q10_H5",
+    "deliv_pct_L20_Q10_H10",
+    "deliv_pct_L20_Q10_H21",
+    "deliv_pct_L60_Q5_H5",
+    "deliv_pct_L60_Q5_H10",
+    "deliv_pct_L60_Q5_H21",
+    "deliv_pct_L60_Q10_H5",
+    "deliv_pct_L60_Q10_H10",
+    "deliv_pct_L60_Q10_H21"
+  ],
+  "trial_verdicts": [
+    {
+      "trial_name": "deliv_pct_L10_Q5_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-4.798), DSR_B=0.0000 (SR=-4.366), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -4.797800221562083,
+            "sharpe_b": -4.3660031415955425,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-5.673, -3.994] excl 0, OOS-B CI=[-5.191, -3.557] excl 0",
+          "metrics": {
+            "ci_a_lower": -5.67278332191219,
+            "ci_a_upper": -3.994245019478681,
+            "ci_b_lower": -5.191372395792855,
+            "ci_b_upper": -3.5570131691304248
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-4.798, SR_B=-4.366 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -4.797800221562083,
+            "sharpe_b": -4.3660031415955425
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-4.878, SR_B=-4.441 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -4.878099979258379,
+            "stressed_sharpe_b": -4.44133950729683,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-2.661 pos_months=36.4% \u2717; 2022_rate_cycle: SR=-6.648 pos_months=0.0% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -2.661376833673875,
+                "positive_month_frac": 0.36363636363636365,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -6.647650559100235,
+                "positive_month_frac": 0.0,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L10_Q5_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-2.639), DSR_B=0.0000 (SR=-2.273), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -2.6394437836696767,
+            "sharpe_b": -2.2727767536402452,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-3.472, -1.841] excl 0, OOS-B CI=[-3.135, -1.366] excl 0",
+          "metrics": {
+            "ci_a_lower": -3.4724134436666043,
+            "ci_a_upper": -1.8408617423471403,
+            "ci_b_lower": -3.13524628073826,
+            "ci_b_upper": -1.3664476301337352
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-2.639, SR_B=-2.273 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -2.6394437836696767,
+            "sharpe_b": -2.2727767536402452
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.727, SR_B=-2.356 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.7270228657910187,
+            "stressed_sharpe_b": -2.3561248500805068,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.976 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-4.492 pos_months=16.7% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.97599023988376,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -4.491520778907065,
+                "positive_month_frac": 0.16666666666666666,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L10_Q5_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.235), DSR_B=0.0000 (SR=-1.108), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.2345030711860117,
+            "sharpe_b": -1.1083959813840443,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-2.092, -0.402] excl 0, OOS-B CI=[-2.113, -0.034] excl 0",
+          "metrics": {
+            "ci_a_lower": -2.0920979364614807,
+            "ci_a_upper": -0.40238907828194825,
+            "ci_b_lower": -2.1130627229564927,
+            "ci_b_upper": -0.03431361001021819
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.235, SR_B=-1.108 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.2345030711860117,
+            "sharpe_b": -1.1083959813840443
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.327, SR_B=-1.198 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.3267229238173337,
+            "stressed_sharpe_b": -1.1979990417187585,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.819 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-2.137 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.8192798740570577,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -2.1370715995687997,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L10_Q10_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-3.872), DSR_B=0.0000 (SR=-3.244), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -3.8721917456323345,
+            "sharpe_b": -3.2441643395929747,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-4.778, -3.042] excl 0, OOS-B CI=[-4.000, -2.461] excl 0",
+          "metrics": {
+            "ci_a_lower": -4.778461883637234,
+            "ci_a_upper": -3.042352195088331,
+            "ci_b_lower": -3.99971843636444,
+            "ci_b_upper": -2.460967038916304
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-3.872, SR_B=-3.244 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -3.8721917456323345,
+            "sharpe_b": -3.2441643395929747
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-3.938, SR_B=-3.307 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -3.937856795665862,
+            "stressed_sharpe_b": -3.3070659497370327,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-1.948 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-5.299 pos_months=0.0% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -1.9479323606311385,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -5.299059239197061,
+                "positive_month_frac": 0.0,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L10_Q10_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.969), DSR_B=0.0000 (SR=-1.561), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.9685026448043095,
+            "sharpe_b": -1.5607155861097068,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-2.876, -1.124] excl 0, OOS-B CI=[-2.341, -0.733] excl 0",
+          "metrics": {
+            "ci_a_lower": -2.875571995458373,
+            "ci_a_upper": -1.1242954743130675,
+            "ci_b_lower": -2.3409701127205795,
+            "ci_b_upper": -0.7334871336992631
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.969, SR_B=-1.561 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.9685026448043095,
+            "sharpe_b": -1.5607155861097068
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.038, SR_B=-1.626 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.0380470720117465,
+            "stressed_sharpe_b": -1.626326440596681,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.657 pos_months=63.6% \u2717; 2022_rate_cycle: SR=-3.354 pos_months=16.7% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.6570938864902062,
+                "positive_month_frac": 0.6363636363636364,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -3.354257094400632,
+                "positive_month_frac": 0.16666666666666666,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L10_Q10_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.320), DSR_B=0.0000 (SR=-0.648), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.3203037947456593,
+            "sharpe_b": -0.6483339060816029,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": false,
+          "summary": "OOS-A CI=[-2.251, -0.435] excl 0, OOS-B CI=[-1.582, 0.359] incl 0",
+          "metrics": {
+            "ci_a_lower": -2.2508639193324216,
+            "ci_a_upper": -0.4345724887093509,
+            "ci_b_lower": -1.582396394958189,
+            "ci_b_upper": 0.3586122275411146
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.320, SR_B=-0.648 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.3203037947456593,
+            "sharpe_b": -0.6483339060816029
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.393, SR_B=-0.718 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.3929371818192158,
+            "stressed_sharpe_b": -0.7180945602500383,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.717 pos_months=45.5% \u2717; 2022_rate_cycle: SR=-1.556 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.717394334468192,
+                "positive_month_frac": 0.45454545454545453,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -1.556235127340505,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q5_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-4.938), DSR_B=0.0000 (SR=-4.410), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -4.938190170289916,
+            "sharpe_b": -4.410005319512253,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-5.801, -4.156] excl 0, OOS-B CI=[-5.256, -3.542] excl 0",
+          "metrics": {
+            "ci_a_lower": -5.800843090038311,
+            "ci_a_upper": -4.15644963299829,
+            "ci_b_lower": -5.255881294996625,
+            "ci_b_upper": -3.5421141095395474
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-4.938, SR_B=-4.410 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -4.938190170289916,
+            "sharpe_b": -4.410005319512253
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-5.018, SR_B=-4.486 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -5.018239587138174,
+            "stressed_sharpe_b": -4.486221929735398,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-2.577 pos_months=27.3% \u2717; 2022_rate_cycle: SR=-6.293 pos_months=0.0% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -2.5774310470248776,
+                "positive_month_frac": 0.2727272727272727,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -6.292576976392143,
+                "positive_month_frac": 0.0,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q5_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-2.648), DSR_B=0.0000 (SR=-2.365), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -2.6481454278909484,
+            "sharpe_b": -2.365416846719721,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-3.519, -1.844] excl 0, OOS-B CI=[-3.208, -1.428] excl 0",
+          "metrics": {
+            "ci_a_lower": -3.5186210542233205,
+            "ci_a_upper": -1.844284232286882,
+            "ci_b_lower": -3.207983306246957,
+            "ci_b_upper": -1.428402346888099
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-2.648, SR_B=-2.365 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -2.6481454278909484,
+            "sharpe_b": -2.365416846719721
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.736, SR_B=-2.449 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.7359273030405857,
+            "stressed_sharpe_b": -2.4487970043839207,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-1.164 pos_months=45.5% \u2717; 2022_rate_cycle: SR=-3.841 pos_months=16.7% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -1.1637954505554675,
+                "positive_month_frac": 0.45454545454545453,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -3.8410491989173745,
+                "positive_month_frac": 0.16666666666666666,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q5_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.369), DSR_B=0.0000 (SR=-0.995), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.3686437711002826,
+            "sharpe_b": -0.9947751593381634,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": false,
+          "summary": "OOS-A CI=[-2.240, -0.550] excl 0, OOS-B CI=[-1.984, 0.063] incl 0",
+          "metrics": {
+            "ci_a_lower": -2.239509974963911,
+            "ci_a_upper": -0.5497302553848842,
+            "ci_b_lower": -1.9841762693518583,
+            "ci_b_upper": 0.06347291301102015
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.369, SR_B=-0.995 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.3686437711002826,
+            "sharpe_b": -0.9947751593381634
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.460, SR_B=-1.083 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.460323964477557,
+            "stressed_sharpe_b": -1.0831215525758675,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.393 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-2.380 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.39253441379101733,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -2.3796094834161634,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q10_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-3.995), DSR_B=0.0000 (SR=-3.344), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -3.9950095269233357,
+            "sharpe_b": -3.344256915246883,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-4.886, -3.210] excl 0, OOS-B CI=[-4.093, -2.558] excl 0",
+          "metrics": {
+            "ci_a_lower": -4.8857741448116805,
+            "ci_a_upper": -3.2097837199695536,
+            "ci_b_lower": -4.092705838373832,
+            "ci_b_upper": -2.558234171279969
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-3.995, SR_B=-3.344 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -3.9950095269233357,
+            "sharpe_b": -3.344256915246883
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-4.061, SR_B=-3.407 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -4.06059739185199,
+            "stressed_sharpe_b": -3.4065379151917656,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-2.145 pos_months=45.5% \u2717; 2022_rate_cycle: SR=-4.700 pos_months=8.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -2.145444448694599,
+                "positive_month_frac": 0.45454545454545453,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -4.699593770451597,
+                "positive_month_frac": 0.08333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q10_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-2.090), DSR_B=0.0000 (SR=-1.654), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -2.08962524757348,
+            "sharpe_b": -1.6535740261184741,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-2.990, -1.257] excl 0, OOS-B CI=[-2.496, -0.754] excl 0",
+          "metrics": {
+            "ci_a_lower": -2.9898954552834636,
+            "ci_a_upper": -1.256896440314651,
+            "ci_b_lower": -2.4956524636223003,
+            "ci_b_upper": -0.753645761143346
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-2.090, SR_B=-1.654 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -2.08962524757348,
+            "sharpe_b": -1.6535740261184741
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.158, SR_B=-1.720 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.1584976712188015,
+            "stressed_sharpe_b": -1.720051677569809,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.756 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-2.795 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.7556822563332428,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -2.7948181812444632,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L20_Q10_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.063), DSR_B=0.0000 (SR=-0.695), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.0628737946467695,
+            "sharpe_b": -0.6949499751961152,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": false,
+          "summary": "OOS-A CI=[-1.917, -0.261] excl 0, OOS-B CI=[-1.625, 0.318] incl 0",
+          "metrics": {
+            "ci_a_lower": -1.917376688927892,
+            "ci_a_upper": -0.26084002163680875,
+            "ci_b_lower": -1.6247050143235398,
+            "ci_b_upper": 0.31786631104340796
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.063, SR_B=-0.695 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.0628737946467695,
+            "sharpe_b": -0.6949499751961152
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.134, SR_B=-0.764 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.1336899934544546,
+            "stressed_sharpe_b": -0.7640793494275868,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.727 pos_months=63.6% \u2717; 2022_rate_cycle: SR=-1.681 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.726573038783867,
+                "positive_month_frac": 0.6363636363636364,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -1.6813726126396824,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q5_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-4.939), DSR_B=0.0000 (SR=-4.413), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -4.938819087806625,
+            "sharpe_b": -4.412668661053811,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-5.790, -4.165] excl 0, OOS-B CI=[-5.235, -3.578] excl 0",
+          "metrics": {
+            "ci_a_lower": -5.79033649044505,
+            "ci_a_upper": -4.164880958097457,
+            "ci_b_lower": -5.2346038945687985,
+            "ci_b_upper": -3.577670019449516
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-4.939, SR_B=-4.413 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -4.938819087806625,
+            "sharpe_b": -4.412668661053811
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-5.018, SR_B=-4.490 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -5.0180040245410416,
+            "stressed_sharpe_b": -4.4896812707790055,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-2.684 pos_months=36.4% \u2717; 2022_rate_cycle: SR=-6.039 pos_months=0.0% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -2.684497786687098,
+                "positive_month_frac": 0.36363636363636365,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -6.039039682569639,
+                "positive_month_frac": 0.0,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q5_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-2.657), DSR_B=0.0000 (SR=-2.201), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -2.6573145852142406,
+            "sharpe_b": -2.2008588473821025,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-3.517, -1.848] excl 0, OOS-B CI=[-3.091, -1.295] excl 0",
+          "metrics": {
+            "ci_a_lower": -3.516653454409665,
+            "ci_a_upper": -1.8480194407151456,
+            "ci_b_lower": -3.090842283764503,
+            "ci_b_upper": -1.2950151651786417
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-2.657, SR_B=-2.201 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -2.6573145852142406,
+            "sharpe_b": -2.2008588473821025
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.743, SR_B=-2.284 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.742992126365437,
+            "stressed_sharpe_b": -2.284361172991333,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.833 pos_months=45.5% \u2717; 2022_rate_cycle: SR=-3.735 pos_months=8.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.8333588305689215,
+                "positive_month_frac": 0.45454545454545453,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -3.7349505520660014,
+                "positive_month_frac": 0.08333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q5_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-1.350), DSR_B=0.0000 (SR=-0.861), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -1.3498410682350106,
+            "sharpe_b": -0.8608449881297803,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": false,
+          "summary": "OOS-A CI=[-2.179, -0.538] excl 0, OOS-B CI=[-1.833, 0.146] incl 0",
+          "metrics": {
+            "ci_a_lower": -2.1793594496102413,
+            "ci_a_upper": -0.53755803075411,
+            "ci_b_lower": -1.8328888682321627,
+            "ci_b_upper": 0.1462118372974411
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-1.350, SR_B=-0.861 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -1.3498410682350106,
+            "sharpe_b": -0.8608449881297803
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.440, SR_B=-0.950 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.4402629515541348,
+            "stressed_sharpe_b": -0.9501003305010683,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-0.204 pos_months=45.5% \u2717; 2022_rate_cycle: SR=-1.606 pos_months=41.7% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -0.20395224115308286,
+                "positive_month_frac": 0.45454545454545453,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -1.6062214425562849,
+                "positive_month_frac": 0.4166666666666667,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q10_H5",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-3.980), DSR_B=0.0000 (SR=-3.352), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -3.9796653046137846,
+            "sharpe_b": -3.3523858177905432,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-4.895, -3.130] excl 0, OOS-B CI=[-4.204, -2.497] excl 0",
+          "metrics": {
+            "ci_a_lower": -4.895343836499431,
+            "ci_a_upper": -3.1304314026219515,
+            "ci_b_lower": -4.203519909956791,
+            "ci_b_upper": -2.496965618363257
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-3.980, SR_B=-3.352 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -3.9796653046137846,
+            "sharpe_b": -3.3523858177905432
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-4.044, SR_B=-3.415 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -4.043661531793425,
+            "stressed_sharpe_b": -3.41508632782166,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=-1.523 pos_months=36.4% \u2717; 2022_rate_cycle: SR=-4.921 pos_months=0.0% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": -1.5225460075936732,
+                "positive_month_frac": 0.36363636363636365,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -4.920947239533642,
+                "positive_month_frac": 0.0,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q10_H10",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-2.111), DSR_B=0.0000 (SR=-1.632), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -2.111480451759661,
+            "sharpe_b": -1.6318644241316944,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": true,
+          "summary": "OOS-A CI=[-3.013, -1.236] excl 0, OOS-B CI=[-2.510, -0.733] excl 0",
+          "metrics": {
+            "ci_a_lower": -3.0130808477235487,
+            "ci_a_upper": -1.2361648269032075,
+            "ci_b_lower": -2.509537870379212,
+            "ci_b_upper": -0.7325848837991292
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-2.111, SR_B=-1.632 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -2.111480451759661,
+            "sharpe_b": -1.6318644241316944
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-2.179, SR_B=-1.698 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -2.17878359617992,
+            "stressed_sharpe_b": -1.6979589601482874,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=0.100 pos_months=54.5% \u2717; 2022_rate_cycle: SR=-2.868 pos_months=16.7% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": 0.1000702761515052,
+                "positive_month_frac": 0.5454545454545454,
+                "passed": false
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -2.868141770380272,
+                "positive_month_frac": 0.16666666666666666,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "deliv_pct_L60_Q10_H21",
+      "family": "delivery_pct",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [
+        {
+          "gate_name": "1_DSR",
+          "passed": false,
+          "summary": "DSR_A=0.0000 (SR=-0.945), DSR_B=0.0000 (SR=-0.620), threshold=0.95",
+          "metrics": {
+            "sharpe_a": -0.9446652197073094,
+            "sharpe_b": -0.6199268757656681,
+            "dsr_a": 0.0,
+            "dsr_b": 0.0,
+            "threshold": 0.95,
+            "n_trials": 22
+          }
+        },
+        {
+          "gate_name": "2_Bootstrap_CI",
+          "passed": false,
+          "summary": "OOS-A CI=[-1.817, -0.086] excl 0, OOS-B CI=[-1.563, 0.375] incl 0",
+          "metrics": {
+            "ci_a_lower": -1.8173606895377032,
+            "ci_a_upper": -0.08561570931522096,
+            "ci_b_lower": -1.5629210922500547,
+            "ci_b_upper": 0.37459598731157967
+          }
+        },
+        {
+          "gate_name": "3_Sign_Agreement",
+          "passed": false,
+          "summary": "SR_A=-0.945, SR_B=-0.620 \u2014 sign disagreement",
+          "metrics": {
+            "sharpe_a": -0.9446652197073094,
+            "sharpe_b": -0.6199268757656681
+          }
+        },
+        {
+          "gate_name": "4_Cost_Survival",
+          "passed": false,
+          "summary": "Stressed SR_A=-1.013, SR_B=-0.689 (2\u00d7 costs: 71.8bp RT + 20.0bp impact)",
+          "metrics": {
+            "stressed_sharpe_a": -1.0133136105274765,
+            "stressed_sharpe_b": -0.68947444522032,
+            "stressed_round_trip_bps": 71.8,
+            "stressed_impact_bps": 20.0
+          }
+        },
+        {
+          "gate_name": "5_Regime_Stress",
+          "passed": false,
+          "summary": "4-of-4 required: 2008_crisis: SR=0.000 pos_months=0.0% \u2717; 2013_taper_tantrum: SR=0.000 pos_months=0.0% \u2717; 2020_covid: SR=0.343 pos_months=63.6% \u2713; 2022_rate_cycle: SR=-0.926 pos_months=33.3% \u2717",
+          "metrics": {
+            "period_results": [
+              {
+                "period": "2008_crisis",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2013_taper_tantrum",
+                "sharpe": 0.0,
+                "positive_month_frac": 0.0,
+                "passed": false,
+                "reason": "insufficient data"
+              },
+              {
+                "period": "2020_covid",
+                "sharpe": 0.34307198088017027,
+                "positive_month_frac": 0.6363636363636364,
+                "passed": true
+              },
+              {
+                "period": "2022_rate_cycle",
+                "sharpe": -0.926420661345822,
+                "positive_month_frac": 0.3333333333333333,
+                "passed": false
+              }
+            ]
+          }
+        }
+      ],
+      "skipped": false,
+      "skip_reason": ""
+    },
+    {
+      "trial_name": "fo_expiry_pre3_post3",
+      "family": "fo_expiry",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [],
+      "skipped": true,
+      "skip_reason": "F&O Phase 3 daily-return construction requires per-event high-OI stock universe (needs OI data). Not implemented in this session \u2014 file follow-up."
+    },
+    {
+      "trial_name": "fo_expiry_pre3_post5",
+      "family": "fo_expiry",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [],
+      "skipped": true,
+      "skip_reason": "F&O Phase 3 daily-return construction requires per-event high-OI stock universe (needs OI data). Not implemented in this session \u2014 file follow-up."
+    },
+    {
+      "trial_name": "fo_expiry_pre5_post3",
+      "family": "fo_expiry",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [],
+      "skipped": true,
+      "skip_reason": "F&O Phase 3 daily-return construction requires per-event high-OI stock universe (needs OI data). Not implemented in this session \u2014 file follow-up."
+    },
+    {
+      "trial_name": "fo_expiry_pre5_post5",
+      "family": "fo_expiry",
+      "gauntlet_passed": false,
+      "gates_1_to_4_passed": false,
+      "gate5_passed": false,
+      "per_gate": [],
+      "skipped": true,
+      "skip_reason": "F&O Phase 3 daily-return construction requires per-event high-OI stock universe (needs OI data). Not implemented in this session \u2014 file follow-up."
+    }
+  ],
+  "total_trials_evaluated": 22,
+  "n_trials_for_dsr": 22,
+  "factor_residualization_applied": true,
+  "generated_at": "2026-05-20T08:39:04Z",
+  "design_doc_sha": "3b397262d5799f7fe6b583b9c97d8eee6d07852611ec8c046a7c717ca1b031b9"
+}

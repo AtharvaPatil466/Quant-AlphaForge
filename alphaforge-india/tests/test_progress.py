@@ -2,15 +2,12 @@
 from __future__ import annotations
 
 import json
-import sys
 from datetime import date
 from pathlib import Path
 
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ingest import progress as P  # noqa: E402
+from ingest import progress as P
 
 
 def _write_checkpoint(path: Path, rows: list[dict]) -> None:

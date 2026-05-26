@@ -1,17 +1,14 @@
 """Tests for ingest.parser_unified — post-2020 unified bhavcopy."""
 from __future__ import annotations
 
-import sys
 from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ingest import parser_unified as U  # noqa: E402
-from ingest.schema import COLUMNS, UNIFIED_ERA  # noqa: E402
+from ingest import parser_unified as U
+from ingest.schema import COLUMNS, UNIFIED_ERA
 
 
 def test_load_unified_strips_column_whitespace(unified_csv: Path):

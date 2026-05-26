@@ -14,17 +14,13 @@ from __future__ import annotations
 
 import json
 import os
-import sys
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
 
 import pytest
 
-# Make the sub-project importable without install.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ingest.downloader import (  # noqa: E402
+from ingest.downloader import (
     Checkpoint, CheckpointRow, DownloadConfig, Downloader, HaltedError,
     HolidayLog, Result, Source, atomic_write_bytes, legacy_url, mto_url,
     output_path, sources_for_date, unified_url, weekday_range,

@@ -7,17 +7,13 @@ Tests cover:
 """
 from __future__ import annotations
 
-import sys
 from datetime import date
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from gauntlet.gates import (  # noqa: E402
+from gauntlet.gates import (
     GauntletResult,
     deflated_sharpe_ratio,
     gate1_dsr,

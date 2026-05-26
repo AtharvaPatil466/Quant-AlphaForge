@@ -3,19 +3,10 @@
 from __future__ import annotations
 
 import math
-import sys
-import os
 from types import SimpleNamespace
 
 import numpy as np
 import pytest
-
-# Ensure alphaforge-python and alphaforge-marl are on path
-_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-_MARL = os.path.dirname(os.path.dirname(__file__))
-for p in [os.path.join(_ROOT, "alphaforge-python"), _MARL]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
 
 from env.trading_env import TradingEnv
 from env.action_space import Action, N_ACTIONS, ACTION_POSITION

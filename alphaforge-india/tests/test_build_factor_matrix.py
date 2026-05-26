@@ -1,7 +1,6 @@
 """Tests for research.build_factor_matrix."""
 from __future__ import annotations
 
-import sys
 from datetime import date
 from pathlib import Path
 
@@ -9,9 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from research import build_factor_matrix as BFM  # noqa: E402
+from research import build_factor_matrix as BFM
 
 
 # ---------------------------------------------------------------------------
@@ -141,17 +138,19 @@ def test_build_risk_free_series_csv_missing_fallback(tmp_path: Path):
 # build_matrix
 # ---------------------------------------------------------------------------
 
-def test_build_matrix_returns_three_factor_columns(tmp_path: Path):
+def test_build_matrix_returns_four_columns_including_const(tmp_path: Path):
     processed = _stage_processed(tmp_path, n_days=60, n_symbols=10)
     close, volume = BFM.load_bhavcopy_for_factors(
         processed, date(2018, 1, 1), date(2018, 12, 31),
     )
     rf = BFM.build_risk_free_series(close.index)
     matrix = BFM.build_matrix(close, volume, risk_free_daily=rf)
-    assert set(matrix.columns) == {"MKT", "SMB", "LIQ"}
+    # MKT/SMB/LIQ + const intercept. The const column is required by
+    # `gauntlet.residualization.residualize()` to identify the alpha
+    # coefficient for the §7 hard-rule t-stat test.
+    assert set(matrix.columns) == {"MKT", "SMB", "LIQ", "const"}
     assert len(matrix) == len(close)
-    # No 'const' column — that's added by residualize() downstream.
-    assert "const" not in matrix.columns
+    assert (matrix["const"] == 1.0).all()
 
 
 def test_build_matrix_without_risk_free_uses_raw_market(tmp_path: Path):
@@ -202,4 +201,6 @@ def test_main_round_trip_consumable_by_run_phase3(tmp_path: Path):
     # Load using the same call signature as run_phase3.main.
     factor_matrix = pd.read_csv(out, index_col=0, parse_dates=True)
     assert factor_matrix.index.dtype.kind == "M"  # datetime
-    assert len(factor_matrix.columns) == 3
+    # MKT/SMB/LIQ + const = 4 columns. const is required by residualize().
+    assert len(factor_matrix.columns) == 4
+    assert "const" in factor_matrix.columns

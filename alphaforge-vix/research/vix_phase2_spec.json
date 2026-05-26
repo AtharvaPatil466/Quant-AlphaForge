@@ -1,0 +1,19 @@
+{
+  "phase2_spec_sha": "18173b6d79ffa3ae6c47904d3bfedabb63de80e38f0db683de5d11aedaefc352",
+  "design_doc_sha": "66a6c45a90bdda5879cc37348ac01bc7aea59e5c8403531592c3d9509cdabb0b",
+  "filed_utc": "2026-05-21T11:03:54+00:00",
+  "survivors": {
+    "vrp_phase1": 10,
+    "mean_reversion_phase3_only": 4,
+    "total_base_trials": 14,
+    "hedge_variants_per_trial": 2,
+    "total_strategy_trial_combos": 28
+  },
+  "sizing_constant": 0.1,
+  "hedge_ratio": 0.1,
+  "hard_stop_vix_pct": 0.4,
+  "time_exit_calendar_days": 60,
+  "svxy_regime_boundary": "2018-02-27",
+  "svxy_pre_exposure": -1.0,
+  "svxy_post_exposure": -0.5
+}

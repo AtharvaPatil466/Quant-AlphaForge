@@ -1,0 +1,9 @@
+{
+  "substrate8_design_sha": "2194b7b2f2e3723904dd8e5e90016279036a3cfec07128d419684847dd7c84a5",
+  "parent_vix_design_sha": "54e53be92f72e5161a4478cb8e518955d08164bfad0057675278fa2c49367b29",
+  "filed_utc": "2026-05-21T13:03:00+00:00",
+  "sizing_rule": "vix_baseline_anchored_10pct",
+  "sizing_constant": 0.1,
+  "vix_baseline": 20.0,
+  "trial_count_base": 28
+}

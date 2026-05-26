@@ -1,6 +1,6 @@
 # Phase 1 Verdict — 22 survivor(s)
 
-_Generated 2026-05-20T07:28:01Z_
+_Generated 2026-05-20T08:24:18Z_
 _INDIA_DESIGN.md SHA-256: `3b397262d5799f7fe6b583b9c97d8eee6d07852611ec8c046a7c717ca1b031b9`_
 
 **IS window:** 2004-01-01 → 2014-12-31

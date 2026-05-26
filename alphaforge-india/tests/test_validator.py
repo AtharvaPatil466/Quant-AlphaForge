@@ -2,17 +2,14 @@
 from __future__ import annotations
 
 import json
-import sys
 from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from ingest import validator as V  # noqa: E402
-from ingest.schema import COLUMNS, LEGACY_ERA, UNIFIED_ERA  # noqa: E402
+from ingest import validator as V
+from ingest.schema import COLUMNS, LEGACY_ERA, UNIFIED_ERA
 
 
 # ---------------------------------------------------------------------------
