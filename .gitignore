@@ -152,3 +152,33 @@ tmp/
 *.orig
 # Added by code-review-graph
 .code-review-graph/
+
+# ─────────────────────────────────────────────────────────────────────────
+# AI tool instruction files (like .claude/ already gitignored)
+# ─────────────────────────────────────────────────────────────────────────
+GEMINI.md
+
+# ─────────────────────────────────────────────────────────────────────────
+# Generated tool output
+# ─────────────────────────────────────────────────────────────────────────
+graphify-out/
+
+# ─────────────────────────────────────────────────────────────────────────
+# Regenerable validation artifacts
+# ─────────────────────────────────────────────────────────────────────────
+data/_validation_report.json
+
+# ─────────────────────────────────────────────────────────────────────────
+# Stale execution digests from halted loop
+# ─────────────────────────────────────────────────────────────────────────
+alphaforge-execution/daily_digest_*.md
+
+# ─────────────────────────────────────────────────────────────────────────
+# Research output dirs for new sub-projects (same pattern as python/marl/execution)
+# ─────────────────────────────────────────────────────────────────────────
+alphaforge-crypto/research/out/
+alphaforge-vix/research/out/
+alphaforge-india/research/out/
+alphaforge-pead/research/out/
+alphaforge-microstructure/research/out/
+alphaforge-options/research/out/
