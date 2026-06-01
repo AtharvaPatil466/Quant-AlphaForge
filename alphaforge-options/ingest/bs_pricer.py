@@ -15,6 +15,7 @@ Units:
 from __future__ import annotations
 
 import math
+import warnings
 from dataclasses import dataclass
 
 import numpy as np
@@ -110,18 +111,58 @@ def find_strike_for_delta(
     lo = K_guess * 0.7
     hi = K_guess * 1.3
 
-    # Make sure the bracket straddles zero
-    f_lo, f_hi = objective(lo), objective(hi)
-    if f_lo * f_hi > 0:
-        # Expand bracket
-        lo = S * 0.40 if option_type == "put" else S * 1.001
-        hi = S * 0.999 if option_type == "put" else S * 3.0
+    # objective(K) = |delta(K)| - target.
+    #   Puts:  K↓ ⇒ deeper OTM ⇒ |delta|↓, so objective is increasing in K.
+    #          A too-tight bracket fails because the true (low) strike sits
+    #          BELOW lo ⇒ objective(lo) > 0 ⇒ we must push lo DOWN.
+    #   Calls: K↑ ⇒ deeper OTM ⇒ |delta|↓, so objective is decreasing in K.
+    #          A too-tight bracket fails because the true (high) strike sits
+    #          ABOVE hi ⇒ objective(hi) > 0 ⇒ we must push hi UP.
+    # Adaptively widen the OTM side until the bracket straddles a root, with a
+    # hard floor/ceiling so realistic deep-OTM low-delta strikes are reachable
+    # (put lo down to S*0.05, call hi up to S*5.0).
+    if objective(lo) * objective(hi) > 0:
+        if option_type == "put":
+            lo = S * 0.40
+            hi = S * 0.999
+            floor = S * 0.05
+            # Widen lo downward until objective(lo) flips sign (or floor hit).
+            for _ in range(12):
+                if objective(lo) * objective(hi) <= 0:
+                    break
+                lo = max(floor, lo * 0.5)
+                if lo <= floor:
+                    break
+        else:
+            lo = S * 1.001
+            hi = S * 3.0
+            ceil = S * 5.0
+            # Widen hi upward until objective(hi) flips sign (or ceil hit).
+            for _ in range(12):
+                if objective(lo) * objective(hi) <= 0:
+                    break
+                hi = min(ceil, hi * 1.5)
+                if hi >= ceil:
+                    break
 
-    try:
-        return float(brentq(objective, lo, hi, xtol=1e-4, maxiter=200))
-    except ValueError:
-        # Fall back to closed-form approximation
-        return K_guess
+    if objective(lo) * objective(hi) <= 0:
+        try:
+            return float(brentq(objective, lo, hi, xtol=1e-4, maxiter=200))
+        except ValueError:
+            pass
+
+    # Root genuinely could not be bracketed — fall back to the closed-form
+    # approximation (exact only at r=0) but make the fallback EXPLICIT so it is
+    # never silent and corrupts a condor leg without a diagnostic.
+    warnings.warn(
+        "find_strike_for_delta: could not bracket a root for "
+        f"option_type={option_type}, target_delta_abs={target_delta_abs}, "
+        f"S={S}, T={T}, r={r}, sigma={sigma}; falling back to closed-form "
+        f"approximation K={K_guess} (exact only at r=0).",
+        RuntimeWarning,
+        stacklevel=2,
+    )
+    return K_guess
 
 
 # ---------------------------------------------------------------------------

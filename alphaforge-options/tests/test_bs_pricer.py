@@ -143,6 +143,36 @@ class TestFindStrikeForDelta:
         with pytest.raises(AssertionError):
             find_strike_for_delta(S, T, r, sigma, 0.0, "put")
 
+    def test_deep_otm_high_sigma_long_T_put_no_silent_fallback(self):
+        # Deep-OTM 5Δ put at high sigma / long T / nonzero r: the true strike
+        # falls below the old expanded bracket (S*0.40), which previously made
+        # brentq fail and silently return the closed-form K_guess. The adaptive
+        # widening must now bracket the true root accurately and emit no warning.
+        import warnings
+
+        S_, T_, r_, sigma_, td = 400.0, 1.0, 0.05, 0.80, 0.05
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            K = find_strike_for_delta(S_, T_, r_, sigma_, td, "put")
+        assert not caught, "deep-OTM put should not trigger the fallback warning"
+        actual = abs(bs_delta(S_, K, T_, r_, sigma_, "put"))
+        assert abs(actual - td) < 1e-3
+        assert K < S_ * 0.40  # genuinely below the old bracket floor
+
+    def test_deep_otm_high_sigma_long_T_call_no_silent_fallback(self):
+        # Symmetric case for calls: deep-OTM low-delta strike sits above the old
+        # expanded ceiling (S*3.0); adaptive upward widening must reach it.
+        import warnings
+
+        S_, T_, r_, sigma_, td = 400.0, 1.0, 0.05, 0.80, 0.05
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            K = find_strike_for_delta(S_, T_, r_, sigma_, td, "call")
+        assert not caught, "deep-OTM call should not trigger the fallback warning"
+        actual = bs_delta(S_, K, T_, r_, sigma_, "call")
+        assert abs(actual - td) < 1e-3
+        assert K > S_
+
 
 # ---------------------------------------------------------------------------
 # CondorStrikes
