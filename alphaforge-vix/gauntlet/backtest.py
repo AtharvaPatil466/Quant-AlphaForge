@@ -308,7 +308,7 @@ class Backtest:
             row = df.iloc[i]
 
             # ----- 1. EXECUTE pending orders at TODAY's open -----
-            if pending_entry and position is None:
+            if pending_entry and position is None and prev_vix_close is not None:
                 pending_entry = False
                 svxy_open = float(row["svxy_open"])
                 vxx_open = (float(row["vxx_open"])
@@ -316,9 +316,12 @@ class Backtest:
                             and not pd.isna(row.get("vxx_open")) else None)
                 # Compute notional from prior-close NAV.
                 # NAV proxy at open: cash (no position open yet).
+                # Size on the VIX level known BEFORE today's open (yesterday's
+                # close); today's vix_close is not known at the open (no
+                # look-ahead, consistent with the T+1-fill contract).
                 sizing = self.sizing_fn(strat.SizingInputs(
                     portfolio_value=cash,
-                    vix_level=float(row["vix_close"]),  # use today's VIX close
+                    vix_level=prev_vix_close,  # prior session's VIX close
                     cash_available=cash,
                 ))
                 if sizing.short_vol_notional > 0 and svxy_open > 0:

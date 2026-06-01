@@ -155,7 +155,8 @@ def deflated_sharpe_ratio(
                             family (deflation denominator; §4 = 28).
         n_obs             — number of return observations (e.g., trading days).
         skewness          — sample skewness of the daily returns.
-        excess_kurtosis   — sample excess kurtosis of the daily returns.
+        excess_kurtosis   — sample EXCESS kurtosis of the daily returns
+                            (i.e. full kurtosis − 3; 0 for a Gaussian).
 
     Returns:
         DSR ∈ [0, 1] — probability that the observed Sharpe exceeds what
@@ -174,10 +175,14 @@ def deflated_sharpe_ratio(
             where z is the standard-normal quantile.
 
         DSR = Φ((sharpe_observed - E[max Sharpe]) ·
-                 √((n_obs − 1) / (1 − skew·SR + (kurt−1)/4 · SR²)))
+                 √((n_obs − 1) / (1 − skew·SR + (kurt_full−1)/4 · SR²)))
 
     where SR is in *daily* units. We convert annualized Sharpe → daily by
-    dividing by √annualization.
+    dividing by √annualization. The variance term uses FULL kurtosis
+    (kurt_full − 1)/4; since `excess_kurtosis` is passed in EXCESS units
+    (kurt_full − 3), the equivalent term implemented below is
+    (excess_kurtosis + 2)/4 — which equals +0.5 for a Gaussian (excess=0),
+    matching the Lo (2002) / Bailey-LdP form.
     """
     if n_trials < 1:
         raise ValueError(f"n_trials must be >= 1, got {n_trials}")
@@ -221,7 +226,7 @@ def deflated_sharpe_ratio(
 
     # Bailey-LdP variance of Sharpe under the null (eq. 9), in daily units.
     var_term = (1 - skewness * sr_daily
-                + ((excess_kurtosis - 1) / 4.0) * sr_daily ** 2) / (n_obs - 1)
+                + ((excess_kurtosis + 2.0) / 4.0) * sr_daily ** 2) / (n_obs - 1)
     if var_term <= 0:
         return 0.0
     sigma_sr = math.sqrt(var_term)
