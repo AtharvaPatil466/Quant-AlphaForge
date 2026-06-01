@@ -280,6 +280,8 @@ def evaluate_trial_deliv_pct(
         trial_name=trial_name,
         daily_returns=residual_ret,
         n_trials=n_trials,
+        avg_turnover=ASSUMED_REBALANCE_TURNOVER,
+        rebalance_interval_days=trial.holding_period,
     )
 
     gate_results = [

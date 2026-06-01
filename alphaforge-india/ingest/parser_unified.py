@@ -138,7 +138,8 @@ def parse_year(unified_dir: Path, out_path: Path, holiday_path: Path | None = No
     unified Parquet."""
     files = sorted(unified_dir.rglob("sec_bhavdata_full_*.csv"))
     frames: list[pd.DataFrame] = []
-    stats = {"files": 0, "rows": 0, "skipped_mismatches": 0}
+    stats = {"files": 0, "rows": 0, "skipped_mismatches": 0,
+             "unexpected_errors": 0, "unexpected_error_files": []}
     for f in files:
         try:
             r = parse_one_date(f)
@@ -173,14 +174,31 @@ def parse_year(unified_dir: Path, out_path: Path, holiday_path: Path | None = No
                             with open(holiday_path, "a") as fp:
                                 fp.write(json.dumps(entry) + "\n")
                 continue
+            # Other ValueErrors are legitimate empty/holiday/format-of-this-file
+            # conditions (e.g. "no EQ-series rows", unrecognized filename) that
+            # do not indicate a systemic schema/encoding break. Keep skipping.
             log.warning("skipping %s: %r", f.name, e)
             continue
         except Exception as e:
-            log.warning("skipping %s: %r", f.name, e)
+            # An UNEXPECTED error (schema/encoding change, corrupt file, etc.)
+            # must NOT be silently swallowed: a format change cannot be allowed
+            # to masquerade as a holiday and let Phase-0 "100% coverage" pass on
+            # silently-missing data. Count it, record the offending date, and
+            # hard-fail the build.
+            stats["unexpected_errors"] += 1
+            stats["unexpected_error_files"].append(f.name)
+            log.error("unexpected parse error on %s: %r", f.name, e)
             continue
         frames.append(r.df)
         stats["files"] += 1
         stats["rows"] += len(r.df)
+    if stats["unexpected_errors"]:
+        raise RuntimeError(
+            f"{stats['unexpected_errors']} unexpected parse error(s) in "
+            f"{unified_dir}; offending files: {stats['unexpected_error_files']}. "
+            f"Refusing to write Parquet — a format/encoding change must not be "
+            f"silently dropped as if it were a holiday."
+        )
     if frames:
         out = pd.concat(frames, ignore_index=True)
         out_path.parent.mkdir(parents=True, exist_ok=True)

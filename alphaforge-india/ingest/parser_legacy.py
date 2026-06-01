@@ -243,12 +243,25 @@ def parse_year(zip_dir: Path, mto_dir: Path,
     agreed_frames: list[pd.DataFrame] = []
     disagreements_frames: list[pd.DataFrame] = []
     stats = {"dates": 0, "agreed_rows": 0, "disagreement_rows": 0,
-             "missing_mto": 0, "missing_bhav": 0}
+             "missing_mto": 0, "missing_bhav": 0,
+             "unexpected_errors": 0, "unexpected_error_dates": []}
     for d in paired:
         try:
             r = parse_one_date(bhav_files[d], mto_files[d])
-        except Exception as e:
+        except ValueError as e:
+            # Legitimate empty/holiday/format-of-this-file conditions (empty
+            # zip, no EQ rows, unrecognized timestamp). Skip, as before.
             log.warning("skipping %s: %r", d.isoformat(), e)
+            continue
+        except Exception as e:
+            # An UNEXPECTED error (schema/encoding change, corrupt file, etc.)
+            # must NOT be silently swallowed: a format change cannot be allowed
+            # to masquerade as a missing/holiday date and let Phase-0 coverage
+            # pass on silently-dropped data. Count it, record the offending
+            # date, and hard-fail the build below.
+            stats["unexpected_errors"] += 1
+            stats["unexpected_error_dates"].append(d.isoformat())
+            log.error("unexpected parse error on %s: %r", d.isoformat(), e)
             continue
         agreed_frames.append(r.agreed)
         if not r.disagreements.empty:
@@ -259,6 +272,14 @@ def parse_year(zip_dir: Path, mto_dir: Path,
     stats["missing_mto"] = len(set(bhav_files) - set(mto_files))
     stats["missing_bhav"] = len(set(mto_files) - set(bhav_files))
 
+    if stats["unexpected_errors"]:
+        raise RuntimeError(
+            f"{stats['unexpected_errors']} unexpected parse error(s) in "
+            f"{zip_dir} / {mto_dir}; offending dates: "
+            f"{stats['unexpected_error_dates']}. Refusing to write Parquet — a "
+            f"format/encoding change must not be silently dropped as if it were "
+            f"a missing/holiday date."
+        )
     if agreed_frames:
         out = pd.concat(agreed_frames, ignore_index=True)
         out_path.parent.mkdir(parents=True, exist_ok=True)

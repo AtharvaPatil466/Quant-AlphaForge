@@ -116,7 +116,6 @@ def compute_window_returns(
                  pre-window return).
     """
     all_dates = close_df.index
-    daily_returns = close_df.pct_change()
     results: list[dict[str, Any]] = []
 
     for exp_date in expiry_dates:
@@ -127,9 +126,15 @@ def compute_window_returns(
             log.debug("Skipping expiry %s: insufficient window dates", exp_date)
             continue
 
-        # Cross-sectional average return over window
-        pre_rets = daily_returns.loc[pre_dates].sum(axis=0)  # per-stock cumulative
-        post_rets = daily_returns.loc[post_dates].sum(axis=0)
+        # Cross-sectional average return over window. Compute each window's
+        # cumulative return WITHIN the window only, via the price endpoints
+        # (last/first - 1). Using close_df.pct_change() on the full frame would
+        # measure the first return from the trading day BEFORE the window,
+        # contaminating the event-study span (off-by-one boundary leak).
+        pre_slice = close_df.loc[pre_dates]
+        post_slice = close_df.loc[post_dates]
+        pre_rets = pre_slice.iloc[-1] / pre_slice.iloc[0] - 1.0  # per-stock cumulative
+        post_rets = post_slice.iloc[-1] / post_slice.iloc[0] - 1.0
 
         # Drop NaN stocks
         valid = pre_rets.dropna().index.intersection(post_rets.dropna().index)

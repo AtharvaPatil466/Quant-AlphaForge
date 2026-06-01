@@ -81,13 +81,22 @@ class TestSharpeRatio:
 
 class TestGate1DSR:
     def test_strong_signal_has_high_dsr(self):
-        """A very strong Sharpe should produce high DSR."""
-        dsr = deflated_sharpe_ratio(3.0, n_trials=22, n_obs=1260)
+        """A very strong Sharpe should produce high DSR.
+
+        DSR now takes a PER-PERIOD Sharpe (no √252). 0.12 per-day over 1260
+        obs ≈ annualized 1.9 — a genuinely strong daily strategy — and clears
+        the 0.95 gate after deflation against 22 trials.
+        """
+        dsr = deflated_sharpe_ratio(0.12, n_trials=22, n_obs=1260)
         assert dsr > 0.95
 
     def test_weak_signal_has_low_dsr(self):
-        """A weak Sharpe should produce low DSR."""
-        dsr = deflated_sharpe_ratio(0.3, n_trials=22, n_obs=1260)
+        """A weak Sharpe should produce low DSR.
+
+        0.02 per-day over 1260 obs ≈ annualized 0.32 — too weak to clear the
+        expected-max-of-22-trials hurdle after the Lo variance correction.
+        """
+        dsr = deflated_sharpe_ratio(0.02, n_trials=22, n_obs=1260)
         assert dsr < 0.5
 
     def test_gate_result(self, strong_positive_returns, noise_returns):

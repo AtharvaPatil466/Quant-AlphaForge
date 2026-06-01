@@ -133,10 +133,22 @@ def deflated_sharpe_ratio(
     Returns the probability that the observed Sharpe is significant
     after correcting for multiple testing.
 
-    DSR = Φ((SR_obs - SR_0) / σ(SR))
+    DSR = Φ((SR_obs·√(n-1) - SR_0) / √(var_factor))
 
-    where SR_0 ≈ √(2 * ln(N)) * (1 - γ / √(2 * ln(N)))  (Euler γ ≈ 0.5772)
-    and σ(SR) = √(1 / n * (1 - γ₃ * SR + (γ₄ - 1)/4 * SR²))
+    where SR_0 ≈ √(2·ln(N))·(1 - γ/√(2·ln(N)))  is the expected max-Sharpe
+    *z-unit* order statistic under the null (Euler γ ≈ 0.5772), and
+    var_factor = 1 - γ₃·SR + (γ₄_excess/4)·SR² + 0.5·SR² is the Lo (2002)
+    non-normality correction to the Sharpe estimator's variance.
+
+    IMPORTANT: ``sharpe_obs`` MUST be the PER-PERIOD (non-annualized) Sharpe,
+    i.e. mean/std at the native return cadence with NO √252 factor. The
+    √(n_obs-1) scaling in the numerator is what converts that per-period
+    Sharpe into the same z-units as SR_0; passing an annualized Sharpe here
+    double-counts the time scaling and produces a mis-scaled near-step
+    function. This matches alphaforge-crypto/research/carry_primitives.py
+    `deflated_sharpe_ratio` exactly (kurt there is full kurtosis; the
+    (γ₄_excess/4 + 0.5)·SR² form here is the algebraically-equivalent Lo
+    expansion using EXCESS kurtosis).
     """
     from scipy.stats import norm
 
@@ -144,22 +156,25 @@ def deflated_sharpe_ratio(
     if n_trials <= 1:
         return 1.0 if sharpe_obs > 0 else 0.0
 
-    # Expected max Sharpe under the null (Euler approximation)
+    # Expected max Sharpe under the null (Euler approximation), in z-units.
     sqrt_2ln = np.sqrt(2.0 * np.log(n_trials))
     sr_0 = sqrt_2ln * (1.0 - euler_gamma / sqrt_2ln)
 
-    # Standard error of the Sharpe estimator
-    se_sr = np.sqrt(
-        (1.0 + 0.5 * sharpe_obs**2
-         - skew * sharpe_obs
-         + (kurt_excess / 4.0) * sharpe_obs**2)
-        / max(n_obs, 1)
+    # Lo (2002) variance correction for the PER-PERIOD Sharpe estimator. The
+    # 1/n_obs sample-size scaling does NOT live here: it is folded into the
+    # numerator via the √(n_obs-1) z-unit conversion of sharpe_obs.
+    var_factor = (
+        1.0
+        + 0.5 * sharpe_obs**2
+        - skew * sharpe_obs
+        + (kurt_excess / 4.0) * sharpe_obs**2
     )
 
-    if se_sr <= 0:
+    if var_factor <= 0:
         return 0.0
 
-    z = (sharpe_obs - sr_0) / se_sr
+    # Scale the per-period Sharpe to z-units, subtract the z-unit expected max.
+    z = (sharpe_obs * np.sqrt(max(1, n_obs - 1)) - sr_0) / np.sqrt(var_factor)
     return float(norm.cdf(z))
 
 
@@ -170,11 +185,15 @@ def gate1_dsr(
     threshold: float = 0.95,
 ) -> GateResult:
     """Gate 1: DSR > threshold in both OOS-A and OOS-B."""
+    # Reported Sharpe is annualized (for human-readable summary/metrics), but
+    # the DSR machinery works in PER-PERIOD units — so pass annualize=1.0.
     sr_a = sharpe_ratio(oos_a_returns)
     sr_b = sharpe_ratio(oos_b_returns)
+    sr_a_pp = sharpe_ratio(oos_a_returns, annualize=1.0)
+    sr_b_pp = sharpe_ratio(oos_b_returns, annualize=1.0)
 
-    dsr_a = deflated_sharpe_ratio(sr_a, n_trials=n_trials, n_obs=len(oos_a_returns))
-    dsr_b = deflated_sharpe_ratio(sr_b, n_trials=n_trials, n_obs=len(oos_b_returns))
+    dsr_a = deflated_sharpe_ratio(sr_a_pp, n_trials=n_trials, n_obs=len(oos_a_returns))
+    dsr_b = deflated_sharpe_ratio(sr_b_pp, n_trials=n_trials, n_obs=len(oos_b_returns))
 
     passed = dsr_a > threshold and dsr_b > threshold
 
@@ -297,26 +316,46 @@ def gate4_cost_survival(
     oos_b_gross_returns: np.ndarray | None = None,
     base_round_trip_bps: float = 35.9,
     base_impact_bps: float = 10.0,
-    avg_turnover: float = 1.0,
+    avg_turnover: float = 2.0,
+    rebalance_interval_days: int = 21,
 ) -> GateResult:
     """Gate 4: Positive Sharpe under doubled costs in both OOS windows.
 
     If gross_returns are provided, costs are deducted from those.
     Otherwise, the already-costed returns are doubled in cost haircut
     (approximate method).
+
+    Cost accounting
+    ---------------
+    ``stressed_rt + stressed_impact * avg_turnover`` is the cost of ONE
+    rebalance round-trip (in bps), where ``avg_turnover`` is the per-rebalance
+    round-trip turnover (≈ 2.0 for a full long+short rotation, matching
+    run_phase3.ASSUMED_REBALANCE_TURNOVER). The strategy rebalances every
+    ``rebalance_interval_days`` trading days, i.e. ``252 / rebalance_interval_days``
+    round-trips per year. Amortizing the per-rebalance cost over the actual
+    inter-rebalance horizon gives the per-day drag:
+
+        daily_cost_bps = per_rebalance_cost_bps / rebalance_interval_days
+
+    (The previous implementation divided by a fixed 252, which assumed exactly
+    one round-trip per year and under-charged a 5-day-rebalance trial by ~50×.)
     """
     stress_multiplier = 2.0
     stressed_rt = base_round_trip_bps * stress_multiplier
     stressed_impact = base_impact_bps * stress_multiplier
 
-    daily_cost_bps = (stressed_rt + stressed_impact * avg_turnover) / 252.0
+    interval = max(1, int(rebalance_interval_days))
+    per_rebalance_cost_bps = stressed_rt + stressed_impact * avg_turnover
+    # Amortize one round-trip's cost over the days it is actually held.
+    daily_cost_bps = per_rebalance_cost_bps / interval
 
     if oos_a_gross_returns is not None and oos_b_gross_returns is not None:
         stressed_a = oos_a_gross_returns - daily_cost_bps / 10000.0
         stressed_b = oos_b_gross_returns - daily_cost_bps / 10000.0
     else:
-        # Approximate: apply additional cost haircut to net returns
-        additional_cost = daily_cost_bps / 10000.0 / 2.0  # half since already costed
+        # Approximate branch: the input is already net of the BASE cost stack,
+        # so the doubled-cost stress only adds the INCREMENTAL (1×) drag on top.
+        additional_cost = (daily_cost_bps / stress_multiplier) / 10000.0
         stressed_a = oos_a_returns - additional_cost
         stressed_b = oos_b_returns - additional_cost
 
@@ -421,7 +460,8 @@ def run_gauntlet(
     daily_returns: pd.Series,
     n_trials: int = N_TRIALS,
     daily_gross_returns: pd.Series | None = None,
-    avg_turnover: float = 1.0,
+    avg_turnover: float = 2.0,
+    rebalance_interval_days: int = 21,
 ) -> GauntletResult:
     """Run the full 5-gate gauntlet on a single trial's daily return series.
 
@@ -437,7 +477,11 @@ def run_gauntlet(
         Gross returns before costs. If provided, Gate 4 uses these
         for accurate stress-costing. Otherwise, approximate method.
     avg_turnover : float
-        Average daily turnover (fraction of portfolio).
+        Per-rebalance round-trip turnover (fraction of portfolio rotated
+        each rebalance; ≈ 2.0 for a full long+short swap).
+    rebalance_interval_days : int
+        Trading days between rebalances (the strategy's holding period).
+        Used by Gate 4 to amortize per-rebalance costs to a per-day drag.
     """
     oos_a, oos_b = split_oos_returns(daily_returns)
 
@@ -450,7 +494,8 @@ def run_gauntlet(
         gate2_bootstrap_ci(oos_a, oos_b),
         gate3_sign_agreement(oos_a, oos_b),
         gate4_cost_survival(oos_a, oos_b, gross_a, gross_b,
-                            avg_turnover=avg_turnover),
+                            avg_turnover=avg_turnover,
+                            rebalance_interval_days=rebalance_interval_days),
         gate5_regime_stress(daily_returns),
     ]
 
