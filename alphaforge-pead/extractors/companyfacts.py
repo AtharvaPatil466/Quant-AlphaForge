@@ -380,6 +380,26 @@ def value_as_of(
         return None
     table = pq.read_table(shard_path)
     df = table.to_pandas()
+    return value_as_of_frame(df, ticker, period_end, as_of_ts, period_kind)
+
+
+def value_as_of_frame(
+    df: "pd.DataFrame",
+    ticker: str,
+    period_end: date,
+    as_of_ts: datetime,
+    period_kind: Optional[str] = "quarterly",
+) -> Optional[float]:
+    """Frame-based sibling of :func:`value_as_of`.
+
+    Performs the identical (ticker, period_end) + optional period_kind +
+    ``filed <= as_of_ts`` selection against an already-loaded shard
+    DataFrame, returning the latest-filed value. Selection semantics are
+    bit-for-bit identical to ``value_as_of``; this overload exists so a
+    caller iterating over many (period_end × as_of) pairs can load the
+    parquet shard ONCE and reuse the in-memory frame instead of
+    re-reading and re-deserializing the parquet on every lookup.
+    """
     df = df[(df["ticker"] == ticker) & (df["period_end"] == period_end)]
     if period_kind is not None and "period_kind" in df.columns:
         df = df[df["period_kind"] == period_kind]

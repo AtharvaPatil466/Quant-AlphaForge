@@ -37,7 +37,7 @@ from typing import Iterable, Optional
 import pandas as pd
 import pyarrow.parquet as pq
 
-from extractors.companyfacts import value_as_of, _pad_cik
+from extractors.companyfacts import value_as_of_frame, _pad_cik
 from .sue import compute_sue
 
 
@@ -181,7 +181,12 @@ def build_panel_for_firm(
     if ohlcv is None or ohlcv.empty:
         return []
     close = ohlcv["close"]
-    shard_path = edgar_root / "by_cik" / f"CIK{_pad_cik(cik)}.parquet"
+    # The shard was already loaded once above (`_load_shard`); run the
+    # as-of lookups against that in-memory frame instead of re-reading
+    # the parquet on every (period_end × as_of) pair. Sort by `filed`
+    # ascending so the frame-based lookup sees the same row ordering as a
+    # fresh parquet read would after its own internal sort.
+    shard_for_lookup = shard.sort_values("filed")
 
     originals = _original_filings_per_period(quarterly)
     all_period_ends = sorted(set(quarterly["period_end"]))
@@ -196,7 +201,7 @@ def build_panel_for_firm(
         # Build the eps-by-period-end dict known at announcement time.
         eps_by_period_end: dict[date, float] = {}
         for pe in all_period_ends:
-            v = value_as_of(shard_path, ticker, pe, announcement_ts)
+            v = value_as_of_frame(shard_for_lookup, ticker, pe, announcement_ts)
             if v is not None:
                 eps_by_period_end[pe] = v
 
