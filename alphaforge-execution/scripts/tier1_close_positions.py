@@ -176,7 +176,7 @@ def main() -> int:
     load_dotenv(ROOT / ".env")
 
     print(f"Tier 1 Phase 0.3 — flatten paper accounts (dry_run={args.dry_run})")
-    print(f"Started: {datetime.now(timezone.utc).isoformat()}Z")
+    print(f"Started: {datetime.now(timezone.utc).isoformat()}")
     print("-" * 60)
 
     results = []
@@ -197,7 +197,7 @@ def main() -> int:
 
     log_path = ROOT / f"tier1_close_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
     log_path.write_text(json.dumps({
-        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "dry_run": args.dry_run,
         "results": results,
     }, indent=2, default=str))
