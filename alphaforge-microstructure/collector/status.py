@@ -37,13 +37,27 @@ PHASE0_GOAL_DAYS = 90
 PHASE0_MAX_GAP_FRACTION = 0.001
 
 
+def _is_readable_parquet(p: Path) -> bool:
+    """True if `p` has a valid parquet footer. The live collector's current
+    hourly file has no footer until it rolls, so it must be skipped rather than
+    crash the readiness scan."""
+    try:
+        pq.read_metadata(p)
+        return True
+    except Exception:
+        return False
+
+
 def _scan_table_dir(root: Path) -> dict:
-    """Walk a YYYY-MM-DD/*.parquet tree, return per-table stats."""
+    """Walk a YYYY-MM-DD/*.parquet tree, return per-table stats. Files that are
+    not yet valid parquet (e.g. the live in-progress hourly file) are skipped
+    and counted in ``skipped`` so the omission is visible, never silent."""
     if not root.exists():
-        return {"days": [], "files": 0, "rows": 0}
+        return {"days": [], "files": 0, "rows": 0, "skipped": 0}
     days = []
     total_files = 0
     total_rows = 0
+    skipped = 0
     for day_dir in sorted(root.iterdir()):
         if not day_dir.is_dir():
             continue
@@ -51,13 +65,19 @@ def _scan_table_dir(root: Path) -> dict:
         if not parquets:
             continue
         day_rows = 0
+        day_files = 0
         for p in parquets:
-            meta = pq.read_metadata(p)
-            day_rows += meta.num_rows
-        days.append({"date": day_dir.name, "files": len(parquets), "rows": day_rows})
-        total_files += len(parquets)
+            if not _is_readable_parquet(p):
+                skipped += 1
+                continue
+            day_rows += pq.read_metadata(p).num_rows
+            day_files += 1
+        if day_files == 0:
+            continue
+        days.append({"date": day_dir.name, "files": day_files, "rows": day_rows})
+        total_files += day_files
         total_rows += day_rows
-    return {"days": days, "files": total_files, "rows": total_rows}
+    return {"days": days, "files": total_files, "rows": total_rows, "skipped": skipped}
 
 
 def _gap_fraction(book_root: Path) -> dict:
@@ -72,6 +92,8 @@ def _gap_fraction(book_root: Path) -> dict:
         if not day_dir.is_dir():
             continue
         for p in sorted(day_dir.glob("*.parquet")):
+            if not _is_readable_parquet(p):
+                continue  # live in-progress file — no footer yet
             t = pq.read_table(p, columns=["local_ts_ns"])
             ts_chunks.append(t.column("local_ts_ns").to_numpy())
 
@@ -143,6 +165,7 @@ def build_report(data_root: Path) -> dict:
             "last_day": trades["days"][-1]["date"] if trades["days"] else None,
         },
         "gaps": {**gap, "explicit_gap_events": explicit_gaps},
+        "skipped_in_progress_files": book.get("skipped", 0) + trades.get("skipped", 0),
         "phase0_criteria": criteria,
         "phase0_not_yet_checked": not_yet_checked,
         "phase0_minimum_ready": ready_minimum,
@@ -171,6 +194,11 @@ def _format_report(r: dict) -> str:
         f"({g['gap_fraction']*100:.3f}% — threshold 0.1%) "
         f"| explicit events: {g['explicit_gap_events']}"
     )
+    if r.get("skipped_in_progress_files"):
+        lines.append(
+            f"Skipped      : {r['skipped_in_progress_files']} in-progress "
+            f"file(s) without a parquet footer (live collector writing)"
+        )
     lines.append("")
     lines.append("Exit criteria:")
     for k, v in r["phase0_criteria"].items():

@@ -56,6 +56,15 @@ CRIT_AGE_SECONDS = 60 * 60   # 60 minutes
 WARN_GAP_BUCKETS = 1
 CRIT_GAP_BUCKETS = 3
 
+# Recent gap-event RATE thresholds (events/hour in the trailing window). A
+# healthy collector emits ~0 gap events/hour. The 2026-05/06 stale-process
+# incident churned ~150 reconcile-failure events/hour for 29 days and went
+# undetected because the cumulative gap_events count looks the same whether
+# the churn is old or ongoing. This rate check is what catches it in hour 1.
+GAP_RATE_WINDOW_SECONDS = 3600          # trailing 1 hour
+WARN_GAP_RATE_PER_HOUR = 5
+CRIT_GAP_RATE_PER_HOUR = 20
+
 # The collector start date — used to calculate total accumulation days.
 COLLECTION_START = datetime(2026, 5, 17, tzinfo=timezone.utc)
 
@@ -152,6 +161,35 @@ def _gap_event_count(data_root: Path) -> int:
         return 0
 
 
+def _recent_gap_event_rate(data_root: Path, now_epoch: float,
+                           window_seconds: int = GAP_RATE_WINDOW_SECONDS) -> float:
+    """Gap events per hour in the trailing `window_seconds`, by event `ts_ns`.
+
+    Unlike the cumulative `_gap_event_count`, this reflects whether churn is
+    happening *now* — so it stays high while a buggy collector is running and
+    drops to ~0 once it is fixed, even though the historical events remain in
+    the file. Lines without a parseable `ts_ns` are ignored."""
+    gaps_path = data_root / "_gaps.jsonl"
+    if not gaps_path.exists():
+        return 0.0
+    cutoff_ns = (now_epoch - window_seconds) * 1e9
+    recent = 0
+    try:
+        for line in gaps_path.read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                ts = json.loads(line).get("ts_ns")
+            except (ValueError, TypeError):
+                continue
+            if ts is not None and ts >= cutoff_ns:
+                recent += 1
+    except OSError:
+        return 0.0
+    return recent * 3600.0 / window_seconds
+
+
 def _fmt_bytes(n: int) -> str:
     for unit, threshold in [("GB", 1 << 30), ("MB", 1 << 20), ("KB", 1 << 10)]:
         if n >= threshold:
@@ -201,6 +239,7 @@ def run_health_check(
             "total_size_bytes": 0,
             "missing_buckets_24h": [],
             "gap_events": 0,
+            "gap_rate_per_hour": 0.0,
             "detail": f"Data root {data_root} does not exist — collector never started?",
         })
         return result
@@ -227,16 +266,22 @@ def run_health_check(
 
     # --- gap events file ----------------------------------------------------
     gap_events = _gap_event_count(data_root)
+    gap_rate_per_hour = _recent_gap_event_rate(data_root, now_epoch)
 
     # --- determine overall status -------------------------------------------
-    # CRITICAL if: no files at all, OR last write > 60 min, OR ≥3 missing buckets.
-    # WARNING  if: last write 10–60 min, OR 1–2 missing buckets.
+    # CRITICAL if: no files at all, OR last write > 60 min, OR ≥3 missing
+    #              buckets, OR recent gap-event churn ≥ CRIT_GAP_RATE_PER_HOUR.
+    # WARNING  if: last write 10–60 min, OR 1–2 missing buckets, OR recent
+    #              gap-event churn ≥ WARN_GAP_RATE_PER_HOUR.
     # OK       otherwise.
 
-    if newest_mtime == 0.0 or age_seconds > crit_age or len(missing_buckets) >= CRIT_GAP_BUCKETS:
+    if (newest_mtime == 0.0 or age_seconds > crit_age
+            or len(missing_buckets) >= CRIT_GAP_BUCKETS
+            or gap_rate_per_hour >= CRIT_GAP_RATE_PER_HOUR):
         status = "CRITICAL"
         exit_code = 2
-    elif age_seconds > warn_age or len(missing_buckets) >= WARN_GAP_BUCKETS:
+    elif (age_seconds > warn_age or len(missing_buckets) >= WARN_GAP_BUCKETS
+            or gap_rate_per_hour >= WARN_GAP_RATE_PER_HOUR):
         status = "WARNING"
         exit_code = 1
     else:
@@ -254,6 +299,7 @@ def run_health_check(
         "total_size_bytes": total_bytes,
         "missing_buckets_24h": missing_buckets,
         "gap_events": gap_events,
+        "gap_rate_per_hour": round(gap_rate_per_hour, 1),
     })
     return result
 
@@ -291,6 +337,13 @@ def _format_human(r: dict) -> str:
     lines.append(
         f"{'Gaps file:':<12}{r['gap_events']} logged event(s) in _gaps.jsonl"
     )
+    rate = r.get("gap_rate_per_hour", 0.0)
+    rate_flag = ""
+    if rate >= CRIT_GAP_RATE_PER_HOUR:
+        rate_flag = "  <-- CRITICAL churn (collector likely running buggy/stale code)"
+    elif rate >= WARN_GAP_RATE_PER_HOUR:
+        rate_flag = "  <-- elevated"
+    lines.append(f"{'Gap rate:':<12}{rate:.1f} events/hour (last hour){rate_flag}")
 
     if not r["data_root_exists"]:
         lines.append(f"\nWARNING: data root '{r['data_root']}' does not exist.")
