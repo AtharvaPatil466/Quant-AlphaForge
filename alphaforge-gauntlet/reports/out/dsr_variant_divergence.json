@@ -1,0 +1,69 @@
+{
+  "max_abs_divergence_vs_canonical_A": {
+    "vix-canon": 0.0,
+    "crypto-canon": 0.006563617553673962,
+    "india-canon": 0.026013675192145758
+  },
+  "max_abs_divergence_family_C_pead": 1.6604240204998177e-10,
+  "n_grid_points": 96,
+  "n_verdict_flips_across_variants": 0,
+  "flip_points": [],
+  "family_C_reconciliation": [
+    {
+      "sr_ann": 0.5,
+      "n_obs": 252,
+      "canonical_C": 0.46595101093116736,
+      "pead": 0.4659510110064008,
+      "abs_diff": 7.523343059645526e-11
+    },
+    {
+      "sr_ann": 0.5,
+      "n_obs": 1260,
+      "canonical_C": 0.42411361729879377,
+      "pead": 0.42411361746483617,
+      "abs_diff": 1.6604240204998177e-10
+    },
+    {
+      "sr_ann": 1.0,
+      "n_obs": 252,
+      "canonical_C": 0.6602421448156512,
+      "pead": 0.660242144884932,
+      "abs_diff": 6.928080331647379e-11
+    },
+    {
+      "sr_ann": 1.0,
+      "n_obs": 1260,
+      "canonical_C": 0.822580628591614,
+      "pead": 0.8225806287017565,
+      "abs_diff": 1.1014256173780268e-10
+    },
+    {
+      "sr_ann": 2.0,
+      "n_obs": 252,
+      "canonical_C": 0.920134873483184,
+      "pead": 0.9201348735111826,
+      "abs_diff": 2.799860343571936e-11
+    },
+    {
+      "sr_ann": 2.0,
+      "n_obs": 1260,
+      "canonical_C": 0.9991804890026702,
+      "pead": 0.9991804890038545,
+      "abs_diff": 1.1842749003676545e-12
+    },
+    {
+      "sr_ann": 2.5,
+      "n_obs": 252,
+      "canonical_C": 0.9712057572526779,
+      "pead": 0.9712057572650517,
+      "abs_diff": 1.2373768676354757e-11
+    },
+    {
+      "sr_ann": 2.5,
+      "n_obs": 1260,
+      "canonical_C": 0.999989437021029,
+      "pead": 0.9999894370210489,
+      "abs_diff": 1.9872992140790302e-14
+    }
+  ]
+}

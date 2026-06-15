@@ -1,0 +1,368 @@
+{
+  "noise_source": "SPY adj_close (8383 days, real)",
+  "n_mc": 300,
+  "boot_reps": 250,
+  "sharpe_grid": [
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.25,
+    1.5,
+    1.75,
+    2.0,
+    2.5,
+    3.0,
+    3.5
+  ],
+  "configs": [
+    {
+      "label": "generous (N=1, 10y, no deflation)",
+      "n_trials": 1,
+      "n_obs_per_window": 2520,
+      "note": "absolute statistical floor",
+      "mde_power50": 0.6887254901960784,
+      "mde_power80": 0.9325842696629214,
+      "curve": [
+        {
+          "sharpe": 0.25,
+          "power": 0.03333333333333333,
+          "dsr": 0.04,
+          "bootstrap": 0.03666666666666667,
+          "sign": 0.7
+        },
+        {
+          "sharpe": 0.5,
+          "power": 0.24333333333333335,
+          "dsr": 0.26666666666666666,
+          "bootstrap": 0.27,
+          "sign": 0.95
+        },
+        {
+          "sharpe": 0.75,
+          "power": 0.5833333333333334,
+          "dsr": 0.63,
+          "bootstrap": 0.6033333333333334,
+          "sign": 0.9966666666666667
+        },
+        {
+          "sharpe": 1.0,
+          "power": 0.88,
+          "dsr": 0.9066666666666666,
+          "bootstrap": 0.8833333333333333,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.25,
+          "power": 0.96,
+          "dsr": 0.97,
+          "bootstrap": 0.96,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.5,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.75,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 2.0,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 2.5,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.0,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.5,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        }
+      ]
+    },
+    {
+      "label": "VIX-like (N=28, 5y windows)",
+      "n_trials": 28,
+      "n_obs_per_window": 1260,
+      "note": "substrate #7 deflation + OOS length",
+      "mde_power50": 1.9140625,
+      "mde_power80": 2.4047619047619047,
+      "curve": [
+        {
+          "sharpe": 0.25,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.023333333333333334,
+          "sign": 0.59
+        },
+        {
+          "sharpe": 0.5,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.09333333333333334,
+          "sign": 0.81
+        },
+        {
+          "sharpe": 0.75,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.29333333333333333,
+          "sign": 0.9533333333333334
+        },
+        {
+          "sharpe": 1.0,
+          "power": 0.023333333333333334,
+          "dsr": 0.023333333333333334,
+          "bootstrap": 0.5866666666666667,
+          "sign": 0.9866666666666667
+        },
+        {
+          "sharpe": 1.25,
+          "power": 0.043333333333333335,
+          "dsr": 0.043333333333333335,
+          "bootstrap": 0.81,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.5,
+          "power": 0.18666666666666668,
+          "dsr": 0.18666666666666668,
+          "bootstrap": 0.8666666666666667,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.75,
+          "power": 0.36,
+          "dsr": 0.36,
+          "bootstrap": 0.93,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 2.0,
+          "power": 0.5733333333333334,
+          "dsr": 0.5733333333333334,
+          "bootstrap": 0.9833333333333333,
+          "sign": 0.9966666666666667
+        },
+        {
+          "sharpe": 2.5,
+          "power": 0.8533333333333334,
+          "dsr": 0.8533333333333334,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.0,
+          "power": 0.9533333333333334,
+          "dsr": 0.9533333333333334,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.5,
+          "power": 0.9933333333333333,
+          "dsr": 0.9933333333333333,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        }
+      ]
+    },
+    {
+      "label": "VIX-long (N=28, 10y windows)",
+      "n_trials": 28,
+      "n_obs_per_window": 2520,
+      "note": "how much sample length buys",
+      "mde_power50": 1.363861386138614,
+      "mde_power80": 1.6620370370370372,
+      "curve": [
+        {
+          "sharpe": 0.25,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.03666666666666667,
+          "sign": 0.7
+        },
+        {
+          "sharpe": 0.5,
+          "power": 0.0033333333333333335,
+          "dsr": 0.0033333333333333335,
+          "bootstrap": 0.27,
+          "sign": 0.95
+        },
+        {
+          "sharpe": 0.75,
+          "power": 0.01,
+          "dsr": 0.01,
+          "bootstrap": 0.6033333333333334,
+          "sign": 0.9966666666666667
+        },
+        {
+          "sharpe": 1.0,
+          "power": 0.09666666666666666,
+          "dsr": 0.09666666666666666,
+          "bootstrap": 0.8833333333333333,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.25,
+          "power": 0.3466666666666667,
+          "dsr": 0.3466666666666667,
+          "bootstrap": 0.96,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.5,
+          "power": 0.6833333333333333,
+          "dsr": 0.6833333333333333,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 1.75,
+          "power": 0.8633333333333333,
+          "dsr": 0.8633333333333333,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 2.0,
+          "power": 0.98,
+          "dsr": 0.98,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 2.5,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.0,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        },
+        {
+          "sharpe": 3.5,
+          "power": 1.0,
+          "dsr": 1.0,
+          "bootstrap": 1.0,
+          "sign": 1.0
+        }
+      ]
+    },
+    {
+      "label": "PEAD-like (N=10, ~1.2y OOS)",
+      "n_trials": 10,
+      "n_obs_per_window": 300,
+      "note": "short-OOS penalty (substrate #5)",
+      "mde_power50": NaN,
+      "mde_power80": NaN,
+      "curve": [
+        {
+          "sharpe": 0.25,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.023333333333333334,
+          "sign": 0.42
+        },
+        {
+          "sharpe": 0.5,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.02,
+          "sign": 0.5266666666666666
+        },
+        {
+          "sharpe": 0.75,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.10666666666666667,
+          "sign": 0.7433333333333333
+        },
+        {
+          "sharpe": 1.0,
+          "power": 0.0,
+          "dsr": 0.0,
+          "bootstrap": 0.13666666666666666,
+          "sign": 0.7966666666666666
+        },
+        {
+          "sharpe": 1.25,
+          "power": 0.0033333333333333335,
+          "dsr": 0.0033333333333333335,
+          "bootstrap": 0.24333333333333335,
+          "sign": 0.8666666666666667
+        },
+        {
+          "sharpe": 1.5,
+          "power": 0.01,
+          "dsr": 0.01,
+          "bootstrap": 0.36666666666666664,
+          "sign": 0.92
+        },
+        {
+          "sharpe": 1.75,
+          "power": 0.04666666666666667,
+          "dsr": 0.04666666666666667,
+          "bootstrap": 0.5166666666666667,
+          "sign": 0.93
+        },
+        {
+          "sharpe": 2.0,
+          "power": 0.056666666666666664,
+          "dsr": 0.056666666666666664,
+          "bootstrap": 0.57,
+          "sign": 0.97
+        },
+        {
+          "sharpe": 2.5,
+          "power": 0.16,
+          "dsr": 0.16,
+          "bootstrap": 0.7433333333333333,
+          "sign": 0.9966666666666667
+        },
+        {
+          "sharpe": 3.0,
+          "power": 0.27,
+          "dsr": 0.27,
+          "bootstrap": 0.8133333333333334,
+          "sign": 0.9966666666666667
+        },
+        {
+          "sharpe": 3.5,
+          "power": 0.43333333333333335,
+          "dsr": 0.43333333333333335,
+          "bootstrap": 0.9033333333333333,
+          "sign": 1.0
+        }
+      ]
+    }
+  ]
+}

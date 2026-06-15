@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "afgauntlet"
+version = "1.0.0"
+description = "Canonical AlphaForge evaluation gauntlet — one audited, version-pinned implementation of DSR, bootstrap Sharpe CI, Hansen SPA / White's Reality Check, purged-embargoed CV, and the gate evaluator."
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas"]
+
+[project.optional-dependencies]
+ic = ["scipy"]          # only cross_sectional_ic_cv needs scipy
+test = ["pytest", "scipy"]
+
+[tool.setuptools]
+packages = ["afgauntlet"]
