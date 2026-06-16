@@ -240,6 +240,68 @@ class KalshiClient:
 
     # -- events --------------------------------------------------------------
 
+    def get_events_page(
+        self,
+        status: str | None = "open",
+        limit: int = 200,
+        cursor: str | None = None,
+        with_nested_markets: bool = True,
+        extra_params: dict[str, Any] | None = None,
+    ) -> tuple[list[dict], str | None]:
+        """One page of events. Returns (events, next_cursor).
+
+        Each event carries ``category`` and ``series_ticker`` (both absent on the
+        bare market) and — with ``with_nested_markets`` — its open markets inline
+        (each nested market carries ``ticker``/``volume_fp``/``yes_bid/ask_dollars``/
+        ``last_price_dollars``/``close_time``). This is the ONLY way to reach the
+        non-MVE classic-event universe on the free host: the unfiltered
+        ``/markets?status=open`` feed is saturated by MVE parlay legs and never
+        surfaces classic events (probe `research/probe_open_universe.py`).
+        """
+        params: dict[str, Any] = {"limit": limit}
+        if status is not None:
+            params["status"] = status
+        if with_nested_markets:
+            params["with_nested_markets"] = "true"
+        if cursor:
+            params["cursor"] = cursor
+        if extra_params:
+            params.update(extra_params)
+        body = self._get("/events", params)
+        events = body.get("events") or []
+        if not isinstance(events, list):
+            raise KalshiAPIError("/events returned non-list 'events'")
+        next_cursor = body.get("cursor") or None
+        return events, next_cursor
+
+    def iter_open_events(
+        self,
+        limit: int = 200,
+        max_pages: int | None = None,
+        status: str | None = "open",
+        with_nested_markets: bool = True,
+        start_cursor: str | None = None,
+    ) -> Iterator[tuple[dict, str | None]]:
+        """Yield (event, next_cursor) across event pages (cursor-paginated).
+
+        Mirrors ``iter_settled_markets`` semantics. Stops after ``max_pages``.
+        """
+        cursor = start_cursor
+        pages = 0
+        while True:
+            events, next_cursor = self.get_events_page(
+                status=status, limit=limit, cursor=cursor,
+                with_nested_markets=with_nested_markets,
+            )
+            pages += 1
+            for e in events:
+                yield e, next_cursor
+            if not next_cursor or not events:
+                return
+            if max_pages is not None and pages >= max_pages:
+                return
+            cursor = next_cursor
+
     def get_event(self, event_ticker: str) -> dict:
         """Event lookup. Returns the inner event dict.
 

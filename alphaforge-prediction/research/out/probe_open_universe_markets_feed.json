@@ -1,0 +1,53 @@
+{
+  "n_seen": 1000,
+  "n_priced": 1000,
+  "n_distinct_events": 931,
+  "events_resolved": false,
+  "mve_split": {
+    "MVE": 1000
+  },
+  "category_counts": {
+    "(unknown)": 1000
+  },
+  "price_bucket_counts": {
+    "(0,5]": 984,
+    "(5,15]": 6,
+    "(15,35]": 6,
+    "(35,65]": 4,
+    "(65,85]": 0,
+    "(85,95]": 0,
+    "(95,100]": 0
+  },
+  "ttc_counts": {
+    "<1min (MVE)": 0,
+    "1min-1h": 14,
+    "1h-1d": 0,
+    "1d-7d": 737,
+    ">7d": 249
+  },
+  "cross_tab": {
+    "MVE": {
+      "(0,5]": {
+        "1d-7d": 722,
+        ">7d": 248,
+        "1min-1h": 14
+      },
+      "(15,35]": {
+        "1d-7d": 5,
+        ">7d": 1
+      },
+      "(5,15]": {
+        "1d-7d": 6
+      },
+      "(35,65]": {
+        "1d-7d": 4
+      }
+    }
+  },
+  "eligibility": {
+    "default_rule_would_journal": 0,
+    "nonmve_extreme_holdable": 0,
+    "mve_extreme_holdable": 60,
+    "mve_extreme_any_ttc": 60
+  }
+}

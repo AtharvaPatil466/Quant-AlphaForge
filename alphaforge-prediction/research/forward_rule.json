@@ -1,0 +1,67 @@
+{
+  "_doc": [
+    "PROVISIONAL forward rule for substrate #10 (Kalshi FLB), Phase 2 — DOCUMENTED, NOT frozen.",
+    "Loaded via `paper_trader.py --rule-spec research/forward_rule.json`; unknown keys (this _doc)",
+    "are ignored by RuleSpec.from_dict. This file does NOT modify the frozen design doc.",
+    "",
+    "WHY IT EXISTS: the frozen signals.strategy.DEFAULT_RULE_SPEC lists 'weather' and 'climate'",
+    "as separate categories, but Kalshi's actual category string is the single 'Climate and",
+    "Weather' -> the literal DEFAULT set matches NO weather markets. It also omits the non-MVE",
+    "categories 'elections', 'entertainment', 'commodities', etc. that exist live on the host.",
+    "This rule corrects the category set to Kalshi's ACTUAL non-MVE category strings (observed",
+    "live via /events) so the non-MVE classic-FLB universe is admitted.",
+    "",
+    "WHAT IS UNCHANGED (and must stay so): the FLB bucket bands (<=15c fade -> NO; >=85c back ->",
+    "YES) are FROZEN by design sections 4/5 and are copied verbatim from DEFAULT_RULE_SPEC. This",
+    "rule does NOT re-bucket, change entry lead, or alter stake (design section 14 hard rules).",
+    "",
+    "MVE EXCLUSION: 'exotics' is deliberately absent from `categories` -> MVE markets stay",
+    "excluded (design section 16: never pool MVE with classic-FLB markets). Use this rule with",
+    "`--source events` so place() actually reaches the non-MVE universe; the legacy `--source",
+    "markets` feed is 100% MVE on the free host and would journal nothing under this rule.",
+    "",
+    "STATUS: PROVISIONAL (provisional=true). It is a hypothesis-derived rule, NOT a Phase 1",
+    "survivor-derived rule (Phase 1 was INCONCLUSIVE/MVE-only — research/PHASE1_VERDICT.md).",
+    "Re-freeze to the survivor cell once the forward record or a richer-data Phase 1 confirms one."
+  ],
+  "name": "provisional-FLB-forward-v1-nonMVE",
+  "provisional": true,
+  "buckets": [
+    {
+      "lo": 0.0,
+      "hi": 0.15,
+      "direction": "fade"
+    },
+    {
+      "lo": 0.85,
+      "hi": 1.0,
+      "direction": "back"
+    }
+  ],
+  "categories": [
+    "climate and weather",
+    "commodities",
+    "companies",
+    "crypto",
+    "economics",
+    "elections",
+    "entertainment",
+    "financials",
+    "health",
+    "politics",
+    "science and technology",
+    "social",
+    "sports",
+    "transportation",
+    "world"
+  ],
+  "max_stake_contracts": 10,
+  "min_volume_fp": 0.0,
+  "require_quote": true,
+  "sp_nasdaq_series_prefixes": [
+    "KXINX",
+    "KXNASDAQ100",
+    "KXSPX",
+    "KXNDX"
+  ]
+}

@@ -273,6 +273,53 @@ def test_place_journals_selected_open_markets(tmp_path):
     assert stats2["skipped_existing"] == 2
 
 
+def _nested_event(event_ticker, series_ticker, category, markets):
+    """An /events entry with nested open markets (the events-source shape)."""
+    return {
+        "event_ticker": event_ticker,
+        "series_ticker": series_ticker,
+        "category": category,
+        "markets": markets,
+    }
+
+
+def test_place_events_source_reaches_nonmve(tmp_path):
+    # The /events feed carries category + nested markets; the events source must
+    # select the non-MVE extremes the unfiltered /markets feed never surfaces.
+    def router(url, params):
+        if url.endswith("/events"):
+            assert params.get("status") == "open"
+            assert params.get("with_nested_markets") == "true"
+            return FakeResponse(200, _json={
+                "events": [
+                    _nested_event("EVT-W", "KXHIGHNY", "Climate and Weather", [
+                        _open_market("WEATHER-LONG", "0.02", event_ticker="EVT-W"),
+                    ]),
+                    _nested_event("EVT-MVE", "KXMVE", "Exotics", [
+                        _open_market("MVE-LONG", "0.03", event_ticker="EVT-MVE"),
+                    ]),
+                ],
+                "cursor": "",
+            })
+        raise AssertionError(f"unexpected url {url}")
+
+    # forward_rule.json admits 'climate and weather' but not 'exotics'.
+    rule = RuleSpec(
+        name="t", provisional=True,
+        buckets=(BucketRule(0.0, 0.15, DIR_FADE), BucketRule(0.85, 1.0, DIR_BACK)),
+        categories=frozenset({"climate and weather"}))
+    cfg = PaperTraderConfig(output_root=tmp_path, target_resolved=4,
+                            rule=rule, source="events")
+    trader = PaperTrader(cfg, client=_client(router))
+    stats = trader.place()
+    # Only the weather longshot is journalled; the MVE/exotics one is excluded.
+    assert stats["seen"] == 2
+    assert stats["selected"] == 1
+    assert stats["journalled"] == 1
+    assert trader.journal.has_entry("WEATHER-LONG")
+    assert not trader.journal.has_entry("MVE-LONG")
+
+
 def test_place_dry_run_does_not_write(tmp_path):
     def router(url, params):
         if url.endswith("/markets"):

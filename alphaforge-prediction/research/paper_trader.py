@@ -528,6 +528,15 @@ def render_scorecard_md(card: dict[str, Any]) -> str:
 # PaperTrader — the orchestrator (network confined to the client)
 # ---------------------------------------------------------------------------
 
+# Open-market sourcing modes for --place. The free host's unfiltered
+# /markets?status=open feed is 100% MVE parlay legs (probe: 8,000 markets, 0
+# non-MVE) so the classic-FLB universe is ONLY reachable via the /events feed
+# (which carries category + nested open markets). See §16 ADDENDUM + the probe.
+SOURCE_MARKETS: str = "markets"   # legacy: unfiltered /markets (MVE-only on free host)
+SOURCE_EVENTS: str = "events"     # /events?with_nested_markets — reaches non-MVE
+VALID_SOURCES: frozenset[str] = frozenset({SOURCE_MARKETS, SOURCE_EVENTS})
+
+
 @dataclass
 class PaperTraderConfig:
     output_root: Path
@@ -536,6 +545,9 @@ class PaperTraderConfig:
     max_pages: int | None = None       # open-markets pagination cap (None = all)
     limit_per_page: int = 200
     seed: int = 0
+    # Where --place sources open markets from. Default "markets" preserves the
+    # original behaviour; "events" reaches the non-MVE classic-FLB universe.
+    source: str = SOURCE_MARKETS
 
     @property
     def journal_path(self) -> Path:
@@ -584,24 +596,61 @@ class PaperTrader:
 
     # -- place --------------------------------------------------------------
 
+    def _open_markets_from_markets(self) -> tuple[list, int]:
+        """Source open markets via the unfiltered /markets feed (legacy).
+
+        Resolves each market's event for (series, category). On the free host
+        this feed is MVE-only (see SOURCE_MARKETS note); kept for parity + tests.
+        """
+        open_markets = []
+        seen = 0
+        for market, _cursor in self.client.iter_settled_markets(
+                limit=self.cfg.limit_per_page, max_pages=self.cfg.max_pages,
+                status="open"):
+            seen += 1
+            series, category = self.events.lookup(
+                str(market.get("event_ticker") or ""))
+            om = extract_open_market(market, series, category)
+            if om is not None:
+                open_markets.append(om)
+        return open_markets, seen
+
+    def _open_markets_from_events(self) -> tuple[list, int]:
+        """Source open markets via the /events feed (reaches the non-MVE universe).
+
+        Each event carries ``category``/``series_ticker`` and its open markets
+        inline (nested markets carry ticker/volume/quotes/close_time), so no
+        per-event lookup is needed and the classic-FLB categories are visible.
+        """
+        open_markets = []
+        seen = 0
+        for event, _cursor in self.client.iter_open_events(
+                limit=self.cfg.limit_per_page, max_pages=self.cfg.max_pages,
+                status="open", with_nested_markets=True):
+            series = str(event.get("series_ticker") or "")
+            category = str(event.get("category") or "")
+            for market in (event.get("markets") or []):
+                seen += 1
+                om = extract_open_market(market, series, category)
+                if om is not None:
+                    open_markets.append(om)
+        return open_markets, seen
+
     def place(self, *, dry_run: bool = False) -> dict[str, Any]:
         """Fetch open markets, select orders, journal the new ones.
 
         ``dry_run`` selects + reports but does not write to the journal (used by
-        the optional live `--place --dry-run` wiring proof).
+        the optional live `--place --dry-run` wiring proof). Open markets are
+        sourced per ``cfg.source`` ("markets" = legacy unfiltered feed;
+        "events" = the /events feed that reaches the non-MVE classic-FLB universe).
         """
-        open_markets = []
+        open_markets: list = []
         seen = 0
         try:
-            for market, _cursor in self.client.iter_settled_markets(
-                    limit=self.cfg.limit_per_page, max_pages=self.cfg.max_pages,
-                    status="open"):
-                seen += 1
-                series, category = self.events.lookup(
-                    str(market.get("event_ticker") or ""))
-                om = extract_open_market(market, series, category)
-                if om is not None:
-                    open_markets.append(om)
+            if self.cfg.source == SOURCE_EVENTS:
+                open_markets, seen = self._open_markets_from_events()
+            else:
+                open_markets, seen = self._open_markets_from_markets()
         except RateLimitedError as e:
             log.error("HALTED (rate limited) during --place: %s", e)
             return {"seen": seen, "selected": 0, "journalled": 0, "rate_limited": 1}
@@ -704,6 +753,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     p.add_argument("--target-resolved", type=int, default=DEFAULT_TARGET_RESOLVED)
     p.add_argument("--max-pages", type=int, default=None,
                    help="Cap on open-markets pages for --place (default: all).")
+    p.add_argument("--source", choices=sorted(VALID_SOURCES), default=SOURCE_MARKETS,
+                   help="Open-market source for --place: 'markets' (legacy unfiltered "
+                        "feed, MVE-only on the free host) or 'events' (the /events feed "
+                        "that reaches the non-MVE classic-FLB universe). Default: markets.")
     p.add_argument("--rate-limit-seconds", type=float, default=0.25)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--verbose", "-v", action="count", default=0)
@@ -726,6 +779,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         target_resolved=args.target_resolved,
         max_pages=args.max_pages,
         seed=args.seed,
+        source=args.source,
     )
     trader = PaperTrader(cfg, client=client)
 

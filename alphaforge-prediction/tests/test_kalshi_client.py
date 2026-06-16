@@ -62,6 +62,45 @@ def test_iter_stops_on_empty_markets():
     assert list(c.iter_settled_markets()) == []
 
 
+def test_get_events_page_sets_nested_param_and_returns_events():
+    def router(url, params):
+        assert url.endswith("/events")
+        assert params.get("status") == "open"
+        assert params.get("with_nested_markets") == "true"
+        return FakeResponse(200, _json={
+            "events": [{"event_ticker": "E1", "category": "Economics", "markets": []}],
+            "cursor": "",
+        })
+
+    c = _client(router)
+    events, cursor = c.get_events_page()
+    assert events[0]["event_ticker"] == "E1"
+    assert cursor is None
+
+
+def test_iter_open_events_follows_cursor():
+    pages = {
+        None: {"events": [{"event_ticker": "E1"}], "cursor": "c1"},
+        "c1": {"events": [{"event_ticker": "E2"}], "cursor": ""},
+    }
+
+    def router(url, params):
+        return FakeResponse(200, _json=pages[params.get("cursor")])
+
+    c = _client(router)
+    seen = [e["event_ticker"] for e, _ in c.iter_open_events(limit=1)]
+    assert seen == ["E1", "E2"]
+
+
+def test_get_events_page_rejects_non_list():
+    def router(url, params):
+        return FakeResponse(200, _json={"events": "nope"})
+
+    c = _client(router)
+    with pytest.raises(KalshiAPIError):
+        c.get_events_page()
+
+
 def test_status_none_omits_status_param_and_passes_close_window():
     captured = {}
 
