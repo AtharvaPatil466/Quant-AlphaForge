@@ -1,0 +1,272 @@
+{
+  "date": "2026-06-17",
+  "gauntlet_version": "1.0.0",
+  "preregistration": {
+    "contract_path": "/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/research/PREDICTION_MARKETS_DESIGN.md",
+    "contract_hash": "6a747a6291ba80422a1f65090249657947fae356610c1606f07dbab7b367b430",
+    "n_trials_committed": 4,
+    "n_trials_evaluated": 4,
+    "gauntlet_source_hash": "e27753aa7a8089632785426b07e91473fbbb3b87792c1cab2db2ffcd131dd295",
+    "preregistration_ok": true
+  },
+  "n_trials": 4,
+  "min_calibration_gap": 0.03,
+  "mde": {
+    "target_edge": 0.03,
+    "power": 0.8,
+    "alpha": 0.05,
+    "by_bucket": [
+      {
+        "bucket_index": 0,
+        "bucket_label": "(0,5]",
+        "bin_lo": 0.0,
+        "bin_hi": 0.05,
+        "base_rate": 0.025,
+        "mde_floor": 276
+      },
+      {
+        "bucket_index": 1,
+        "bucket_label": "(5,15]",
+        "bin_lo": 0.05,
+        "bin_hi": 0.15,
+        "base_rate": 0.1,
+        "mde_floor": 843
+      },
+      {
+        "bucket_index": 2,
+        "bucket_label": "(15,35]",
+        "bin_lo": 0.15,
+        "bin_hi": 0.35,
+        "base_rate": 0.25,
+        "mde_floor": 1672
+      },
+      {
+        "bucket_index": 3,
+        "bucket_label": "(35,65]",
+        "bin_lo": 0.35,
+        "bin_hi": 0.65,
+        "base_rate": 0.5,
+        "mde_floor": 2178
+      },
+      {
+        "bucket_index": 4,
+        "bucket_label": "(65,85]",
+        "bin_lo": 0.65,
+        "bin_hi": 0.85,
+        "base_rate": 0.75,
+        "mde_floor": 1593
+      },
+      {
+        "bucket_index": 5,
+        "bucket_label": "(85,95]",
+        "bin_lo": 0.85,
+        "bin_hi": 0.95,
+        "base_rate": 0.8999999999999999,
+        "mde_floor": 716
+      },
+      {
+        "bucket_index": 6,
+        "bucket_label": "(95,100)",
+        "bin_lo": 0.95,
+        "bin_hi": 1.0,
+        "base_rate": 0.975,
+        "mde_floor": 105
+      }
+    ]
+  },
+  "calendar_split": {
+    "midpoint_ns": 1781591022000000000,
+    "midpoint_iso": "2026-06-16T06:23:42.000000Z",
+    "n_is": 170,
+    "n_oos": 122
+  },
+  "classification": {
+    "headline_verdict": "INCONCLUSIVE",
+    "mve_only": true,
+    "non_mve_verdict": "NO-DATA",
+    "mve_verdict": "INCONCLUSIVE",
+    "n_cells": 4,
+    "n_mve_cells": 4,
+    "n_non_mve_cells": 0,
+    "n_powered": 0,
+    "n_passed": 0
+  },
+  "cells": [
+    {
+      "cell_id": "per-category:exotics:(0,5]",
+      "scope": "per-category",
+      "category": "exotics",
+      "bucket_label": "(0,5]",
+      "bin_lo": 0.0,
+      "bin_hi": 0.05,
+      "direction": "negative",
+      "is_mve": true,
+      "mde_floor": 276,
+      "n_is": 20,
+      "n_oos": 11,
+      "n_total": 31,
+      "underpowered": true,
+      "edge_is": -0.020200000000000003,
+      "edge_oos": -0.015909090909090907,
+      "edge_full": -0.01867741935483871,
+      "p_mean_full": 0.01867741935483871,
+      "realized_full": 0.0,
+      "per_unit_fee": 0.01,
+      "per_unit_fee_2x": 0.01,
+      "gates": {
+        "G1_calibration_gap": false,
+        "G2_direction_consistency": true,
+        "G3_edge_ci": true,
+        "G4_net_of_fee": true,
+        "G_deflation": true
+      },
+      "gate_detail": {
+        "G1_is": "negative edge, n=20, region=(-0.00,0.05]",
+        "G1_oos": "negative edge, n=11, region=(-0.00,0.05]",
+        "G3": "edge=-0.0187, CI=[-0.0243,-0.0135], n=31",
+        "G4": "gross=-0.0187, fee=0.0100",
+        "G4_2x": "gross=-0.0187, fee=0.0100",
+        "deflation_confidence": 0.9875,
+        "deflation_ci": [
+          -0.026064919354838723,
+          -0.012064112903225812
+        ]
+      },
+      "deflated_excludes_zero": true,
+      "passed": false,
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "cell_id": "per-category:exotics:(5,15]",
+      "scope": "per-category",
+      "category": "exotics",
+      "bucket_label": "(5,15]",
+      "bin_lo": 0.05,
+      "bin_hi": 0.15,
+      "direction": "negative",
+      "is_mve": true,
+      "mde_floor": 843,
+      "n_is": 24,
+      "n_oos": 19,
+      "n_total": 43,
+      "underpowered": true,
+      "edge_is": -0.10579166666666667,
+      "edge_oos": -0.04915789473684211,
+      "edge_full": -0.08076744186046511,
+      "p_mean_full": 0.10402325581395348,
+      "realized_full": 0.023255813953488372,
+      "per_unit_fee": 0.01,
+      "per_unit_fee_2x": 0.02,
+      "gates": {
+        "G1_calibration_gap": true,
+        "G2_direction_consistency": true,
+        "G3_edge_ci": true,
+        "G4_net_of_fee": true,
+        "G_deflation": true
+      },
+      "gate_detail": {
+        "G1_is": "negative edge, n=24, region=(0.05,0.15]",
+        "G1_oos": "negative edge, n=19, region=(0.05,0.15]",
+        "G3": "edge=-0.0808, CI=[-0.1099,-0.0318], n=43",
+        "G4": "gross=-0.0808, fee=0.0100",
+        "G4_2x": "gross=-0.0808, fee=0.0200",
+        "deflation_confidence": 0.9875,
+        "deflation_ci": [
+          -0.11318691860465117,
+          -0.010531250000000075
+        ]
+      },
+      "deflated_excludes_zero": true,
+      "passed": false,
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "cell_id": "per-category:exotics:(85,95]",
+      "scope": "per-category",
+      "category": "exotics",
+      "bucket_label": "(85,95]",
+      "bin_lo": 0.85,
+      "bin_hi": 0.95,
+      "direction": "positive",
+      "is_mve": true,
+      "mde_floor": 716,
+      "n_is": 5,
+      "n_oos": 9,
+      "n_total": 14,
+      "underpowered": true,
+      "edge_is": 0.09840000000000004,
+      "edge_oos": -0.016444444444444484,
+      "edge_full": 0.02457142857142869,
+      "p_mean_full": 0.9039999999999999,
+      "realized_full": 0.9285714285714286,
+      "per_unit_fee": 0.01,
+      "per_unit_fee_2x": 0.02,
+      "gates": {
+        "G1_calibration_gap": false,
+        "G2_direction_consistency": false,
+        "G3_edge_ci": false,
+        "G4_net_of_fee": true,
+        "G_deflation": false
+      },
+      "gate_detail": {
+        "G1_is": "positive edge, n=5, region=(0.85,0.95]",
+        "G1_oos": "positive edge, n=9, region=(0.85,0.95]",
+        "G3": "edge=+0.0246, CI=[-0.1307,+0.1079], n=14",
+        "G4": "gross=+0.0246, fee=0.0100",
+        "G4_2x": "gross=+0.0246, fee=0.0200",
+        "deflation_confidence": 0.9875,
+        "deflation_ci": [
+          -0.20342901785714274,
+          0.1119290178571429
+        ]
+      },
+      "deflated_excludes_zero": false,
+      "passed": false,
+      "verdict": "INCONCLUSIVE"
+    },
+    {
+      "cell_id": "per-category:exotics:(95,100)",
+      "scope": "per-category",
+      "category": "exotics",
+      "bucket_label": "(95,100)",
+      "bin_lo": 0.95,
+      "bin_hi": 1.0,
+      "direction": "positive",
+      "is_mve": true,
+      "mde_floor": 105,
+      "n_is": 2,
+      "n_oos": 2,
+      "n_total": 4,
+      "underpowered": true,
+      "edge_is": 0.03649999999999998,
+      "edge_oos": 0.013000000000000012,
+      "edge_full": 0.02475000000000005,
+      "p_mean_full": 0.97525,
+      "realized_full": 1.0,
+      "per_unit_fee": 0.01,
+      "per_unit_fee_2x": 0.01,
+      "gates": {
+        "G1_calibration_gap": false,
+        "G2_direction_consistency": true,
+        "G3_edge_ci": true,
+        "G4_net_of_fee": true,
+        "G_deflation": true
+      },
+      "gate_detail": {
+        "G1_is": "positive edge, n=2, region=(0.95,1.00]",
+        "G1_oos": "positive edge, n=2, region=(0.95,1.00]",
+        "G3": "edge=+0.0248, CI=[+0.0130,+0.0405], n=4",
+        "G4": "gross=+0.0248, fee=0.0100",
+        "G4_2x": "gross=+0.0248, fee=0.0100",
+        "deflation_confidence": 0.9875,
+        "deflation_ci": [
+          0.01200000000000001,
+          0.042750000000000066
+        ]
+      },
+      "deflated_excludes_zero": true,
+      "passed": false,
+      "verdict": "INCONCLUSIVE"
+    }
+  ]
+}

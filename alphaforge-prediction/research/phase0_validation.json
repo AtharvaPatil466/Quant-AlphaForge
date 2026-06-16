@@ -1,0 +1,50 @@
+{
+  "date": "2026-06-16",
+  "overall": "FAIL",
+  "checks": [
+    {
+      "name": "coverage",
+      "status": "fail",
+      "summary": "165 volume-bearing resolved contracts across 1 categories (2026-06-16 \u2192 2026-06-16). Floor = 200.",
+      "metrics": {
+        "n_resolved": 165,
+        "n_volume_bearing": 165,
+        "min_required": 200,
+        "by_category": {
+          "Exotics": 165
+        },
+        "span": {
+          "first_close": "2026-06-16T05:45:00.000000Z",
+          "last_close": "2026-06-16T07:32:43.000000Z"
+        }
+      },
+      "errors": []
+    },
+    {
+      "name": "resolution_integrity",
+      "status": "pass",
+      "summary": "100.0000% of 165 rows have result\u2208{yes,no} with consistent settlement (threshold 99.9%). Bad result: 0; bad settlement: 0.",
+      "metrics": {
+        "n": 165,
+        "n_ok": 165,
+        "fraction_ok": 1.0,
+        "n_bad_result": 0,
+        "n_bad_settlement": 0,
+        "threshold": 0.999
+      },
+      "errors": []
+    },
+    {
+      "name": "no_lookahead",
+      "status": "pass",
+      "summary": "100.0000% of 165 rows have entry_snapshot_ts strictly before close_time (threshold 100.0%).",
+      "metrics": {
+        "n": 165,
+        "n_ok": 165,
+        "fraction_ok": 1.0,
+        "threshold": 1.0
+      },
+      "errors": []
+    }
+  ]
+}
