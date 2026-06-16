@@ -13,6 +13,10 @@ upstream substrate numbers to float equality.
 """
 from __future__ import annotations
 
+from .binary import (binary_mde, brier_score, bucket_edge_ci,
+                     calibration_slope_intercept, gate_calibration_gap,
+                     gate_edge_ci_excludes_zero, gate_net_of_fee_edge,
+                     log_loss, reliability_curve)
 from .bootstrap import (SharpeBootstrapCI, stationary_bootstrap_indices,
                         stationary_bootstrap_sharpe_ci)
 from .cross_val import PurgedEmbargoedKFold, cross_sectional_ic_cv
@@ -46,4 +50,8 @@ __all__ = [
     "gate_cornish_fisher",
     "PreRegistration", "PreRegistrationError", "compute_contract_hash",
     "verify_contract_hash", "assert_trial_count",
+    "brier_score", "log_loss", "reliability_curve",
+    "calibration_slope_intercept", "bucket_edge_ci", "binary_mde",
+    "gate_calibration_gap", "gate_edge_ci_excludes_zero",
+    "gate_net_of_fee_edge",
 ]
