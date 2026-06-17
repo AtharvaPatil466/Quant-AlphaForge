@@ -30,6 +30,7 @@ probability of YES.
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field, replace
 from typing import Any, Sequence
 
@@ -135,6 +136,12 @@ class RuleSpec:
                        (so the recorded entry crosses a real spread).
         sp_nasdaq_series_prefixes: series-ticker prefixes that get the half fee
                        rate (S&P 500 / Nasdaq-100); see §6.
+        max_days_to_close: if set, only enter markets that resolve within this
+                       many days. None = no cap (default). Targets near-term
+                       markets where FLB is a genuine bias rather than far-future
+                       time-value, and keeps the forward record on a useful
+                       timescale. Provisional-forward tuning; does not touch the
+                       frozen §4/§5 bands.
     """
 
     name: str
@@ -145,6 +152,7 @@ class RuleSpec:
     min_volume_fp: float = 0.0
     require_quote: bool = True
     sp_nasdaq_series_prefixes: tuple[str, ...] = ()
+    max_days_to_close: float | None = None
 
     def __post_init__(self) -> None:
         if not self.buckets:
@@ -190,6 +198,7 @@ class RuleSpec:
             "min_volume_fp": self.min_volume_fp,
             "require_quote": self.require_quote,
             "sp_nasdaq_series_prefixes": list(self.sp_nasdaq_series_prefixes),
+            "max_days_to_close": self.max_days_to_close,
         }
 
     @classmethod
@@ -206,6 +215,8 @@ class RuleSpec:
             min_volume_fp=float(d.get("min_volume_fp", 0.0)),
             require_quote=bool(d.get("require_quote", True)),
             sp_nasdaq_series_prefixes=tuple(d.get("sp_nasdaq_series_prefixes", []) or []),
+            max_days_to_close=(float(d["max_days_to_close"])
+                               if d.get("max_days_to_close") is not None else None),
         )
 
     def freeze(self, name: str | None = None) -> "RuleSpec":
@@ -373,7 +384,8 @@ def extract_open_market(market: dict[str, Any], series_ticker: str,
 # ---------------------------------------------------------------------------
 
 def select_orders(open_markets: Sequence[OpenMarket],
-                  rule: RuleSpec = DEFAULT_RULE_SPEC) -> list[PaperOrder]:
+                  rule: RuleSpec = DEFAULT_RULE_SPEC,
+                  *, now_ns: int | None = None) -> list[PaperOrder]:
     """Apply ``rule`` to a snapshot of open markets → intended paper entries.
 
     A market becomes an order iff, in order:
@@ -390,9 +402,21 @@ def select_orders(open_markets: Sequence[OpenMarket],
     Pure function: no network, no I/O, deterministic. Returns orders sorted by
     ticker for stable journalling.
     """
+    cap_ns = (None if rule.max_days_to_close is None
+              else int(rule.max_days_to_close * 86_400 * 1_000_000_000))
+    if cap_ns is not None and now_ns is None:
+        now_ns = time.time_ns()
     orders: list[PaperOrder] = []
     for om in open_markets:
         if not rule.category_eligible(om.category):
+            continue
+        # Time-to-close cap (provisional forward tuning): skip markets that are
+        # already closed / have an unknown close, or that resolve beyond the cap.
+        # Targets near-term markets where FLB is a genuine bias (not far-future
+        # time-value) and keeps the forward record on a useful timescale. The
+        # frozen §4/§5 price bands are untouched.
+        if cap_ns is not None and (om.close_time <= now_ns
+                                   or (om.close_time - now_ns) > cap_ns):
             continue
         # §7 volume filter: strictly positive floor, plus the rule's threshold.
         if not (math.isfinite(om.volume_fp) and om.volume_fp > 0

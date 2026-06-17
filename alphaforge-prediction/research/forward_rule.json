@@ -20,6 +20,12 @@
     "`--source events` so place() actually reaches the non-MVE universe; the legacy `--source",
     "markets` feed is 100% MVE on the free host and would journal nothing under this rule.",
     "",
+    "TIME-TO-CLOSE CAP: max_days_to_close=45 — only enter markets resolving within ~45 days.",
+    "The live /events universe is 94% long-dated (median close ~2030; some 2099). Without the",
+    "cap the record fills with multi-year longshots that never resolve in a useful window and",
+    "whose low price is mostly rational time-value, not FLB. The cap targets near-term markets",
+    "where FLB is a genuine bias and lets the 200-resolved target accrue in weeks, not years.",
+    "",
     "STATUS: PROVISIONAL (provisional=true). It is a hypothesis-derived rule, NOT a Phase 1",
     "survivor-derived rule (Phase 1 was INCONCLUSIVE/MVE-only — research/PHASE1_VERDICT.md).",
     "Re-freeze to the survivor cell once the forward record or a richer-data Phase 1 confirms one."
@@ -57,6 +63,7 @@
   ],
   "max_stake_contracts": 10,
   "min_volume_fp": 0.0,
+  "max_days_to_close": 45,
   "require_quote": true,
   "sp_nasdaq_series_prefixes": [
     "KXINX",

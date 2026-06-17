@@ -271,3 +271,45 @@ def test_select_orders_sp_nasdaq_flag():
 
 def test_select_orders_empty_input():
     assert select_orders([], DEFAULT_RULE_SPEC) == []
+
+
+# ---------------------------------------------------------------------------
+# Time-to-close cap (provisional forward tuning)
+# ---------------------------------------------------------------------------
+
+def _open_market(ticker, *, close_time, price=0.10, category="Economics"):
+    return OpenMarket(ticker=ticker, event_ticker="E", series_ticker="S",
+                      category=category, yes_price=price, yes_bid=price - 0.01,
+                      yes_ask=price + 0.01, volume_fp=500.0, close_time=close_time)
+
+
+def test_select_orders_time_to_close_cap():
+    from dataclasses import replace
+    now = 1_700_000_000_000_000_000
+    day = 86_400 * 1_000_000_000
+    near = _open_market("NEAR", close_time=now + 10 * day)
+    far = _open_market("FAR", close_time=now + 400 * day)
+    past = _open_market("PAST", close_time=now - day)
+    capped = replace(DEFAULT_RULE_SPEC, max_days_to_close=45)
+    # Cap set → only the near-term market is entered; far-future + past excluded.
+    assert {o.ticker for o in select_orders([near, far, past], capped, now_ns=now)} == {"NEAR"}
+    # No cap (default None) → close_time is ignored entirely (prior behaviour).
+    nocap = {o.ticker for o in select_orders([near, far, past], DEFAULT_RULE_SPEC, now_ns=now)}
+    assert {"NEAR", "FAR", "PAST"} <= nocap
+
+
+def test_rulespec_max_days_to_close_round_trips():
+    from dataclasses import replace
+    r = replace(DEFAULT_RULE_SPEC, max_days_to_close=45.0)
+    assert RuleSpec.from_dict(r.to_dict()).max_days_to_close == 45.0
+    # Default rule is uncapped, and that survives a round-trip.
+    assert DEFAULT_RULE_SPEC.max_days_to_close is None
+    assert RuleSpec.from_dict(DEFAULT_RULE_SPEC.to_dict()).max_days_to_close is None
+
+
+def test_forward_rule_json_has_time_cap():
+    import json
+    import pathlib
+    p = pathlib.Path(__file__).resolve().parent.parent / "research" / "forward_rule.json"
+    spec = RuleSpec.from_dict(json.loads(p.read_text()))
+    assert spec.max_days_to_close is not None and spec.max_days_to_close > 0
