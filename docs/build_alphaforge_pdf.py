@@ -250,32 +250,38 @@ def build():
     S(Paragraph(
         "Point-in-time event-driven backtesting, deflation-aware statistical "
         "evaluation, evolutionary multi-agent reinforcement learning, and live "
-        "paper-trading execution — applied across eight pre-committed substrates "
+        "paper-trading execution — applied across ten pre-committed substrates "
         "spanning US equities, crypto perpetual futures, BTC microstructure, "
-        "EDGAR-driven post-earnings drift, NSE event-driven flow, and CBOE "
-        "variance-risk-premium harvest.",
+        "EDGAR-driven post-earnings drift, NSE event-driven flow, CBOE "
+        "variance-risk-premium harvest, SPY iron-condor options, and Kalshi "
+        "prediction markets.",
         styles["Subtitle"]
     ))
 
     S(Paragraph(
-        "<b>Status (2026-05-22):</b> Seven substrate evaluations have CLOSED FAILED "
-        "under the project's pre-committed gauntlet; one (BTC-USDT microstructure) "
-        "is in Phase 0 book-data accumulation. The methodology &mdash; pre-commit "
-        "gates, Deflated Sharpe deflation, stationary-bootstrap CIs, honest "
-        "transaction costs, and no-look-ahead enforced by construction &mdash; has "
-        "functioned exactly as designed: it has rejected every signal that does "
-        "not survive honest deflation, including one that produced statistically "
-        "significant raw alpha (MV-21 OOS Sharpe +3.06 / +2.43) and one that "
-        "exhibited a clear underlying variance-risk-premium IC of +0.180.",
+        "<b>Status (2026-06-19):</b> Eight substrate evaluations have CLOSED FAILED "
+        "under the project's pre-committed gauntlet. Substrate #10 (Kalshi "
+        "favorite-longshot bias) is Phase-1 INCONCLUSIVE (underpowered on free "
+        "data) and is now accumulating a live forward paper-trade record; "
+        "substrate #4 (BTC-USDT microstructure) is re-collecting Phase 0 book "
+        "data after a stale-collector break. The June 2026 work added a canonical, "
+        "version-pinned evaluation gauntlet (<tt>afgauntlet</tt>) and a power "
+        "calibration that measures the gauntlet's own minimum detectable effect "
+        "(MDE@80% &asymp; 2.4 annualized Sharpe at 28 trials over 5-year windows) "
+        "&mdash; separating &lsquo;no alpha&rsquo; from &lsquo;instrument too "
+        "blunt&rsquo;. The methodology has rejected every signal that does not "
+        "survive honest deflation, including one with statistically significant raw "
+        "alpha (MV-21 OOS Sharpe +3.06 / +2.43) and one with a clear underlying "
+        "variance-risk-premium IC of +0.180.",
         styles["StatusBanner"]
     ))
 
     S(Spacer(1, 0.10 * inch))
     S(metric_block([
-        ("SUBSTRATES INITIATED", "8", "across 5 asset classes"),
-        ("CLOSED FAILED", "7", "under DSR-deflated gates"),
-        ("IN FLIGHT", "1", "BTC-USDT microstructure"),
-        ("TESTS GREEN", "1,000+", "across 9 sub-projects"),
+        ("SUBSTRATES INITIATED", "10", "across 6 asset classes"),
+        ("CLOSED FAILED", "8", "under DSR-deflated gates"),
+        ("OPEN", "2", "#4 recollecting · #10 forward"),
+        ("TESTS GREEN", "1,000+", "across 11 sub-projects"),
     ]))
     S(Spacer(1, 0.12 * inch))
     S(metric_block([
@@ -289,7 +295,7 @@ def build():
     S(hr(PRIMARY, 0.8))
     S(P("<b>Author:</b> Atharva Patil &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
         "<b>Repository:</b> <i>Quant Alpha</i> &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
-        "<b>Generated:</b> 2026-05-22 &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
+        "<b>Generated:</b> 2026-06-19 &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
         "<b>Build:</b> <tt>docs/build_alphaforge_pdf.py</tt>", style="Caption"))
     S(hr(PRIMARY, 0.8))
 
@@ -301,15 +307,23 @@ def build():
         "transaction-cost modelling, deflation-aware statistical evaluation, "
         "multi-agent reinforcement learning, and live paper-trading execution "
         "&mdash; to a series of pre-committed substrates of increasing methodological "
-        "distinctness. Across <b>eight initiated substrates</b> (US equities Tier 1 "
+        "distinctness. Across <b>ten initiated substrates</b> (US equities Tier 1 "
         "+ Tier 2, Binance USDT-M crypto carry, BTC-USDT microstructure, EDGAR "
         "XBRL post-earnings drift, NSE event-driven flow, CBOE variance-risk "
-        "premium, and a follow-up VIX-baseline-anchored sizing study), <b>seven "
+        "premium, a follow-up VIX-baseline-anchored sizing study, SPY iron-condor "
+        "options, and Kalshi prediction-market favorite-longshot bias), <b>eight "
         "have CLOSED FAILED</b> under the same five-to-six gate gauntlet: "
         "Deflated Sharpe &gt; 0.95, stationary-bootstrap 95% CI excludes zero, "
         "out-of-sample sign agreement, cost-doubling survival, regime-stress "
-        "stability, and (for the VRP harvest) Cornish-Fisher Sharpe &gt; 0.5 "
-        "with max-drawdown limit per stress period. "
+        "stability, and (for premium-harvest substrates) Cornish-Fisher Sharpe &gt; 0.5 "
+        "with max-drawdown limit per stress period. Substrate #10 is Phase-1 "
+        "INCONCLUSIVE (underpowered on free data) and is accumulating a live forward "
+        "paper-trade record; substrate #4 is re-collecting Phase 0 data. The June "
+        "2026 work consolidated the per-substrate statistics into one canonical, "
+        "version-pinned gauntlet (<tt>afgauntlet</tt>, with binary/calibration "
+        "extensions for prediction markets), added a power calibration that measures "
+        "the gauntlet's own minimum detectable effect, and reconciled assumed vs "
+        "realized transaction costs from live fills. "
         "The project's contribution is the methodology and infrastructure that "
         "produced these honest negative results: a research-grade stack that "
         "refuses to deploy capital against signals which do not survive multiple-"
@@ -328,7 +342,7 @@ def build():
     toc_rows = [
         ["§", "Section"],
         ["1",  "Executive Summary"],
-        ["2",  "Project Architecture — Nine Components"],
+        ["2",  "Project Architecture — Eleven Components"],
         ["3",  "Data Infrastructure — PIT Universes and Parquet Stores"],
         ["4",  "Alpha Engine — Factors, Scoring, and Event-Driven Backtest"],
         ["5",  "Statistical Methodology — The Gauntlet"],
@@ -346,7 +360,8 @@ def build():
         ["17", "Failure-Mode Taxonomy — What the Verdicts Mean Together"],
         ["18", "Engineering Highlights — Tests, Parity, CI, Reproducibility"],
         ["19", "Honest Limitations and Process Disclosures"],
-        ["20", "Forward Path — The Strategy-Class Decision Window"],
+        ["20", "June 2026 Update — Substrates #9–#10, Gauntlet + MDE"],
+        ["21", "Forward Path — The Strategy-Class Decision Window"],
     ]
     S(kv_table(toc_rows, col_widths=[0.5 * inch, 5.7 * inch], font_size=10))
     S(PageBreak())
@@ -358,8 +373,10 @@ def build():
     S(P(
         "<b>Headline.</b> AlphaForge is a working end-to-end systematic-trading "
         "research stack — not a single strategy. It has been used to evaluate "
-        "eight pre-committed substrates against the same rigorous gauntlet; "
-        "seven have CLOSED FAILED and one is in book-data accumulation. The "
+        "ten pre-committed substrates against the same rigorous gauntlet; "
+        "eight have CLOSED FAILED, substrate #10 (Kalshi favorite-longshot bias) "
+        "is Phase-1 inconclusive and accumulating a live forward record, and "
+        "substrate #4 (microstructure) is re-collecting Phase 0 book data. The "
         "infrastructure has detected and rejected signals that would pass "
         "naive statistical bars: the closest near-miss (a Markowitz overlay "
         "on nine factor return streams) produced alpha-residual OOS Sharpe "
@@ -395,7 +412,7 @@ def build():
         "<b>What the project demonstrates.</b> That a methodologically honest "
         "research process can produce credible <i>negative</i> verdicts at "
         "scale, and that the absence of surviving signals is itself a "
-        "scientifically informative outcome. Across eight substrates, three "
+        "scientifically informative outcome. Across ten substrates, six "
         "asset classes, and two strategy classes (predictive cross-sectional "
         "alpha and structural premium harvest), no construction within the "
         "tested parameter space &mdash; using free public data, parametric "
@@ -410,27 +427,31 @@ def build():
         ["1", "Equity Tier 1",                 "US large-cap",   "X-section factor",   "CLOSED FAILED", "2026-05-02"],
         ["2", "Equity Tier 2",                 "US large-cap",   "Lower-turnover X",   "CLOSED FAILED", "2026-05-02"],
         ["3", "Crypto USDT-M Carry",            "Crypto perp",    "X-section funding",  "CLOSED FAILED", "2026-05-15"],
-        ["4", "BTC-USDT Microstructure",        "Crypto spot L2", "Order-flow",         "PHASE 0",       "in flight"],
+        ["4", "BTC-USDT Microstructure",        "Crypto spot L2", "Order-flow",         "PHASE 0 (recollect)", "in flight"],
         ["5", "PEAD via EDGAR XBRL",            "US large-cap",   "Event-driven",       "CLOSED FAILED", "2026-05-17"],
         ["6", "NSE Event-Driven + Flow",        "Indian equity",  "Flow / delivery %",  "CLOSED FAILED", "2026-05-20"],
         ["7", "CBOE VIX/VRP harvest",           "US vol",         "Premium harvest",    "CLOSED FAILED", "2026-05-21"],
         ["8", "VIX-baseline-anchored sizing",   "US vol",         "Premium harvest",    "CLOSED FAILED", "2026-05-21"],
+        ["9", "SPY Iron-Condor Options",        "US options",     "Premium harvest",    "CLOSED FAILED", "2026-05-26"],
+        ["10", "Kalshi Favorite-Longshot",      "Prediction mkt", "Calibration / FLB",  "PH1 INCONCL.",  "2026-06-17"],
     ]
     S(kv_table(
         ledger,
-        col_widths=[0.32 * inch, 1.7 * inch, 1.05 * inch, 1.3 * inch, 1.15 * inch, 0.85 * inch],
+        col_widths=[0.32 * inch, 1.62 * inch, 1.0 * inch, 1.22 * inch, 1.36 * inch, 0.82 * inch],
         font_size=9,
     ))
 
     S(H("Platform Metrics", 3))
-    S(bullet("<b>9 sub-projects.</b> JS frontend, <tt>alphaforge-python</tt>, "
+    S(bullet("<b>11 sub-projects.</b> JS frontend, <tt>alphaforge-python</tt>, "
              "<tt>-marl</tt>, <tt>-execution</tt>, <tt>-crypto</tt>, "
              "<tt>-microstructure</tt>, <tt>-pead</tt>, <tt>-india</tt>, "
-             "<tt>-vix</tt>. Each sub-project has its own CLAUDE.md, "
-             "test suite, and SHA-256-anchored design contract."))
-    S(bullet("<b>1,000+ tests green.</b> 531 in <tt>alphaforge-python</tt>, "
-             "122 in <tt>-marl</tt>, 122 in <tt>-execution</tt>, 237 in <tt>-vix</tt>, "
-             "371 in <tt>-india</tt>, plus crypto/PEAD/microstructure suites."))
+             "<tt>-vix</tt>, <tt>-options</tt>, <tt>-prediction</tt>, plus the shared "
+             "<tt>alphaforge-gauntlet</tt> evaluation package. Each has its own "
+             "CLAUDE.md, test suite, and SHA-256-anchored design contract."))
+    S(bullet("<b>1,000+ tests green.</b> incl. 531 <tt>alphaforge-python</tt>, "
+             "237 <tt>-vix</tt>, 371 <tt>-india</tt>, 157 <tt>-prediction</tt>, "
+             "86 <tt>alphaforge-gauntlet</tt>, plus -marl / -execution / -crypto / "
+             "-pead / -microstructure / -options suites."))
     S(bullet("<b>837 PIT membership events.</b> 407 REMOVE + 352 ADD + 78 RENAME, "
              "built from 2,811 Wikipedia revisions + EDGAR CIK enrichment, "
              "validated to 0.9895 monthly correlation against <tt>^SP500EW</tt>."))
@@ -454,13 +475,15 @@ def build():
     # ============================================================
     # 2. ARCHITECTURE
     # ============================================================
-    S(H("2. Project Architecture — Nine Components", 1))
+    S(H("2. Project Architecture — Eleven Components", 1))
     S(P(
-        "AlphaForge is organised as nine loosely-coupled components. Five "
-        "are now frozen (factor / RL / execution research surfaces), three "
-        "are CLOSED FAILED substrates whose code remains as audit trail, and "
-        "one (microstructure) is the active research surface. The JS frontend "
-        "remains parity-tested and connected to the Python data layer."
+        "AlphaForge is organised as eleven loosely-coupled sub-projects plus the "
+        "shared <tt>alphaforge-gauntlet</tt> evaluation package. The equity "
+        "factor / RL / execution surfaces are frozen; eight substrate sub-projects "
+        "are CLOSED FAILED audit trails; <tt>-prediction</tt> (#10) is accumulating "
+        "a live forward paper-trade record and <tt>-microstructure</tt> (#4) is "
+        "re-collecting Phase 0 book data. The JS frontend remains parity-tested "
+        "and connected to the Python data layer."
     ))
     arch_rows = [
         ["Component", "Status", "Role"],
@@ -1474,19 +1497,110 @@ def build():
              "audit-able fact of the project."))
 
     # ============================================================
-    # 20. FORWARD PATH
+    # 20. JUNE 2026 UPDATE
     # ============================================================
-    S(H("20. Forward Path — The Strategy-Class Decision Window", 1))
+    S(H("20. June 2026 Update — Substrates #9–#10 and the Canonical Gauntlet", 1))
+    S(P(
+        "<b>This section post-dates the original document body</b> and records the "
+        "work since 2026-05-22: two further substrates and a consolidation of the "
+        "evaluation methodology into one audited, version-pinned package with a "
+        "measured detection floor. Where it conflicts with earlier sections, this "
+        "section governs."
+    ))
+
+    S(H("Substrate #9 — SPY Iron-Condor Options (CLOSED FAILED 2026-05-26)", 3))
+    S(P(
+        "Black-Scholes reconstruction on free VIX + OHLCV. The premium is "
+        "<i>real</i>: 11 of 11 in-sample years positive, mean +$0.19/share per "
+        "cycle. But the entry-time variance-risk premium has <b>no predictive "
+        "power for cycle-level P&amp;L</b>: corr(VRP_entry, cycle P&amp;L) = "
+        "&minus;0.0146 (required &gt; 0). <b>Mode E</b> — the binary filter "
+        "(VRP &gt; 0 &rarr; positive expectation) works, but the continuous-predictor "
+        "relationship is absent. Closed at Phase 1, Test 1."
+    ))
+
+    S(H("Substrate #10 — Kalshi Favorite-Longshot Bias (PHASE 1 INCONCLUSIVE)", 3))
+    S(P(
+        "The first substrate where <b>small capacity is the edge, not the "
+        "handicap</b>: a $40k Kalshi market is too small for an institution and "
+        "right-sized for a solo trader. Goal: a credible live track record, not "
+        "fund-scale alpha. Phase 0 CERTIFIED (292 volume-bearing resolved "
+        "contracts, no-look-ahead 100%; Kalshi fee schedule confirmed). Phase 1 "
+        "INCONCLUSIVE — the free read-only host exposes only a recent, MVE-heavy "
+        "universe, so available N sits <b>25–140&times; below the binary-MDE "
+        "detection floor</b>; per the decision matrix this routes to forward "
+        "accumulation. The Phase-1 core was adversarially audited 7/7 "
+        "integrity-clean."
+    ))
+    S(bullet("<b>Phase 2 forward record is live.</b> A read-only paper-trade "
+             "harness places against the Kalshi <tt>/events</tt> feed (the "
+             "<tt>/markets</tt> feed is 100% sub-minute MVE), with a 45-day "
+             "time-to-close cap so the record accrues on a useful timescale. "
+             "launchd runs <tt>place</tt> 3&times;/day, <tt>reconcile</tt> + a "
+             "weekly digest. Target: 200 resolved events (~weeks–2 months)."))
+
+    S(H("The Canonical Gauntlet (afgauntlet) + DSR Audit", 3))
+    S(P(
+        "The per-substrate statistics (Sharpe, DSR, bootstrap CI, SPA / Reality "
+        "Check, purged-embargoed CV) were consolidated into one version-pinned, "
+        "golden-tested package, with a binary/calibration module (Brier, log-loss, "
+        "reliability curve, calibration-edge bootstrap, binary MDE) for prediction "
+        "markets. A reconciliation audit found the project had been running "
+        "<b>four different DSR implementations</b>; measured divergence is at most "
+        "0.026 in DSR units and produces <b>0 verdict flips across 96 grid "
+        "points</b> — so no historical verdict was an artifact of its estimator."
+    ))
+
+    S(H("MDE Power Calibration — Real Null vs Blunt Instrument", 3))
+    S(P(
+        "A power study injects synthetic alpha of known strength onto real return "
+        "noise and measures how often the gauntlet detects it. Overall power "
+        "tracks the DSR-gate pass rate exactly &mdash; <b>DSR deflation is the "
+        "sole binding constraint.</b> Minimum detectable true annualized Sharpe "
+        "(80% power): <b>~0.93</b> generous (1 trial, 10-year window), "
+        "<b>~2.40</b> VIX-like (28 trials, 5-year), <b>&gt; 3.5</b> PEAD-like "
+        "(short OOS). Reading: the strongest observed signal (VIX OOS +0.55) sits "
+        "below even the generous floor &mdash; a <i>real null</i> &mdash; but a "
+        "2.4-Sharpe bar is economically strict versus the ~0.5–1.0 a leveraged "
+        "desk trades, so the hurdle, not only the data, is part of the story."
+    ))
+
+    S(H("Cost-Model Reconciliation + Microstructure Recollection", 3))
+    S(bullet("<b>Costs.</b> Realized paper-trade slippage was ~2.6–3&times; the "
+             "assumed rate (on 12 live fills), but higher costs flip <b>zero</b> "
+             "verdicts; only crypto carry was plausibly cost-bound. The binding "
+             "constraint was deflation, not execution."))
+    S(bullet("<b>Microstructure (#4) Phase 0 break.</b> The live collector ran "
+             "pre-fix code for 29 days (82% gap fraction, ~33% hour coverage). "
+             "Code on disk was already correct; the process was stale. Fixed the "
+             "readiness tooling, added a recent-gap-rate alarm, filed a recovery "
+             "runbook. Earliest honest Phase 1 ~2026-07-16."))
+    S(P(
+        "The full cross-substrate synthesis lives in "
+        "<tt>RESEARCH_META_SYNTHESIS.md</tt>."
+    ))
+
+    S(PageBreak())
+
+    # ============================================================
+    # 21. FORWARD PATH
+    # ============================================================
+    S(H("21. Forward Path — The Strategy-Class Decision Window", 1))
     S(P(
         "<b>The honest question is no longer &quot;what substrate?&quot; — "
         "it is &quot;what strategy class?&quot;</b> Cross-sectional rank-based "
         "signals with linear combinations and parametric retail costs do not "
         "survive in either equity (substrates 1–2, 5), crypto perpetuals "
-        "(substrate 3), Indian large-caps (substrate 6), or vol-surface "
-        "premium harvest (substrates 7–8). Five of the seven failures "
-        "share the row-2 / Mode A pattern with variants; one (India) shows "
-        "sharper Mode C sign inversion; the VIX cluster discovered Mode D "
-        "and then refuted it."
+        "(substrate 3), Indian large-caps (substrate 6), vol-surface "
+        "premium harvest (substrates 7–9), or — at free-data scale — "
+        "prediction-market calibration (substrate 10). Six of the eight "
+        "failures share the row-2 / Mode A pattern with variants; India shows "
+        "sharper Mode C sign inversion; the VIX cluster discovered Mode D and "
+        "then refuted it; and the iron condor exhibited Mode E (binary filter "
+        "works, continuous predictor absent). The MDE calibration (§20) reframes "
+        "this: the binding constraint is the DSR deflation floor, and the "
+        "open question is whether to lower that bar deliberately or change a "
+        "structural input."
     ))
 
     S(H("What could change the verdict (substrate #9+)", 3))
@@ -1527,14 +1641,16 @@ def build():
     S(P(
         "An end-to-end research-grade systematic-trading stack built and run "
         "on free public data by a solo undergraduate, applied honestly to a "
-        "known-hard problem across three asset classes and two strategy "
+        "known-hard problem across six asset classes and two strategy "
         "classes, with methodology bugs found and fixed in the same session "
         "they surfaced and every diagnostic shift documented openly. <b>The "
         "negative results published here are the artefact; surviving signals "
-        "are not.</b> Substrate #4 (BTC-USDT microstructure) is the next "
-        "credible verdict the methodology will deliver; the design contract "
-        "is already frozen, and the runner will refuse to execute against a "
-        "modified design when Phase 0 closes on or after 2026-06-17."
+        "are not.</b> The current frontier is two-fold: substrate #10's live "
+        "forward paper-trade record (the first deliberate pursuit of a "
+        "small-capacity edge) and substrate #4's microstructure Phase 1 once "
+        "its book-data recollection completes (~2026-07-16). The methodology "
+        "now reports not just a verdict but, via the MDE calibration, whether a "
+        "verdict was even detectable in the first place."
     ))
 
     S(Spacer(1, 0.25 * inch))
