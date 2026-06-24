@@ -60,11 +60,53 @@ def test_seed_marks_seeded():
 def test_first_diff_after_snapshot_bracketing():
     b = OrderBook()
     _seed_basic(b, last_update_id=100)
-    # last_update_id + 1 == 101 must be in [U, u]
-    assert b.is_first_diff_after_snapshot(U=99, u=105)
-    assert b.is_first_diff_after_snapshot(U=101, u=101)
-    assert not b.is_first_diff_after_snapshot(U=102, u=110)
-    assert not b.is_first_diff_after_snapshot(U=50, u=80)
+    # USDT-M FUTURES rule (step 5): the first processed event must satisfy
+    #   U <= lastUpdateId <= u
+    # NOT spot's `U <= lastUpdateId + 1 <= u`. The snapshot's own
+    # lastUpdateId — not lastUpdateId+1 — is what the first event brackets.
+    # Ref: developers.binance.com/docs/derivatives/usds-margined-futures/
+    #      websocket-market-streams/How-to-manage-a-local-order-book-correctly
+    assert b.is_first_diff_after_snapshot(U=99, u=105)    # 99 <= 100 <= 105
+    assert b.is_first_diff_after_snapshot(U=100, u=100)   # boundary: u == L
+    assert b.is_first_diff_after_snapshot(U=100, u=105)   # boundary: U == L
+    assert not b.is_first_diff_after_snapshot(U=101, u=110)  # U > L → gap, not first
+    assert not b.is_first_diff_after_snapshot(U=50, u=80)    # u < L → stale
+
+
+def test_first_processed_event_uses_futures_bracket_not_spot():
+    """Snapshot-ahead regression (futures-vs-spot semantics).
+
+    The load-bearing discriminator between spot and USDT-M futures: an event
+    whose FINAL update id `u` EQUALS the snapshot `lastUpdateId`. This is the
+    snapshot-ahead case — the snapshot sits at the leading edge of the
+    bracketing event, whose `u` only just reaches `lastUpdateId`.
+
+    Futures step 5 (`U <= lastUpdateId AND u >= lastUpdateId`) PROCESSES it.
+    Spot (`U <= lastUpdateId + 1 <= u`) REJECTS it (lastUpdateId+1 > u). Under
+    the old spot code this event was wrongly rejected/dropped, the buffer's
+    next event had `U > lastUpdateId`, the bracket check failed, and the
+    collector entered a reconnect storm that seeded ~0 books.
+    """
+    b = OrderBook()
+    _seed_basic(b, last_update_id=100)
+    # u == lastUpdateId: futures accepts, spot rejects.
+    assert b.is_first_diff_after_snapshot(U=98, u=100)
+    # U == u == lastUpdateId: degenerate single-id event still brackets.
+    assert b.is_first_diff_after_snapshot(U=100, u=100)
+    # apply_diff must NOT raise on a futures-valid first event with u == L.
+    b.apply_diff(U=98, u=100, pu=90, bids=[(99.0, 7.0)], asks=[])
+    assert b.last_update_id == 100
+    bids, _ = b.top_n(3)
+    assert bids[0] == (99.0, 7.0)
+
+
+def test_first_processed_event_drops_strictly_stale_only():
+    """Futures step 4 drops events with `u` STRICTLY < lastUpdateId. An event
+    with `u == lastUpdateId` is NOT stale — it is the bracketing event."""
+    b = OrderBook()
+    _seed_basic(b, last_update_id=100)
+    assert not b.is_first_diff_after_snapshot(U=80, u=99)   # u < 100 → stale
+    assert b.is_first_diff_after_snapshot(U=80, u=100)      # u == 100 → brackets
 
 
 # --- apply_diff -------------------------------------------------------------
@@ -73,7 +115,8 @@ def test_first_diff_after_snapshot_bracketing():
 def test_apply_diff_updates_existing_level():
     b = OrderBook()
     _seed_basic(b, last_update_id=100)
-    b.apply_diff(U=101, u=102, pu=100, bids=[(99.0, 5.0)], asks=[])
+    # First post-seed event straddles lastUpdateId (U<=100<=u) per futures step 5.
+    b.apply_diff(U=100, u=102, pu=100, bids=[(99.0, 5.0)], asks=[])
     bids, _ = b.top_n(3)
     assert bids[0] == (99.0, 5.0)
     assert b.last_update_id == 102
@@ -82,7 +125,7 @@ def test_apply_diff_updates_existing_level():
 def test_apply_diff_removes_level_on_zero_size():
     b = OrderBook()
     _seed_basic(b, last_update_id=100)
-    b.apply_diff(U=101, u=102, pu=100, bids=[(98.0, 0.0)], asks=[])
+    b.apply_diff(U=100, u=102, pu=100, bids=[(98.0, 0.0)], asks=[])
     bids, _ = b.top_n(5)
     assert (98.0, 2.0) not in bids
     assert bids == [(99.0, 1.0), (97.0, 3.0)]
@@ -93,7 +136,7 @@ def test_apply_diff_inserts_new_level():
     _seed_basic(b, last_update_id=100)
     # 99.5 inside the bid book becomes new best bid; 100.5 inside the ask
     # book becomes new best ask.
-    b.apply_diff(U=101, u=102, pu=100, bids=[(99.5, 0.5)], asks=[(100.5, 0.7)])
+    b.apply_diff(U=100, u=102, pu=100, bids=[(99.5, 0.5)], asks=[(100.5, 0.7)])
     bids, asks = b.top_n(5)
     assert bids[0] == (99.5, 0.5)
     assert asks[0] == (100.5, 0.7)
@@ -102,7 +145,7 @@ def test_apply_diff_inserts_new_level():
 def test_apply_diff_chain_continuity_passes():
     b = OrderBook()
     _seed_basic(b, last_update_id=100)
-    b.apply_diff(U=101, u=110, pu=100, bids=[], asks=[])
+    b.apply_diff(U=100, u=110, pu=100, bids=[], asks=[])
     b.apply_diff(U=111, u=115, pu=110, bids=[], asks=[])
     b.apply_diff(U=116, u=120, pu=115, bids=[], asks=[])
     assert b.last_update_id == 120
@@ -111,7 +154,7 @@ def test_apply_diff_chain_continuity_passes():
 def test_apply_diff_raises_on_pu_mismatch():
     b = OrderBook()
     _seed_basic(b, last_update_id=100)
-    b.apply_diff(U=101, u=110, pu=100, bids=[], asks=[])
+    b.apply_diff(U=100, u=110, pu=100, bids=[], asks=[])
     with pytest.raises(BookResyncRequired):
         # pu should be 110, not 109
         b.apply_diff(U=111, u=115, pu=109, bids=[], asks=[])

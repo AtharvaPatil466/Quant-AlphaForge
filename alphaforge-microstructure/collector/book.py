@@ -130,9 +130,18 @@ class OrderBook:
         self._post_seed_diffs = 0
 
     def is_first_diff_after_snapshot(self, U: int, u: int) -> bool:
-        """Per Binance docs, the first diff to apply after a snapshot must
-        bracket the snapshot's `lastUpdateId + 1`."""
-        return U <= self.last_update_id + 1 <= u
+        """Per the Binance USDT-M FUTURES docs (step 5), the first diff to
+        apply after a snapshot must satisfy `U <= lastUpdateId <= u` — i.e.
+        the event brackets the snapshot's `lastUpdateId` itself.
+
+        This is the futures rule, NOT the spot rule (`U <= lastUpdateId+1 <= u`).
+        The difference is load-bearing: a futures event whose final id `u`
+        equals `lastUpdateId` IS the bracketing event and must be processed;
+        spot semantics would wrongly reject it and trigger a reconnect storm.
+        Ref: developers.binance.com/docs/derivatives/usds-margined-futures/
+             websocket-market-streams/How-to-manage-a-local-order-book-correctly
+        """
+        return U <= self.last_update_id <= u
 
     # -- diff application ----------------------------------------------------
 
@@ -156,13 +165,16 @@ class OrderBook:
         if not self._seeded:
             raise BookResyncRequired("apply_diff called before seed_from_snapshot")
 
-        # The very first diff after a seed is validated by the caller via
-        # is_first_diff_after_snapshot (the bracket check). After that
+        # The very first diff after a seed must bracket the snapshot's
+        # lastUpdateId per futures step 5 (U <= lastUpdateId <= u). After that
         # first event, every subsequent event must satisfy pu == prior u.
+        # NOTE: callers must drop strictly-stale events (u < lastUpdateId, step
+        # 4) BEFORE feeding the first event here — otherwise a still-catching-up
+        # stream's stale event fails this bracket and triggers a needless resync.
         if self._post_seed_diffs == 0:
             if not self.is_first_diff_after_snapshot(U, u):
                 raise BookResyncRequired(
-                    f"first diff after seed does not bracket lastUpdateId+1: "
+                    f"first diff after seed does not bracket lastUpdateId: "
                     f"snap.lastUpdateId={self.last_update_id}, U={U}, u={u}"
                 )
         elif pu != self.last_update_id:
@@ -207,6 +219,14 @@ class OrderBook:
     @property
     def is_seeded(self) -> bool:
         return self._seeded
+
+    @property
+    def awaiting_first_diff(self) -> bool:
+        """True when the book is seeded but no post-seed diff has been applied
+        yet. While this holds, `last_update_id` is still the snapshot's
+        `lastUpdateId`, so callers may use it to drop strictly-stale buffered
+        events (`u < last_update_id`, futures step 4) before the first apply."""
+        return self._seeded and self._post_seed_diffs == 0
 
     def __len__(self) -> int:
         return len(self._bids) + len(self._asks)

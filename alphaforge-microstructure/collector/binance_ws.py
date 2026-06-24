@@ -7,11 +7,15 @@ Streams:
 REST snapshot:
     GET https://fapi.binance.com/fapi/v1/depth?symbol=BTCUSDT&limit=1000
 
-The collector follows Binance's documented sequence:
+The collector follows Binance's documented USDT-M FUTURES sequence
+(developers.binance.com/docs/derivatives/usds-margined-futures/
+ websocket-market-streams/How-to-manage-a-local-order-book-correctly):
     1. Open WS stream, buffer events.
     2. Fetch REST snapshot.
-    3. Drop buffered events with u <= snapshot.lastUpdateId.
-    4. Verify first remaining event satisfies U <= lastUpdateId+1 <= u.
+    3. Drop buffered events with u < snapshot.lastUpdateId  (futures step 4,
+       STRICT <; spot uses <=).
+    4. Verify first remaining event satisfies U <= lastUpdateId <= u
+       (futures step 5; spot uses lastUpdateId+1).
     5. Apply that event and all subsequent events, checking pu continuity.
 
 On any BookResyncRequired, the collector tears down the book and restarts
@@ -24,17 +28,31 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import ssl
 import time
 from collections import deque
 from dataclasses import dataclass
 from typing import AsyncIterator, Callable, Optional
 
 import aiohttp
+import certifi
 
 from .book import OrderBook, BookResyncRequired, BookSnapshot
 
 
 log = logging.getLogger(__name__)
+
+
+def _ssl_context() -> ssl.SSLContext:
+    """Pin the certifi CA bundle so the collector verifies Binance TLS
+    regardless of how the ambient Python's trust store is configured.
+
+    Relying on aiohttp's default context made the collector fail to connect
+    on interpreters without a working system CA bundle (the python.org macOS
+    build is the common offender), surfacing as a CERTIFICATE_VERIFY_FAILED
+    that looked like a network outage. Pinning certifi removes that coupling.
+    """
+    return ssl.create_default_context(cafile=certifi.where())
 
 
 # --- config -----------------------------------------------------------------
@@ -97,6 +115,7 @@ class BinanceFuturesCollector:
         self.depth_levels_emitted = depth_levels_emitted
         self.book = OrderBook()
         self._buffered_diffs: deque[dict] = deque()
+        self._ssl = _ssl_context()
 
     # -- public driver -------------------------------------------------------
 
@@ -125,7 +144,7 @@ class BinanceFuturesCollector:
     async def _run_once(self) -> AsyncIterator[tuple[str, object]]:
         url = f"{FAPI_WS_URL}?streams={self.stream_symbol}@depth@100ms/{self.stream_symbol}@aggTrade"
         async with aiohttp.ClientSession() as session:
-            async with session.ws_connect(url, heartbeat=30) as ws:
+            async with session.ws_connect(url, heartbeat=30, ssl=self._ssl) as ws:
                 log.info("connected: %s", url)
 
                 # Reset state for this connection
@@ -190,6 +209,22 @@ class BinanceFuturesCollector:
 
                     # If we have a seeded book, every subsequent diff applies.
                     if snapshot_data is not None and self.book.is_seeded and self._buffered_diffs:
+                        # Futures step 4: while the book is still awaiting its
+                        # first post-seed diff, drop strictly-stale buffered
+                        # events (u < snapshot lastUpdateId) instead of feeding
+                        # them into the bracket check. A still-catching-up
+                        # stream emits stale events first; without this drop the
+                        # bracket check fails on them and the collector spins in
+                        # a reconnect storm that seeds ~0 books. While
+                        # awaiting_first_diff holds, book.last_update_id is still
+                        # the snapshot's lastUpdateId.
+                        while (
+                            self.book.awaiting_first_diff
+                            and self._buffered_diffs
+                            and self._buffered_diffs[0][0]["u"] < self.book.last_update_id
+                        ):
+                            self._buffered_diffs.popleft()
+
                         for diff, diff_local_ts in list(self._buffered_diffs):
                             self._buffered_diffs.popleft()
                             try:
@@ -214,7 +249,7 @@ class BinanceFuturesCollector:
 
     async def _fetch_rest_snapshot(self, session: aiohttp.ClientSession) -> dict:
         params = {"symbol": self.symbol, "limit": DEFAULT_DEPTH_LEVELS}
-        async with session.get(FAPI_REST_DEPTH, params=params, timeout=10) as r:
+        async with session.get(FAPI_REST_DEPTH, params=params, timeout=10, ssl=self._ssl) as r:
             r.raise_for_status()
             return await r.json()
 
@@ -240,8 +275,9 @@ class BinanceFuturesCollector:
             last_update_id=last_update_id,
         )
 
-        # Drop stale buffered events.
-        while self._buffered_diffs and self._buffered_diffs[0][0]["u"] <= last_update_id:
+        # Drop stale buffered events (futures step 4: u STRICTLY < lastUpdateId).
+        # An event with u == lastUpdateId is the bracketing event and is kept.
+        while self._buffered_diffs and self._buffered_diffs[0][0]["u"] < last_update_id:
             self._buffered_diffs.popleft()
 
         if not self._buffered_diffs:
@@ -253,7 +289,7 @@ class BinanceFuturesCollector:
         first, first_local_ts = self._buffered_diffs[0]
         if not self.book.is_first_diff_after_snapshot(first["U"], first["u"]):
             raise BookResyncRequired(
-                f"first diff does not bracket lastUpdateId+1: "
+                f"first diff does not bracket lastUpdateId: "
                 f"snap.lastUpdateId={last_update_id}, U={first['U']}, u={first['u']}"
             )
 
