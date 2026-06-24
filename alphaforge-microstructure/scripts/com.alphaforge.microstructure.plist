@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alphaforge.microstructure</string>
+
+    <!-- 24/7 BTC-USDT L2 + trade-tape collector. Runs the venv interpreter
+         directly with `-m collector.run_collector`; CWD (WorkingDirectory) makes
+         the `collector` package importable and `--out data/` resolve correctly. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-microstructure/.venv/bin/python</string>
+        <string>-m</string>
+        <string>collector.run_collector</string>
+        <string>--symbol</string>
+        <string>BTCUSDT</string>
+        <string>--out</string>
+        <string>data/</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-microstructure</string>
+
+    <!-- KeepAlive=true: this is a daemon, not a job. Relaunch on ANY exit
+         (crash, OOM, or a death during sleep that the process can't recover from
+         on wake). Transient network/DNS blips are handled INSIDE the collector's
+         own reconnect+backoff loop, so it does not exit on those — KeepAlive is
+         the backstop for the cases the process itself can't survive. -->
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- Start immediately at load and at every login/boot. -->
+    <key>RunAtLoad</key>
+    <true/>
+
+    <!-- Min seconds between respawns. Guards against a hot crash-loop hammering
+         the host while still recovering quickly from a one-off crash. -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+
+    <!-- Standard (not Background): a Phase 0 gap fraction < 0.1% is required, so
+         the collector must NOT be CPU/IO-throttled or App-Napped by the system. -->
+    <key>ProcessType</key>
+    <string>Standard</string>
+
+    <!-- launchd's capture of the process's stdout/stderr. The collector ALSO
+         writes its own timestamped logs under logs/collector_*.log. -->
+    <key>StandardOutPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-microstructure/logs/launchd.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-microstructure/logs/launchd.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-microstructure/.venv/bin:/Library/Frameworks/Python.framework/Versions/3.13/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>LANG</key>
+        <string>en_US.UTF-8</string>
+    </dict>
+</dict>
+</plist>
