@@ -207,7 +207,7 @@ def _draw_footer(canvas, doc):
     canvas.drawCentredString(width / 2, 0.4 * inch,
                              f"AlphaForge — Project Overview  |  {page_num}")
     canvas.drawRightString(width - 0.6 * inch, 0.4 * inch,
-                           "Atharva Patil  |  2026-05-22")
+                           "Quant Alpha  |  2026-06-19")
     canvas.setStrokeColor(BORDER)
     canvas.setLineWidth(0.3)
     canvas.line(0.6 * inch, 0.6 * inch, width - 0.6 * inch, 0.6 * inch)
@@ -232,7 +232,7 @@ def build():
         leftMargin=0.85 * inch, rightMargin=0.85 * inch,
         topMargin=0.9 * inch, bottomMargin=0.85 * inch,
         title="AlphaForge — Project Overview",
-        author="Atharva Patil",
+        author="AlphaForge",
         subject="Quantitative research stack — architecture, methodology, and substrate verdicts",
     )
     story = []
@@ -293,8 +293,7 @@ def build():
 
     S(Spacer(1, 0.20 * inch))
     S(hr(PRIMARY, 0.8))
-    S(P("<b>Author:</b> Atharva Patil &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
-        "<b>Repository:</b> <i>Quant Alpha</i> &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
+    S(P("<b>Repository:</b> <i>Quant Alpha</i> &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
         "<b>Generated:</b> 2026-06-19 &nbsp;&nbsp;&middot;&nbsp;&nbsp; "
         "<b>Build:</b> <tt>docs/build_alphaforge_pdf.py</tt>", style="Caption"))
     S(hr(PRIMARY, 0.8))
@@ -572,7 +571,7 @@ def build():
         "ever-member tickers have no yfinance OHLCV — mostly delisted, "
         "restructured, or pre-IPO at the request date. Every downstream "
         "metric reports this as a known limitation; CRSP-grade data would "
-        "close the gap but is outside the founder-path budget."
+        "close the gap but is outside the project's free-data budget."
     ))
 
     S(H("Per-substrate data flow", 3))
@@ -1522,9 +1521,11 @@ def build():
     S(H("Substrate #10 — Kalshi Favorite-Longshot Bias (PHASE 1 INCONCLUSIVE)", 3))
     S(P(
         "The first substrate where <b>small capacity is the edge, not the "
-        "handicap</b>: a $40k Kalshi market is too small for an institution and "
-        "right-sized for a solo trader. Goal: a credible live track record, not "
-        "fund-scale alpha. Phase 0 CERTIFIED (292 volume-bearing resolved "
+        "handicap</b>: a ~$40k Kalshi market sits below the size at which "
+        "crowding and market impact bind, so the capacity constraint that "
+        "handicaps larger strategies does not apply. The evaluation objective "
+        "is a credible live track record, not large-scale alpha. Phase 0 "
+        "CERTIFIED (292 volume-bearing resolved "
         "contracts, no-look-ahead 100%; Kalshi fee schedule confirmed). Phase 1 "
         "INCONCLUSIVE — the free read-only host exposes only a recent, MVE-heavy "
         "universe, so available N sits <b>25–140&times; below the binary-MDE "
@@ -1640,7 +1641,7 @@ def build():
     S(H("What the project demonstrates today", 3))
     S(P(
         "An end-to-end research-grade systematic-trading stack built and run "
-        "on free public data by a solo undergraduate, applied honestly to a "
+        "on free public data, applied honestly to a "
         "known-hard problem across six asset classes and two strategy "
         "classes, with methodology bugs found and fixed in the same session "
         "they surfaced and every diagnostic shift documented openly. <b>The "
