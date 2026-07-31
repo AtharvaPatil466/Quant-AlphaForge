@@ -28,8 +28,8 @@ EXEC_OUT   := $(EXEC_DIR)/research/out
 export ALPHAFORGE_GLOBAL_SEED ?= 42
 
 .PHONY: all factor-study capacity-study marl-rigor ablation-ladder \
-        slippage-reconciliation tests tests-python tests-marl tests-execution \
-        clean print-seeds
+        slippage-reconciliation overview tests tests-python tests-marl \
+        tests-execution clean print-seeds
 
 all: factor-study capacity-study tsmom-study pairs-study marl-rigor ablation-ladder
 
@@ -86,6 +86,21 @@ $(EXEC_OUT)/slippage_reconciliation.md: \
 	   echo "[skipped — no SQLite DB yet]"
 
 slippage-reconciliation: $(EXEC_OUT)/slippage_reconciliation.md
+
+# ─── project overview PDF ───────────────────────────────────────────────
+# docs/AlphaForge_Project_Overview.md is the source of truth; the PDF is
+# generated. Edit the markdown, then `make overview`.
+#
+# Both fonts are pinned deliberately: the document uses ✓ → ↔ ≥ ≈ ± ∈ Δ √ §,
+# and the LaTeX default (Latin Modern) silently drops them. This pairing is
+# the only locally-installed one with full coverage. If you change a font,
+# grep the build output for "could not represent" — the failure is silent.
+docs/AlphaForge_Project_Overview.pdf: docs/AlphaForge_Project_Overview.md
+	pandoc $< -o $@ --pdf-engine=tectonic --toc --number-sections \
+	   -V geometry:margin=1in -V colorlinks=true \
+	   -V mainfont="Arial Unicode MS" -V monofont="Menlo"
+
+overview: docs/AlphaForge_Project_Overview.pdf
 
 # ─── tests ──────────────────────────────────────────────────────────────
 tests: tests-python tests-marl tests-execution
