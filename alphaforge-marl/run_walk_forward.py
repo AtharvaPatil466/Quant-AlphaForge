@@ -57,7 +57,6 @@ def main():
         config._data["population"]["episodes_per_agent"] = 3
         config._data["validation"]["validate_every_n_gens"] = 3
         config._data["evolution"]["maml_enabled"] = False
-        config._data["distributed"]["enabled"] = False
     else:
         config = load_config(args.config)
 

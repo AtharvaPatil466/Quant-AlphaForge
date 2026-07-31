@@ -25,7 +25,6 @@ from training.baselines import compute_performance_metrics, evaluate_baselines
 from training.config import Config, load_config
 from training.checkpoint import save_checkpoint, load_checkpoint
 from training.curriculum import CurriculumScheduler
-from training.distributed import DistributedEvaluator
 from training.logger import TrainingLogger
 
 logger = logging.getLogger(__name__)
@@ -224,14 +223,6 @@ class Trainer:
         # Logger
         self.logger = TrainingLogger(log_path=log_path)
 
-        # Distributed evaluation
-        dist_cfg = self.config.get("distributed", {})
-        if isinstance(dist_cfg, Config):
-            dist_cfg = dist_cfg.to_dict()
-        self._distributed_enabled = dist_cfg.get("enabled", False)
-        self._n_workers = dist_cfg.get("n_workers", None)
-        self._distributed_evaluator: Optional[DistributedEvaluator] = None
-
         # Curriculum learning
         self.curriculum = CurriculumScheduler(
             enabled=curriculum_cfg.get("enabled", True)
@@ -266,42 +257,6 @@ class Trainer:
 
         self._running = True
         history: List[GenerationStats] = []
-
-        # Start distributed evaluator if enabled
-        if self._distributed_enabled:
-            env_kwargs = {
-                "sector": self.env.sector,
-                "lookback": self.env.lookback,
-                "episode_length": self.env.episode_length,
-                "max_position": self.env.max_position,
-                "max_gross_exposure": self.env.max_gross_exposure,
-                "stop_loss": self.env.stop_loss,
-                "tx_cost_bps": int(self.env.tx_cost * 10000),
-                "catastrophic_nav": self.env.catastrophic_nav,
-                "data_mode": self.env.data_mode,
-                "real_data_cache_dir": self.env.real_data_cache_dir,
-                "real_data_end_date": self.env.real_data_end_date,
-                "hybrid_real_prob": self.env.hybrid_real_prob,
-                "strict_real_data": self.env.strict_real_data,
-                "normalize_observations": self.env.normalize_observations,
-                "observation_norm_window": self.env.observation_norm_window,
-                "benchmark_relative_mix": self.env._reward_kwargs.get("benchmark_relative_mix", 0.5),
-                "relative_reference_strategy": self.env.relative_reference_strategy,
-                "sharpe_delta_scale": self.env.sharpe_delta_scale,
-                "drawdown_step_penalty": self.env.drawdown_step_penalty,
-                "participation_bonus": self.env.participation_bonus,
-                "inactivity_penalty": self.env.inactivity_penalty,
-                "episode_reward_scale": self.env.episode_reward_scale,
-            }
-            self._distributed_evaluator = DistributedEvaluator(
-                n_workers=self._n_workers,
-                env_kwargs=env_kwargs,
-            )
-            self._distributed_evaluator.start()
-            self.evo_engine.distributed_evaluator = self._distributed_evaluator
-            logger.info(
-                f"Distributed evaluation enabled with {self._distributed_evaluator.n_workers} workers"
-            )
 
         for g in range(n_generations):
             if not self._running:
@@ -432,12 +387,6 @@ class Trainer:
         # Final checkpoint
         if history:
             self._save_checkpoint(history[-1])
-
-        # Shut down distributed evaluator
-        if self._distributed_evaluator is not None:
-            self._distributed_evaluator.stop()
-            self._distributed_evaluator = None
-            self.evo_engine.distributed_evaluator = None
 
         logger.info(
             f"Training done. Best val Sharpe: {self.best_val_sharpe:.4f} "

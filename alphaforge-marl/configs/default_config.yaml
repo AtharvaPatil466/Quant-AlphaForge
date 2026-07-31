@@ -114,10 +114,6 @@ ensemble:
   pareto_max_size: 8         # Max agents in Pareto front
   min_weight: 0.05           # Minimum capital weight per agent
 
-distributed:
-  enabled: false              # Set true for multiprocessing evaluation
-  n_workers: null             # null = cpu_count - 1
-
 data:
   mode: "hybrid"              # "synthetic", "real", "real_strict", or "hybrid"
   sector: "All"               # "All" = full 30-ticker universe across 5 sectors

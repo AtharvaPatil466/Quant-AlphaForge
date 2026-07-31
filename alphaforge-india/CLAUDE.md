@@ -239,11 +239,11 @@ Operational notes:
   - **323/323 tests passing** on python3.13.
 
 - **2026-05-20 session 6** (parallel-to-download work — download running externally on user's machine, ~2017 in progress):
-  - `ingest/progress.py` — read-only download progress monitor. Reads the live `_download_checkpoint.jsonl`, reports per-result/per-year counts, surfaces halt rows + recent failures, estimates ETA honoring the era split (pre-2020 = 2 sources/weekday, post = 1). 15 tests.
+  - ~~`ingest/progress.py` — read-only download progress monitor. 15 tests.~~ **REMOVED 2026-07-31** — the download it monitored completed and the substrate closed FAILED 2026-05-20; its only importer was its own test file. Recover from git history if a future substrate needs it.
   - `research/build_factor_matrix.py` — orchestrator around `gauntlet.residualization.build_factor_matrix`. Loads bhavcopy → close + volume panels, builds the four-factor return matrix (MKT, SMB, LIQ, const), writes CSV consumable by `research/run_phase3.py --factor-matrix`. Risk-free defaults to 7%/yr constant if no CSV supplied. SMB falls back to close × volume proxy when no free-float-mcap data (documented). 14 tests.
   - `research/cs_calibration.py` — Phase 0 §6 deliverable. Samples 50 Nifty 500 stocks (seeded), computes Corwin-Schultz half-spread per stock per window (IS / OOS-A / OOS-B), compares against parametric 5 bp, flags any window above the 10 bp documentation threshold. 19 tests.
   - **Defensive fix to four loaders** (`ingest.validator`, `research.run_phase1`, `research.run_phase3`, `research.build_factor_matrix`): added `drop_duplicates(subset=["date","symbol"])` because `build_parquet.py` writes era-overlap dates twice in 2020 (128,806 exact-identical duplicate rows found). Loaders also accept the `{YYYY}.parquet` canonical naming convention.
-  - **371/371 tests passing.**
+  - **371/371 tests passing** (356/356 as of 2026-07-31, after `ingest/progress.py` and its 15 tests were removed).
 
 - **2026-05-20 session 7** (download complete — full pipeline + CLOSED FAILED verdict):
   - **Phase 0 CERTIFIED**: 6/6 active gates pass. 7,764,360 EQ rows across 5,527 dates (2004-01-01 → 2026-05-19), 4,225 unique symbols. 100% DELIV_PER coverage on 3,558,569 Nifty 500 ever-member rows. F&O calendar 57/57 reference months matched. Holiday log 40/40 known holidays. (TRI correlation + FII/DII remain SKIP per design.)

@@ -69,6 +69,8 @@ htmlcov/
 .env
 .env.local
 .env.*.local
+ops/watchdog.env
+ops/backup.env
 *.pem
 *.key
 credentials.json
@@ -159,9 +161,22 @@ tmp/
 GEMINI.md
 
 # ─────────────────────────────────────────────────────────────────────────
+# Vendored third-party agent tooling — not part of AlphaForge.
+# Nothing under alphaforge-* imports it. Re-clone if needed:
+#   git clone https://github.com/affaan-m/ECC.git ECC
+# ─────────────────────────────────────────────────────────────────────────
+ECC/
+
+# ─────────────────────────────────────────────────────────────────────────
 # Generated tool output
 # ─────────────────────────────────────────────────────────────────────────
 graphify-out/
+
+# ─────────────────────────────────────────────────────────────────────────
+# Phase 3 staged inputs — deterministically derived from the tracked
+# phase3_raw_*.csv by research/phase3_stage_inputs.py. Track raw, not staged.
+# ─────────────────────────────────────────────────────────────────────────
+alphaforge-python/research/phase3_staged_reference.csv
 
 # ─────────────────────────────────────────────────────────────────────────
 # Regenerable validation artifacts

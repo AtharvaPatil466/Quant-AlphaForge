@@ -86,21 +86,13 @@ class EvolutionaryEngine:
         self.nsga2_enabled = nsga2_enabled
         self._episode_results: dict[str, dict[str, float]] = {}
 
-        # Distributed evaluation (set by Trainer when enabled)
-        self.distributed_evaluator = None
-
     def run_generation(self) -> GenerationStats:
         """Execute one full generation cycle."""
         self.generation += 1
         self.pool.set_generation(self.generation)
 
         # 1. Evaluate with random training seeds
-        if self.distributed_evaluator is not None:
-            # Parallel evaluation across CPU cores
-            self.distributed_evaluator.evaluate_population(
-                self.pool.agents, self.episodes_per_agent, self.seed_range,
-            )
-        elif self.nsga2_enabled:
+        if self.nsga2_enabled:
             _, self._episode_results = evaluate_population_multi_objective(
                 self.pool.agents, self.env, self.episodes_per_agent, self.seed_range
             )
