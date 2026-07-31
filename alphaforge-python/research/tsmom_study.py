@@ -25,6 +25,12 @@ if str(PROJECT_DIR) not in sys.path:
 
 from data.market.loader import MarketDataLoader
 from data.market.universe import ALL_REAL_TICKERS
+from research._stats import (
+    ann_return,
+    ann_sharpe,
+    max_drawdown,
+    stationary_bootstrap_sharpe,
+)
 from strategies.tsmom import TSMOMConfig, tsmom_backtest
 
 OUT_DIR = THIS_DIR / "out"
@@ -54,52 +60,6 @@ def load_close() -> pd.DataFrame:
     close = pd.DataFrame({t: df["Adj Close"].loc[idx] for t, df in history.items()})
     close = close.dropna(axis=1, how="all").ffill(limit=2).dropna(axis=1)
     return close
-
-
-def ann_sharpe(r: pd.Series) -> float:
-    if len(r) < 30 or r.std(ddof=1) == 0:
-        return 0.0
-    return float(r.mean() / r.std(ddof=1) * math.sqrt(252))
-
-
-def ann_return(r: pd.Series) -> float:
-    nav = (1 + r).prod()
-    if nav <= 0 or len(r) == 0:
-        return 0.0
-    return float(nav ** (252 / len(r)) - 1)
-
-
-def max_drawdown(r: pd.Series) -> float:
-    nav = (1 + r).cumprod()
-    return float(((nav - nav.cummax()) / nav.cummax()).min())
-
-
-def stationary_bootstrap_sharpe(r: np.ndarray, reps: int = BOOT_REPS,
-                                mean_block: int = BOOT_BLOCKS, seed: int = 0) -> Dict[str, float]:
-    rng = np.random.default_rng(seed)
-    n = len(r)
-    if n < 30:
-        return {"ci_lo": 0.0, "ci_hi": 0.0, "p_positive": 0.0}
-    p = 1.0 / mean_block
-    out = np.empty(reps)
-    for b in range(reps):
-        idxs = np.empty(n, dtype=np.int64)
-        i = int(rng.integers(0, n))
-        for k in range(n):
-            if k > 0 and rng.random() < p:
-                i = int(rng.integers(0, n))
-            else:
-                i = (i + 1) % n if k > 0 else i
-            idxs[k] = i
-        s = r[idxs]; sd = s.std(ddof=1)
-        out[b] = (s.mean() / sd * math.sqrt(252)) if sd > 0 else 0.0
-    return {
-        "ci_lo": float(np.quantile(out, 0.025)),
-        "ci_hi": float(np.quantile(out, 0.975)),
-        "p_positive": float((out > 0).mean()),
-    }
-
-
 def main():
     t0 = time.time()
     print(f"[{time.time()-t0:5.1f}s] Loading panel...")
@@ -113,6 +73,7 @@ def main():
             bt = tsmom_backtest(close, cfg)
             net = bt["net"].dropna()
             boot = stationary_bootstrap_sharpe(net.to_numpy(),
+                                               reps=BOOT_REPS, mean_block=BOOT_BLOCKS,
                                                seed=abs(hash((lev, lb))) % (2**31))
             grid_results.append({
                 "max_gross_leverage": lev,

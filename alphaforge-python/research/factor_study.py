@@ -37,6 +37,12 @@ if str(PROJECT_DIR) not in sys.path:
 from data.market.loader import MarketDataLoader
 from data.market.pit import load_pit_field_panel, load_pit_sector_map
 from data.market.universe import ALL_REAL_TICKERS, REAL_TICKER_SPECS
+from research._stats import (
+    ann_return,
+    ann_sharpe,
+    max_drawdown,
+    stationary_bootstrap_sharpe,
+)
 from research.risk_model import load_reference_factor_table, rolling_factor_residuals_panel
 from research.stats_hygiene import (
     hansen_spa_test, white_reality_check,
@@ -441,53 +447,7 @@ def quintile_backtest_from_returns(
 
 
 # ---------- metrics ----------
-def ann_sharpe(r: pd.Series) -> float:
-    if len(r) < 30 or r.std(ddof=1) == 0:
-        return 0.0
-    return float(r.mean() / r.std(ddof=1) * math.sqrt(252))
-
-
-def ann_return(r: pd.Series) -> float:
-    nav = (1 + r).prod()
-    if nav <= 0 or len(r) == 0:
-        return 0.0
-    years = len(r) / 252.0
-    return float(nav ** (1 / years) - 1)
-
-
-def max_drawdown(r: pd.Series) -> float:
-    nav = (1 + r).cumprod()
-    peak = nav.cummax()
-    dd = (nav - peak) / peak
-    return float(dd.min())
-
-
 # ---------- stationary bootstrap ----------
-def stationary_bootstrap_sharpe(r: np.ndarray, reps: int = BOOT_REPS, mean_block: int = BOOT_BLOCKS, seed: int = 0) -> Dict[str, float]:
-    rng = np.random.default_rng(seed)
-    n = len(r)
-    p = 1.0 / mean_block
-    out = np.empty(reps)
-    for b in range(reps):
-        idxs = np.empty(n, dtype=np.int64)
-        i = rng.integers(0, n)
-        for k in range(n):
-            if k > 0 and rng.random() < p:
-                i = rng.integers(0, n)
-            else:
-                i = (i + 1) % n if k > 0 else i
-            idxs[k] = i
-        sample = r[idxs]
-        sd = sample.std(ddof=1)
-        out[b] = (sample.mean() / sd * math.sqrt(252)) if sd > 0 else 0.0
-    return {
-        "mean": float(out.mean()),
-        "ci_lo": float(np.quantile(out, 0.025)),
-        "ci_hi": float(np.quantile(out, 0.975)),
-        "p_positive": float((out > 0).mean()),
-    }
-
-
 # ---------- deflated Sharpe ----------
 def deflated_sharpe_ratio(sr_observed: float, n_obs: int, sr_candidates: List[float]) -> Dict[str, float]:
     """Bailey & López de Prado (2014). SR in annualized units; converted to per-period.
@@ -643,6 +603,7 @@ def _run_variant(label: str, factors: Dict[str, pd.DataFrame],
         }
         sharpe_candidates_net.append(metrics["net"]["sharpe"])
         boot = stationary_bootstrap_sharpe(ls_net.to_numpy(),
+                                           reps=BOOT_REPS, mean_block=BOOT_BLOCKS,
                                            seed=abs(hash((label, name))) % (2**31))
         metrics["net"]["sharpe_bootstrap"] = boot
 

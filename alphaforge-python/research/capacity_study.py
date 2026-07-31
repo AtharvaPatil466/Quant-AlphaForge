@@ -42,6 +42,12 @@ if str(PROJECT_DIR) not in sys.path:
 
 from data.market.loader import MarketDataLoader
 from data.market.universe import ALL_REAL_TICKERS
+from research._stats import (
+    ann_return,
+    ann_sharpe,
+    max_drawdown,
+    stationary_bootstrap_sharpe,
+)
 from research.cost_model import (
     HonestCostModel, SquareRootImpactModel, BorrowCostTable, corwin_schultz_spread,
 )
@@ -96,55 +102,6 @@ def load_panel() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame
 def build_momentum_panel(close: pd.DataFrame) -> pd.DataFrame:
     """12-1 momentum (JS parity)."""
     return (close.shift(21) - close.shift(252)) / close.shift(252)
-
-
-def ann_sharpe(r: pd.Series) -> float:
-    if len(r) < 30 or r.std(ddof=1) == 0:
-        return 0.0
-    return float(r.mean() / r.std(ddof=1) * math.sqrt(252))
-
-
-def ann_return(r: pd.Series) -> float:
-    nav = (1 + r).prod()
-    if nav <= 0 or len(r) == 0:
-        return 0.0
-    return float(nav ** (252 / len(r)) - 1)
-
-
-def max_drawdown(r: pd.Series) -> float:
-    nav = (1 + r).cumprod()
-    peak = nav.cummax()
-    return float(((nav - peak) / peak).min())
-
-
-def stationary_bootstrap_sharpe(r: np.ndarray, reps: int = BOOT_REPS,
-                                mean_block: int = BOOT_BLOCKS, seed: int = 0) -> Dict[str, float]:
-    rng = np.random.default_rng(seed)
-    n = len(r)
-    if n < 30:
-        return {"mean": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "p_positive": 0.0}
-    p = 1.0 / mean_block
-    out = np.empty(reps)
-    for b in range(reps):
-        idxs = np.empty(n, dtype=np.int64)
-        i = int(rng.integers(0, n))
-        for k in range(n):
-            if k > 0 and rng.random() < p:
-                i = int(rng.integers(0, n))
-            else:
-                i = (i + 1) % n if k > 0 else i
-            idxs[k] = i
-        sample = r[idxs]
-        sd = sample.std(ddof=1)
-        out[b] = (sample.mean() / sd * math.sqrt(252)) if sd > 0 else 0.0
-    return {
-        "mean": float(out.mean()),
-        "ci_lo": float(np.quantile(out, 0.025)),
-        "ci_hi": float(np.quantile(out, 0.975)),
-        "p_positive": float((out > 0).mean()),
-    }
-
-
 def run_backtest_with_aum(
     factor: pd.DataFrame,
     close: pd.DataFrame,
@@ -249,7 +206,9 @@ def regime_conditional_sharpe(net: pd.Series, benchmark: pd.Series) -> Dict[str,
                          ("all", pd.Series(True, index=vol.index))]:
         r = net[mask.reindex(net.index, fill_value=False)]
         if len(r) >= 30:
-            boot = stationary_bootstrap_sharpe(r.to_numpy(), seed=abs(hash(label)) % (2**31))
+            boot = stationary_bootstrap_sharpe(r.to_numpy(), reps=BOOT_REPS,
+                                               mean_block=BOOT_BLOCKS,
+                                               seed=abs(hash(label)) % (2**31))
         else:
             boot = {"mean": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "p_positive": 0.0}
         out[label] = {
@@ -327,6 +286,7 @@ def main():
         net = bt["net"]
         gross = bt["gross"]
         boot = stationary_bootstrap_sharpe(net.to_numpy(),
+                                           reps=BOOT_REPS, mean_block=BOOT_BLOCKS,
                                            seed=abs(hash(aum)) % (2**31))
         curve.append({
             "aum_dollar": float(aum),
