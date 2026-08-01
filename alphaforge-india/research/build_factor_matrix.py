@@ -24,7 +24,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from datetime import date, datetime
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -151,7 +151,7 @@ def build_matrix(
 # ---------------------------------------------------------------------------
 
 def _parse_date(s: str) -> date:
-    return datetime.strptime(s, "%Y-%m-%d").date()
+    return date.fromisoformat(s)
 
 
 def main(argv: list[str] | None = None) -> int:

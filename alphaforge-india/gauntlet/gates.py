@@ -1,3 +1,5 @@
+# Frozen: closed substrate reproducibility.
+# Do not refactor to afgauntlet.
 """Five-gate gauntlet for alphaforge-india signal evaluation.
 
 Per research/INDIA_DESIGN.md §5 and §10:

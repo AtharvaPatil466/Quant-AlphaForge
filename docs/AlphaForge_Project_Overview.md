@@ -258,8 +258,8 @@ Total round-trip cost: ~35.9 bps + 10 bps impact at base; 2× stress (G4): 71.8 
 
 `TradingEnv → AgentPool → EvolutionaryEngine (NSGA-II + speciation + MAML) → RegimeBandit (HMM) → Ensemble`
 
-- **TradingEnv.** Gymnasium env, 57-dim observation, 5 discrete actions *or* 10-dim continuous weights. Dense reward shaping: rolling Sharpe delta + drawdown penalty + participation, plus Sharpe-based terminal reward. Curriculum scheduler ramps transaction costs, leverage, stops, and episode length. `env/real_data.py` sources aligned OHLCV from the shared parquet store — training never touches the network.
-- **Agents.** `BaseAgent` wraps an `ActorCriticNetwork` with multi-head attention over per-ticker features. Variants: `ContinuousActorCritic`, `DQNHead`, `PPOTrainer` (GAE + clipped surrogate), `MAMLTrainer` (FOMAML), `EnsemblePolicy`, `ParetoFront`, `AgentPool`.
+- **TradingEnv.** Gymnasium env, 57-dim observation, 5 discrete actions. Continuous action space is not implemented. Dense reward shaping: rolling Sharpe delta + drawdown penalty + participation, plus Sharpe-based terminal reward. Curriculum scheduler ramps transaction costs, leverage, stops, and episode length. `env/real_data.py` sources aligned OHLCV from the shared parquet store — training never touches the network.
+- **Agents.** `BaseAgent` wraps an `ActorCriticNetwork` with multi-head attention over per-ticker features. Continuous action space is not implemented. Variants: `DQNHead`, `PPOTrainer` (GAE + clipped surrogate), `MAMLTrainer` (FOMAML), `EnsemblePolicy`, `ParetoFront`, `AgentPool`.
 - **Evolution.** Per-generation: evaluate under common random numbers → PPO fine-tune → periodic MAML → NSGA-II select on (Sharpe, drawdown, turnover) → speciated reproduction (Jensen-Shannon distance) → per-parameter adaptive mutation.
 - **Regime bandit.** HMM regime detector (K-means init + Baum-Welch). Thompson sampling per (regime, agent) feeds a capital allocator.
 - **Walk-forward validator.** Anchored splits, strict temporal isolation, reports overfitting ratio and val/test correlation.

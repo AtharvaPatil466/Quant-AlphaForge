@@ -1,3 +1,5 @@
+# Frozen: closed substrate reproducibility.
+# Do not refactor to afgauntlet.
 """Advanced statistical hygiene beyond Deflated Sharpe.
 
 Two tools:

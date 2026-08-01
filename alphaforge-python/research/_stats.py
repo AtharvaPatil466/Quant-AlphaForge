@@ -1,33 +1,48 @@
-"""Shared performance statistics for the research studies.
+"""Study statistics for the research scripts — an adapter over `afgauntlet`.
 
-Extracted from factor_study / capacity_study / tsmom_study / pairs_study, which
-each carried their own copy of these four functions. The copies had drifted:
+The Sharpe and stationary-bootstrap math is NOT implemented here. It is the
+canonical `afgauntlet` package (`annualized_sharpe`,
+`stationary_bootstrap_indices`), so these studies run the same audited,
+version-pinned code as every substrate verdict.
 
-  - `stationary_bootstrap_sharpe` returned a "mean" key in factor_study and
-    capacity_study but not in tsmom_study or pairs_study.
-  - factor_study had no `n < 30` short-circuit; the other three did.
-  - `ann_return` was written as `nav ** (1 / years)` in factor_study and
-    `nav ** (252 / len(r))` elsewhere. Algebraically identical.
-  - `max_drawdown` differed only in whether `nav.cummax()` was bound to a
-    local. Identical.
+What survives locally is only what afgauntlet does not export:
 
-The capacity_study forms are canonical here: the "mean" key is always present
-and the `n < 30` guard always applies. Bootstrapping a 20-observation series
-produces a CI that means nothing, so returning zeros is the honest answer.
+  - `ann_return` / `max_drawdown` — NAV-path descriptives, not gauntlet
+    statistics; no canonical home.
+  - the dict-shaped bootstrap return (`mean` / `ci_lo` / `ci_hi` /
+    `p_positive`). afgauntlet's `stationary_bootstrap_sharpe_ci` returns a
+    `SharpeBootstrapCI` carrying the *point* Sharpe and CI bounds, and drops
+    the replicate array — so it cannot produce `mean` (the bootstrap
+    distribution's mean) or `p_positive`, both of which these reports print.
+    We rebuild the distribution from afgauntlet's index generator instead of
+    re-deriving the resampling scheme.
 
-`reps` and `mean_block` intentionally have module defaults but every caller
-passes its own BOOT_REPS / BOOT_BLOCKS explicitly — factor_study uses 2000
-reps where the others use 1000, and a shared default would have silently
-changed four call sites during extraction.
+Verified bit-identical to the previous local implementation: same RNG stream,
+same quantiles, same `mean`/`p_positive`.
+
+`reps` and `mean_block` have module defaults but every caller passes its own
+BOOT_REPS / BOOT_BLOCKS explicitly — factor_study uses 2000 reps where the
+others use 1000, and a shared default would silently change call sites.
 """
 
 from __future__ import annotations
 
-import math
+import sys
+from pathlib import Path
 from typing import Dict
 
 import numpy as np
 import pandas as pd
+
+# The canonical gauntlet package lives in the sibling `alphaforge-gauntlet/`
+# and is not pip-installed — same sys.path pattern alphaforge-prediction uses.
+_REPO_ROOT = Path(__file__).resolve().parents[2]
+_GAUNTLET = _REPO_ROOT / "alphaforge-gauntlet"
+if str(_GAUNTLET) not in sys.path:
+    sys.path.insert(0, str(_GAUNTLET))
+
+from afgauntlet import (ANNUALIZATION, annualized_sharpe,  # noqa: E402
+                        stationary_bootstrap_indices)
 
 DEFAULT_BOOT_REPS = 1000
 DEFAULT_BOOT_BLOCKS = 21
@@ -36,14 +51,18 @@ DEFAULT_BOOT_BLOCKS = 21
 # not meaningful. Shared by every caller.
 MIN_OBS = 30
 
-TRADING_DAYS = 252
+TRADING_DAYS = int(ANNUALIZATION)
 
 
 def ann_sharpe(r: pd.Series) -> float:
-    """Annualized Sharpe. 0.0 on degenerate input (too short, or zero vol)."""
-    if len(r) < MIN_OBS or r.std(ddof=1) == 0:
+    """Annualized Sharpe. 0.0 on degenerate input (too short, or zero vol).
+
+    The `MIN_OBS` floor is this project's convention and sits on top of
+    afgauntlet, which has no minimum-length opinion of its own.
+    """
+    if len(r) < MIN_OBS:
         return 0.0
-    return float(r.mean() / r.std(ddof=1) * math.sqrt(TRADING_DAYS))
+    return float(annualized_sharpe(r, TRADING_DAYS))
 
 
 def ann_return(r: pd.Series) -> float:
@@ -69,30 +88,18 @@ def stationary_bootstrap_sharpe(
 ) -> Dict[str, float]:
     """Politis-Romano stationary bootstrap CI on the annualized Sharpe.
 
-    Geometric block lengths with mean `mean_block` preserve the serial
-    dependence that an i.i.d. bootstrap would destroy. Returns the bootstrap
-    distribution's mean, its 95% percentile interval, and the fraction of
-    resamples with a positive Sharpe.
+    Resampling and per-replicate Sharpe both come from afgauntlet; this only
+    reduces the replicate distribution to the dict shape the reports print.
     """
-    rng = np.random.default_rng(seed)
     n = len(r)
     if n < MIN_OBS:
         return {"mean": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "p_positive": 0.0}
 
-    p = 1.0 / mean_block
+    rng = np.random.default_rng(seed)
     out = np.empty(reps)
     for b in range(reps):
-        idxs = np.empty(n, dtype=np.int64)
-        i = int(rng.integers(0, n))
-        for k in range(n):
-            if k > 0 and rng.random() < p:
-                i = int(rng.integers(0, n))
-            else:
-                i = (i + 1) % n if k > 0 else i
-            idxs[k] = i
-        sample = r[idxs]
-        sd = sample.std(ddof=1)
-        out[b] = (sample.mean() / sd * math.sqrt(TRADING_DAYS)) if sd > 0 else 0.0
+        idxs = stationary_bootstrap_indices(n, mean_block, rng)
+        out[b] = annualized_sharpe(r[idxs], TRADING_DAYS)
 
     return {
         "mean": float(out.mean()),
@@ -111,16 +118,15 @@ def _demo() -> None:
     assert ann_sharpe(short) == 0.0
     assert ann_sharpe(pd.Series([0.0] * 100)) == 0.0           # exactly zero vol
     assert ann_return(pd.Series([], dtype=float)) == 0.0
-
-    # KNOWN SHARP EDGE, carried over unchanged from all four original copies:
-    # the zero-vol guard is an exact `== 0` test, and a constant *non-zero*
-    # series has std ~1.7e-18 rather than 0.0, so it slips through and yields
-    # a nonsense Sharpe. Not fixed here — this extraction is behaviour-
-    # preserving by design, and a tolerance would move published numbers.
-    assert ann_sharpe(pd.Series([0.01] * 100)) > 1e15
     assert stationary_bootstrap_sharpe(short.to_numpy()) == {
         "mean": 0.0, "ci_lo": 0.0, "ci_hi": 0.0, "p_positive": 0.0
     }
+
+    # Delegating to afgauntlet FIXED a sharp edge the four original local
+    # copies shared: their zero-vol guard was an exact `std(ddof=1) == 0`, and
+    # a constant *non-zero* series has std ~1.7e-18, so it slipped through and
+    # returned a Sharpe of ~9e16. afgauntlet's guard is FP-tolerant.
+    assert ann_sharpe(pd.Series([0.01] * 100)) == 0.0
 
     # A strongly positive drift is detected with the CI above zero.
     good = pd.Series(rng.normal(0.002, 0.01, 500))

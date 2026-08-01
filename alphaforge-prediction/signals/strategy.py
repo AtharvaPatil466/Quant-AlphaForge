@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import math
 import time
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from typing import Any, Sequence
 
 from ingest import schema as S
@@ -294,26 +294,7 @@ class PaperOrder:
     rule_name: str
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "ticker": self.ticker,
-            "event_ticker": self.event_ticker,
-            "series_ticker": self.series_ticker,
-            "category": self.category,
-            "side": self.side,
-            "direction": self.direction,
-            "entry_price": self.entry_price,
-            "implied_prob": self.implied_prob,
-            "effective_entry_price": self.effective_entry_price,
-            "stake_contracts": self.stake_contracts,
-            "bucket_lo": self.bucket_lo,
-            "bucket_hi": self.bucket_hi,
-            "yes_bid": self.yes_bid,
-            "yes_ask": self.yes_ask,
-            "volume_fp": self.volume_fp,
-            "close_time": self.close_time,
-            "sp_nasdaq": self.sp_nasdaq,
-            "rule_name": self.rule_name,
-        }
+        return asdict(self)
 
 
 # ---------------------------------------------------------------------------

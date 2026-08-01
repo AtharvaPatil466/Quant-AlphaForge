@@ -40,7 +40,6 @@ environment:
   obs_dim: 57
   n_actions: 5
   catastrophic_nav: 0.50
-  continuous_actions: false  # Set true for continuous weight output
   normalize_observations: true
   observation_norm_window: 63
 

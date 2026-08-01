@@ -37,7 +37,7 @@ from data.synthetic import generate_dataset, generate_prices, PriceSeries, safe_
 from factors.scoring import compute_factor_scores_js
 from factors.registry import JS_FACTOR_NAMES
 
-from env.action_space import Action, ACTION_POSITION, N_ACTIONS, continuous_weights_to_positions
+from env.action_space import Action, ACTION_POSITION, N_ACTIONS
 from env.state_builder import build_state, rolling_signal_score
 from env.reward import compute_reward
 
@@ -142,8 +142,6 @@ class TradingEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-np.inf, high=np.inf, shape=(57,), dtype=np.float32
         )
-        # Support both discrete and continuous action spaces
-        self.continuous_actions = False
         self.action_space = spaces.Discrete(N_ACTIONS)
 
         # Episode state (initialized in reset)
@@ -229,17 +227,6 @@ class TradingEnv(gym.Env):
 
         return self._get_obs(), self._get_info()
 
-    def set_continuous(self, enabled: bool = True) -> None:
-        """Switch to continuous action space (10-dim weight vector)."""
-        self.continuous_actions = enabled
-        if enabled:
-            self.action_space = spaces.Box(
-                low=-self.max_position, high=self.max_position,
-                shape=(10,), dtype=np.float32,
-            )
-        else:
-            self.action_space = spaces.Discrete(N_ACTIONS)
-
     def step(
         self, action
     ) -> Tuple[np.ndarray, float, bool, bool, Dict[str, Any]]:
@@ -247,19 +234,8 @@ class TradingEnv(gym.Env):
         decision_day = self._day
         old_positions = dict(self._positions)
 
-        if self.continuous_actions and not isinstance(action, (int, np.integer)):
-            # Continuous: action is a weight vector
-            weights = np.asarray(action, dtype=np.float32)
-            ranked = self._rank_tickers(day=decision_day)
-            top5 = ranked[:5]
-            bot5 = ranked[-5:] if len(ranked) >= 5 else ranked[:5]
-            self._positions = continuous_weights_to_positions(
-                weights, top5, bot5,
-                self.max_position, self.max_gross_exposure,
-            )
-        else:
-            act = Action(int(action))
-            self._apply_action(act, day=decision_day)
+        act = Action(int(action))
+        self._apply_action(act, day=decision_day)
 
         self._day += 1
 

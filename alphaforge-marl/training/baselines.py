@@ -3,24 +3,27 @@
 from __future__ import annotations
 
 import math
+import os
+import sys
 from typing import Any, Dict, Iterable, List, Mapping, Sequence
 
 import numpy as np
 
 from env.state_builder import rolling_signal_score
 
+# Add alpha engine to path for the shared defensive-numerics helpers
+_ALPHA_ENGINE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    "alphaforge-python",
+)
+if _ALPHA_ENGINE not in sys.path:
+    sys.path.insert(0, _ALPHA_ENGINE)
+
+from data.synthetic import safe_div  # noqa: E402
 
 MetricDict = Dict[str, float]
 Dataset = Mapping[str, Any]
 PathDict = Dict[str, Any]
-
-
-def safe_div(a: float, b: float, fallback: float = 0.0) -> float:
-    """Finite-safe division helper."""
-    if abs(b) < 1e-12 or not np.isfinite(b):
-        return fallback
-    out = a / b
-    return float(out) if np.isfinite(out) else fallback
 
 
 def compute_performance_metrics(

@@ -1,3 +1,5 @@
+# Frozen: closed substrate reproducibility.
+# Do not refactor to afgauntlet.
 """Statistical hygiene for the VIX gauntlet — DSR + bootstrap CI + Cornish-Fisher.
 
 All functions are pure numpy/python — no scipy dependency. Deterministic via

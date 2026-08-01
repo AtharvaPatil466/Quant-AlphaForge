@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import math
 import os
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import date
 from typing import Any, Dict, Iterable, List, Mapping, Sequence
 
@@ -143,16 +143,7 @@ class BenchmarkReport:
     checkpoint_metadata: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
-        return {
-            "cache_date": self.cache_date,
-            "checkpoint_metrics": self.checkpoint_metrics,
-            "baseline_metrics": self.baseline_metrics,
-            "checkpoint_cost_grid": self.checkpoint_cost_grid,
-            "baseline_cost_grid": self.baseline_cost_grid,
-            "checkpoint_regimes": self.checkpoint_regimes,
-            "baseline_regimes": self.baseline_regimes,
-            "checkpoint_metadata": self.checkpoint_metadata,
-        }
+        return asdict(self)
 
     def to_markdown(self) -> str:
         lines = [

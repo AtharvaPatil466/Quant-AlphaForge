@@ -1,3 +1,5 @@
+# Frozen: closed substrate reproducibility.
+# Do not refactor to afgauntlet.
 """Computation primitives for the carry study.
 
 These are mechanical functions: given inputs, compute outputs deterministically.

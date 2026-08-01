@@ -551,7 +551,7 @@ def render_markdown_report(
 # ---------------------------------------------------------------------------
 
 def _parse_date(s: str) -> date:
-    return datetime.strptime(s, "%Y-%m-%d").date()
+    return date.fromisoformat(s)
 
 
 def main(argv: list[str] | None = None) -> int:
