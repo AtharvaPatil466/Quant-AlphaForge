@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import uuid
 from typing import Any, Dict, List, Optional
 
 from execution.broker import Order
@@ -12,13 +13,17 @@ from strategy.momentum import Signal
 
 
 def log_order(conn: sqlite3.Connection, date: str, order: Order) -> None:
+    # Brokers leave order_id empty on rejection; order_id is the table's
+    # primary key with INSERT OR REPLACE, so empty ids would collapse every
+    # rejection into one audit row. Synthesize a unique id for the log.
+    order_id = order.order_id or f"noid-{uuid.uuid4().hex[:12]}"
     conn.execute(
         """INSERT OR REPLACE INTO orders
            (order_id, date, ticker, side, quantity, fill_price, fill_quantity,
             status, slippage_bps, tx_cost, submitted_at, filled_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
-            order.order_id, date, order.ticker, order.side, order.quantity,
+            order_id, date, order.ticker, order.side, order.quantity,
             order.fill_price, order.fill_quantity, order.status,
             order.slippage_bps, order.tx_cost, order.submitted_at, order.filled_at,
         ),

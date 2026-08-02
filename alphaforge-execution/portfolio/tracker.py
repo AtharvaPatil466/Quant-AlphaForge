@@ -46,7 +46,7 @@ class PortfolioTracker:
         self.daily_returns.append(daily_ret)
         self.peak_nav = max(self.peak_nav, nav)
 
-        cum_ret = (nav - self.starting_nav) / self.starting_nav
+        cum_ret = (nav - self.starting_nav) / self.starting_nav if self.starting_nav > 0 else 0.0
         dd = (self.peak_nav - nav) / self.peak_nav if self.peak_nav > 0 else 0.0
 
         long_exp = sum(v for v in positions.values() if v > 0)
