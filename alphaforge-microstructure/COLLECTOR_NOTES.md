@@ -1,5 +1,28 @@
 # Collector Notes — trade-tape fidelity caveats
 
+## INCIDENT 2026-07-19 — host sleep gaps; recollection window NOT gap-clean
+
+Bucket-level audit of `data/book_snapshots/` on 2026-07-19 08:05 UTC: the
+recollection window (2026-06-24 →) is missing **~85 of ~603 hour-buckets
+(~14%)** — vs the Phase 0 budget of <0.1% feed-gap minutes. Gaps cluster in
+00–07 UTC (overnight IST) with `loop_crash:ClientConnectorDNSError` /
+`TimeoutError` churn in `_gaps.jsonl` at the edges; only 2026-07-14 and
+2026-07-15 are complete 24/24 days. Root cause: the host sleeps (`pmset`
+system sleep = 1 min idle on AC and battery). launchd KeepAlive respawns the
+collector *after wake* but nothing collects *during* sleep — the 2026-06-24
+"survives sleep" note meant respawn, not continuity. Bucket-missing is a
+lower bound; within-file gap minutes will be higher (run
+`validation/gap_detector.py` for the verdict-grade inventory).
+
+Mitigations applied 2026-07-19: permanent `caffeinate -s -i` sidecar
+(`com.alphaforge.keepawake`, launchd KeepAlive) + 5-minute watchdog with
+dead-man heartbeat (`ops/collector_watchdog.sh`, `com.alphaforge.watchdog`) +
+nightly offsite backup of `data/` (`ops/backup_critical_data.sh`, cron 02:30).
+Durable fix: `sudo pmset -c sleep 0` on this host, and/or VPS migration
+(`deploy/DEPLOY.md`). **Open governance question:** whether any span of this
+window is salvageable for the 30-day clock, or the clock restarts once the
+host is stabilized — user decision, file it in `research/` before Phase 1.
+
 **Status: 2026-06-24.** These caveats describe how the Phase 0 collector sources
 its two data streams and what the resulting parquet does and does not guarantee.
 They are load-bearing for any Phase 1 signal that consumes the trade tape (TFI,

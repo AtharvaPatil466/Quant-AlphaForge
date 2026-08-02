@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alphaforge.keepawake</string>
+
+    <!-- Permanent keep-awake sidecar for the 24/7 microstructure collector.
+         The host's pmset config (sleep=1 min idle) put the machine to sleep
+         overnight throughout the Phase 0 recollection window, producing
+         multi-hour book-data gaps nightly (~14% of hour-buckets missing as of
+         2026-07-19). caffeinate -s prevents system sleep while on AC power;
+         -i prevents idle sleep. Runs indefinitely (no -t); launchd KeepAlive
+         restarts it if it ever dies.
+
+         LIMITS: -s is only honored on AC power, and nothing prevents sleep
+         when the lid is closed without an external display. The durable fix
+         is `sudo pmset -c sleep 0` and/or moving the collector to a VPS.
+
+         Remove with:
+           launchctl bootout gui/$(id -u)/com.alphaforge.keepawake
+           rm ~/Library/LaunchAgents/com.alphaforge.keepawake.plist -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/caffeinate</string>
+        <string>-s</string>
+        <string>-i</string>
+    </array>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+</dict>
+</plist>

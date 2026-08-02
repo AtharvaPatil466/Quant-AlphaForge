@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alphaforge.prediction.papertrader.digest</string>
+
+    <!-- Weekly forward-record digest for substrate #10 (Kalshi FLB).
+         Reads the locally-maintained scorecard, writes data/paper/weekly_digest.md,
+         and fires a macOS notification (loud at a section-9 decision point). Runs
+         LOCALLY because the scorecard lives in the gitignored data/paper/ dir. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13</string>
+        <string>-m</string>
+        <string>research.weekly_digest</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction</string>
+
+    <!-- Monday 09:00 LOCAL time (launchd StartCalendarInterval uses local time).
+         Weekday 1 = Monday. -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>1</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Library/Frameworks/Python.framework/Versions/3.13/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/data/paper/logs/digest.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/data/paper/logs/digest.log</string>
+</dict>
+</plist>

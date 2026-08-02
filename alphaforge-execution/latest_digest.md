@@ -1,4 +1,4 @@
-# AlphaForge Daily Digest — 2026-05-20
+# AlphaForge Daily Digest — 2026-07-29
 
 ### Momentum Strategy
 - **NAV**: $102,502.01

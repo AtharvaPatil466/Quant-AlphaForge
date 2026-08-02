@@ -1,0 +1,24 @@
+services:
+  collector:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: alphaforge-collector
+    restart: always
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    # health_check exit codes: 0 OK, 1 WARNING, 2 CRITICAL — Docker treats
+    # any nonzero as unhealthy, which is the right sensitivity given the
+    # Phase 0 gap budget (<0.1%).
+    healthcheck:
+      test: ["CMD", "python", "-m", "collector.health_check", "--data-root", "data"]
+      interval: 5m
+      timeout: 60s
+      retries: 3
+      start_period: 2m
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.alphaforge.prediction.papertrader.reconcile</string>
+
+    <!-- Invoke the wrapper with the `reconcile` subcommand. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/scripts/run_paper_trader.sh</string>
+        <string>reconcile</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction</string>
+
+    <!-- reconcile 1x/day: 23:30 local (after the last place pass of the day). -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>23</integer>
+        <key>Minute</key><integer>30</integer>
+    </dict>
+
+    <!-- Do not fire at load/login; only on the calendar schedule. -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- launchd's own capture of the wrapper's stdout/stderr (the wrapper also
+         keeps its own framed per-command daily log under data/paper/logs/). -->
+    <key>StandardOutPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/data/paper/logs/launchd-reconcile.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/atharva/Quant Projects/Quant Alpha/alphaforge-prediction/data/paper/logs/launchd-reconcile.err.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Library/Frameworks/Python.framework/Versions/3.13/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>LANG</key>
+        <string>en_US.UTF-8</string>
+    </dict>
+
+    <!-- A missed run (machine asleep) fires once at next wake, not N catch-ups. -->
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>
