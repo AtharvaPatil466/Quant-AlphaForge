@@ -7,8 +7,8 @@
 #         run_paper_trader.sh reconcile
 #
 # It is a READ-ONLY paper sim: no money, no auth, no orders. It journals intended
-# entries (place) and settles resolved entries + rebuilds the scorecard (reconcile)
-# under data/paper/. The underlying harness is resume-safe and idempotent.
+# entries (place)settles resolved entries + rebuilds the scorecard (reconcile)
+# under data/paper/. The underlying harness is resume-safeidempotent.
 #
 # Behaviour:
 #   - cd to the sub-project root, resolved from this script's own location
@@ -17,7 +17,7 @@
 #   - appends timestamped stdout/stderr to data/paper/logs/<cmd>-YYYYMMDD.log.
 #   - takes an atomic mkdir(2) lock so an overlapping run of the same command
 #     cannot collide (the journal is append-only + fsync'd, but two concurrent
-#     --place passes would waste API calls and risk interleaved logs).
+#     --place passes would waste API callsrisk interleaved logs).
 #   - exits nonzero on any failure.
 
 set -euo pipefail
@@ -34,7 +34,7 @@ done
 SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 PROJECT_DIR="$(cd -P "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
 
-# Full python3.13 interpreter path (per task spec / CLAUDE.md).
+# Full python3.13 interpreter path.
 PYTHON="/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13"
 
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ LOG_FILE="$LOG_DIR/${CMD}-$(date +%Y%m%d).log"
 
 # ---------------------------------------------------------------------------
 # Atomic lock (mkdir is atomic on POSIX; no flock/shlock dependency).
-# Stale-lock guard: if the lock is older than 1h, assume a crashed run and clear.
+# Stale-lock guard: if the lock is older than 1h, assume a crashed runclear.
 # ---------------------------------------------------------------------------
 LOCK_DIR="$PROJECT_DIR/data/paper/.${CMD}.lock"
 
@@ -99,7 +99,7 @@ rc=0
 # 8,000 markets, 0 non-MVE), so --source events is REQUIRED for `place` to reach
 # the non-MVE classic-FLB universe; --rule-spec research/forward_rule.json corrects
 # the category set (the frozen DEFAULT lists 'weather'/'climate' separately but
-# Kalshi uses the single 'Climate and Weather'); --max-pages 1 caps each sweep.
+# Kalshi uses the single 'ClimateWeather'); --max-pages 1 caps each sweep.
 # These are GLOBAL args (parsed before the subcommand) so they precede "$CMD".
 # `reconcile` ignores source/max-pages (it fetches journalled tickers by ticker),
 # but the rule keeps the scorecard's recorded rule consistent across commands.

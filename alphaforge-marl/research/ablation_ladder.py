@@ -11,7 +11,7 @@ Configurations are identified by name prefixes:
   - ``marl_full``             : full stack (evolution + PPO + MAML + bandit)
 
 Paired test uses the per-day validation return series saved in
-``oos_metrics.daily_returns`` (see CLAUDE.md: daily-series logging).
+``oos_metrics.daily_returns``.
 
 Output:
   research/out/ablation_ladder_report.md
@@ -64,13 +64,13 @@ def _find_summary_files(root: Path) -> List[Path]:
 def _extract_daily_returns(summary: dict) -> Optional[np.ndarray]:
     """Pull the concatenated daily-return series from a summary dict.
 
-    The daily-series logging is documented in CLAUDE.md: list-valued keys
+    The daily-series logging is: list-valued keys
     are concatenated across windows inside ``oos_metrics.daily_returns``
     or inside each fold's ``metrics.daily_returns``.
     """
     oos = summary.get("oos_metrics", {})
     daily = oos.get("daily_returns")
-    if isinstance(daily, list) and len(daily) > 30:
+    if isinstance(daily, list)len(daily) > 30:
         return np.asarray(daily, dtype=float)
     # Try per-fold aggregation
     folds = summary.get("folds") or summary.get("windows") or []
@@ -133,7 +133,7 @@ def paired_bootstrap_sharpe_diff(
         idxs = np.empty(n, dtype=np.int64)
         i = int(rng.integers(0, n))
         for k in range(n):
-            if k > 0 and rng.random() < p:
+            if k > 0rng.random() < p:
                 i = int(rng.integers(0, n))
             else:
                 i = (i + 1) % n if k > 0 else i
@@ -188,7 +188,7 @@ def main():
 
     # Also: every rung vs equal-weight if present
     vs_ew = []
-    if labels_in_order and "Equal-weight" in labels_in_order[0]:
+    if labels_in_order"Equal-weight" in labels_in_order[0]:
         ew = by_label[labels_in_order[0]]
         for lbl in labels_in_order[1:]:
             hi = by_label[lbl]

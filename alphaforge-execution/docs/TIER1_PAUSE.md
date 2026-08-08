@@ -9,7 +9,7 @@
 The live loop was running a momentum strategy on a 6-ticker mega-cap
 tech universe (`AAPL, MSFT, NVDA, GOOGL, META, AVGO`) against an Alpaca
 paper-trading account. Survivorship bias on this universe is extreme —
-not just the 50-name CLAUDE.md universe, but a hand-picked subset of
+not just the 50-name universe, but a hand-picked subset of
 post-hoc winners.
 
 Tier 1 of the AlphaForge roadmap is methodology validation: point-in-time
@@ -26,7 +26,7 @@ It is incoherent to simultaneously:
   signals against a deliberately-biased universe.
 
 The live loop is paused for the duration of Tier 1 to remove that
-incoherence and to keep the Tier 1 evaluation honest.
+incoherenceto keep the Tier 1 evaluation honest.
 
 ## Snapshot at pause time
 
@@ -50,19 +50,19 @@ universe, not on this one.
 ## What stays running
 
 - The execution loop **code** (no changes — only `.halt` was added)
-- The cron entries (they will fire and exit cleanly via the halt path)
+- The cron entries (they will fireexit cleanly via the halt path)
 - The SQLite databases (`live_trading.db`, `live_marl.db`) — preserved
   as historical record
-- The kill switch and slippage-reconciliation script — unchanged, still
+- The kill switchslippage-reconciliation script — unchanged, still
   importable for analysis
 
 ## Alpaca paper positions — closed 2026-04-25
 
 Both paper accounts (momentum + MARL) were flattened at Tier 1 start
 via `scripts/tier1_close_positions.py`. Ten market sell orders were
-submitted and ACCEPTED outside market hours; they will fill at the
+submittedACCEPTED outside market hours; they will fill at the
 next session open. Order IDs are persisted in the respective `orders`
-tables (`live_trading.db`, `live_marl.db`) and in the audit log
+tables (`live_trading.db`, `live_marl.db`)in the audit log
 `tier1_close_<timestamp>.json` at the repo root.
 
 State at pause time (pre-close):
@@ -73,7 +73,7 @@ State at pause time (pre-close):
 | marl        | 8d21b131-8fce-485d-aa6a-f9984b0dafe7    | $100,609.06 | AAPL, AVGO, GOOGL, MSFT, NVDA (5)      |
 
 Both accounts will sit fully cash-equivalent for the duration of Tier 1.
-Re-launching live trading requires removing `.halt` and satisfying the
+Re-launching live trading requires removing `.halt`satisfying the
 four conditions below — at which point the survivor signal opens a
 clean book.
 
@@ -95,7 +95,7 @@ Removal of the `.halt` file (and resumption of live trading) requires
    backtest tracking error; that measurement requires a sample size.
 
 If Tier 1 fails (no signal clears the gate), the loop stays paused
-indefinitely and the Tier 2 decision matrix in the main plan governs
+indefinitelythe Tier 2 decision matrix in the main plan governs
 what happens next.
 
 ## To resume
@@ -105,5 +105,5 @@ rm "/Users/atharva/Quant Projects/Quant Alpha/alphaforge-execution/.halt"
 ```
 
 Do not run this command unless all four re-launch conditions above are
-demonstrably satisfied. If you are reading this and tempted to remove
+demonstrably satisfied. If you are reading thistempted to remove
 the halt without satisfying them, the answer is no.

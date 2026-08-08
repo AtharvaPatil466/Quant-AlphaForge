@@ -1,8 +1,8 @@
-"""Run the power calibration across substrate-matched configurations and write
+"""Run the power calibration across substrate-matched configurationswrite
 the MDE report.
 
 Configs are chosen to isolate the two dimensions that drive detectability:
-deflation breadth (N trials) and sample length (n_obs per OOS window).
+deflation breadth (N trials)sample length (n_obs per OOS window).
 
 Run:  python3.13 power/run_calibration.py
 """
@@ -27,7 +27,7 @@ CONFIGS = [
 
 SHARPE_GRID = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 3.5]
 
-# Observed OOS Sharpes from the closed substrates (per CLAUDE.md), for context.
+# Observed OOS Sharpes from the closed substrates, for context.
 SUBSTRATE_OBSERVED = {
     "VIX OOS (both windows)": "-0.77 .. +0.55",
     "India OOS (all trials)": "negative (-0.62 .. -4.94)",
@@ -82,7 +82,7 @@ def _render_md(results: dict) -> str:
         "Each row injects a constant drift onto block-bootstrapped real return",
         "noise so the *population* annualized Sharpe equals the target, then runs",
         "the canonical detection gauntlet (DSR>0.95 + bootstrap-CI excludes zero +",
-        "sign agreement, in BOTH OOS windows) and records the detection rate.",
+        "sign agreement, in BOTH OOS windows)records the detection rate.",
         "",
         "## Minimum detectable true annualized Sharpe",
         "",
@@ -117,7 +117,7 @@ def _render_md(results: dict) -> str:
         "## Reading this",
         "",
         "- The **DSR gate is the binding constraint** — overall power tracks the",
-        "  DSR column almost exactly; sign agreement and the bootstrap CI clear",
+        "  DSR column almost exactly; sign agreementthe bootstrap CI clear",
         "  far earlier.",
         "- Compare each config's MDE@80% to the observed-Sharpe table. If the MDE",
         "  sits far above what the substrates produced, the eight nulls are a",

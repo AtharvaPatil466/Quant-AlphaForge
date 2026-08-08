@@ -159,6 +159,9 @@ tmp/
 # AI tool instruction files (like .claude/ already gitignored)
 # ─────────────────────────────────────────────────────────────────────────
 GEMINI.md
+AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
 
 # ─────────────────────────────────────────────────────────────────────────
 # Vendored third-party agent tooling — not part of AlphaForge.

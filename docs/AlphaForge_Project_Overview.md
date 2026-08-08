@@ -76,7 +76,7 @@ AlphaForge applies the full systematic-trading lifecycle — data ingestion, fac
 
 #### Platform Metrics
 
-- **11 sub-projects.** JS frontend, `alphaforge-python`, `-marl`, `-execution`, `-crypto`, `-microstructure`, `-pead`, `-india`, `-vix`, `-options`, `-prediction`, plus the shared `alphaforge-gauntlet` evaluation package. Each has its own CLAUDE.md, test suite, and SHA-256-anchored design contract.
+- **11 sub-projects.** JS frontend, `alphaforge-python`, `-marl`, `-execution`, `-crypto`, `-microstructure`, `-pead`, `-india`, `-vix`, `-options`, `-prediction`, plus the shared `alphaforge-gauntlet` evaluation package. Each has its own test suite and SHA-256-anchored design contract.
 - **1,000+ tests green.** incl. 531 `alphaforge-python`, 237 `-vix`, 371 `-india`, 157 `-prediction`, 86 `alphaforge-gauntlet`, plus -marl / -execution / -crypto / -pead / -microstructure / -options suites.
 - **837 PIT membership events.** 407 REMOVE + 352 ADD + 78 RENAME, built from 2,811 Wikipedia revisions + EDGAR CIK enrichment, validated to 0.9895 monthly correlation against `^SP500EW`.
 - **16 years of equity OHLCV** in `data/quarantine/market/`, 655 of 881 PIT ever-members on disk; 5 years of Binance USDT-M funding + OHLCV; 7.76M NSE bhavcopy rows (2004–2026, 5,527 dates) with 100% delivery-percentage coverage on Nifty-500 ever-members.
@@ -494,7 +494,6 @@ Across eight substrates the gauntlet has classified four distinct failure modes.
 - **Pre- and post-fix output preservation.** Pre-bug-fix Tier 1 outputs are retained as `*_residualized.json` backups alongside post-fix outputs, enabling full audit of the diagnostic shift between runs.
 - **One-command reproducibility.** `make all` rebuilds every research artefact in this document from the parquet store in ~5 minutes.
 - **CI drift detection on headline metrics.** GitHub Actions matrix re-runs each headline study and diffs rebuilt JSON against the committed artefact. Silent numerical regression fails the build.
-- **Per-component CLAUDE.md.** Each sub-project carries its own architecture documentation. The root CLAUDE.md is the cross-cutting summary; each sub-project doc is the authoritative reference for that component.
 - **Knowledge-graph backed code review.** The repository is indexed by a Tree-sitter-based code-review knowledge graph (3,087 nodes, 26,157 edges, 328 files); semantic search, impact radius, and review-context queries replace manual grep/read on non-trivial reviews.
 
 ## 19. Honest Limitations and Process Disclosures
