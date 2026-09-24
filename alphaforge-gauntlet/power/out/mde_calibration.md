@@ -5,7 +5,7 @@ Noise substrate: **SPY adj_close (8383 days, real)**. Monte-Carlo reps: 300; boo
 Each row injects a constant drift onto block-bootstrapped real return
 noise so the *population* annualized Sharpe equals the target, then runs
 the canonical detection gauntlet (DSR>0.95 + bootstrap-CI excludes zero +
-sign agreement, in BOTH OOS windows) and records the detection rate.
+sign agreement, in BOTH OOS windows)records the detection rate.
 
 ## Minimum detectable true annualized Sharpe
 
@@ -94,7 +94,7 @@ sign agreement, in BOTH OOS windows) and records the detection rate.
 ## Reading this
 
 - The **DSR gate is the binding constraint** — overall power tracks the
-  DSR column almost exactly; sign agreement and the bootstrap CI clear
+  DSR column almost exactly; sign agreementthe bootstrap CI clear
   far earlier.
 - Compare each config's MDE@80% to the observed-Sharpe table. If the MDE
   sits far above what the substrates produced, the eight nulls are a

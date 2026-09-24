@@ -34,8 +34,10 @@ done
 SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" >/dev/null 2>&1 && pwd)"
 PROJECT_DIR="$(cd -P "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd)"
 
-# Full python3.13 interpreter path.
-PYTHON="/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13"
+# Full python3.13 interpreter path. Overridable so the Linux/VPS container can
+# point at its own interpreter; the default keeps macOS behaviour unchanged
+# (Homebrew 3.14 has broken pyexpat, hence the explicit framework path).
+PYTHON="${PAPER_TRADER_PYTHON:-/Library/Frameworks/Python.framework/Versions/3.13/bin/python3.13}"
 
 # ---------------------------------------------------------------------------
 # Validate argument.
@@ -62,8 +64,8 @@ LOG_FILE="$LOG_DIR/${CMD}-$(date +%Y%m%d).log"
 LOCK_DIR="$PROJECT_DIR/data/paper/.${CMD}.lock"
 
 if [ -d "$LOCK_DIR" ]; then
-  # macOS stat: -f %m gives mtime epoch seconds.
-  if lock_mtime=$(/usr/bin/stat -f %m "$LOCK_DIR" 2>/dev/null); then
+  # mtime epoch seconds: BSD/macOS `stat -f %m`, GNU/Linux `stat -c %Y`.
+  if lock_mtime=$(stat -f %m "$LOCK_DIR" 2>/dev/null || stat -c %Y "$LOCK_DIR" 2>/dev/null); then
     now=$(date +%s)
     age=$(( now - lock_mtime ))
     if [ "$age" -gt 3600 ]; then

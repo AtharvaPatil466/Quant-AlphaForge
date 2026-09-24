@@ -1,0 +1,22 @@
+services:
+  papertrader:
+    build:
+      # Repo root — the image needs alphaforge-gauntlet/ alongside this sub-project.
+      context: ../..
+      dockerfile: alphaforge-prediction/deploy/Dockerfile
+    image: alphaforge-papertrader
+    # NO `restart:` and no long-running command on purpose. Unlike the
+    # microstructure collector this is a periodic batch job (place 3x/day,
+    # reconcile 1x/day), driven by host cron via `docker compose run --rm`.
+    volumes:
+      # The journal + scorecard live here and are the substrate's actual record.
+      - ../data:/srv/alphaforge-prediction/data
+    environment:
+      # Cadence was authored against the laptop's local time; keep it explicit
+      # so the VPS's UTC clock doesn't silently shift the 09/15/21 sweeps.
+      TZ: ${ALPHAFORGE_TZ:-Asia/Kolkata}
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "3"

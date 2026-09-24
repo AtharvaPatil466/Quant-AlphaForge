@@ -1,0 +1,16 @@
+# AlphaForge substrate #10 — Phase 2 forward paper trader (VPS).
+# Install with:  crontab deploy/crontab      (after editing DEPLOY_DIR below)
+#
+# Mirrors the retired launchd agents exactly:
+#   place     3x/day 09:00, 15:00, 21:00   (com.alphaforge.prediction.papertrader.place)
+#   reconcile 1x/day 23:30                 (...papertrader.reconcile)
+#   digest    Mondays 09:00                (...papertrader.digest)
+#
+# Times are container-local (TZ from ALPHAFORGE_TZ, default Asia/Kolkata), so set
+# the host TZ to match or the sweep times drift relative to the original run.
+
+DEPLOY_DIR=/srv/alphaforge/alphaforge-prediction/deploy
+
+0 9,15,21 * * *  cd $DEPLOY_DIR && docker compose run --rm papertrader place     >> /var/log/alphaforge-place.log 2>&1
+30 23 * * *      cd $DEPLOY_DIR && docker compose run --rm papertrader reconcile >> /var/log/alphaforge-reconcile.log 2>&1
+0 9 * * 1        cd $DEPLOY_DIR && docker compose run --rm --entrypoint python papertrader -m research.weekly_digest >> /var/log/alphaforge-digest.log 2>&1
